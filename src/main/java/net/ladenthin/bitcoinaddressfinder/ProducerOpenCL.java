@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
+import net.ladenthin.bitcoinaddressfinder.opt.OpenCLCubeResults;
 
 public class ProducerOpenCL extends AbstractProducer {
 
@@ -34,6 +35,7 @@ public class ProducerOpenCL extends AbstractProducer {
     private OpenCLContext openCLContext;
 
     public ProducerOpenCL(CProducerOpenCL producerOpenCL, AtomicBoolean shouldRun, Consumer consumer, KeyUtility keyUtility, Random random) {
+    	// TODO wann ist "shouldRun==false"?
         super(shouldRun, consumer, keyUtility, random);
         this.producerOpenCL = producerOpenCL;
     }
@@ -62,6 +64,12 @@ public class ProducerOpenCL extends AbstractProducer {
             final BigInteger secretBase = createSecretBase(producerOpenCL, secret, producerOpenCL.logSecretBase);
 
             waitTillFreeThreadsInPool();
+            
+            // TODO was war nochmal die "secretBase"?
+            // TODO: Hier Anpassung
+            OpenCLCubeResults generatedKeys = openCLContext.createKeyAddressPairs(secretBase);
+            // TODO den Consumer anpassen, dieser würde dann die Adressen gegen eine Datenbank testen
+            // und bei einem Match diese ausgeben (bzw in Datei schreiben) mitsamt PrivateKey?
             OpenCLGridResult createKeys = openCLContext.createKeys(secretBase);
             
             resultReaderThreadPoolExecutor.submit(
