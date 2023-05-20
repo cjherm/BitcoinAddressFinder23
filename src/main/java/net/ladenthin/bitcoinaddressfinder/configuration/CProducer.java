@@ -19,10 +19,24 @@
 package net.ladenthin.bitcoinaddressfinder.configuration;
 
 import java.math.BigInteger;
+
+import net.ladenthin.bitcoinaddressfinder.OpenCLContext;
 import net.ladenthin.bitcoinaddressfinder.PublicKeyBytes;
 
+
 public class CProducer {
-    
+
+    /**
+     * Defines which calculation should be done in the OpenCL kernel:
+     * <br><br>
+     * {@link OpenCLContext#GEN_PUBLIC_KEYS_MODE}<br>
+     * For the generation of PublicKeys from given PrivateKeys
+     * <br><br>
+     * {@link OpenCLContext#GEN_ADDRESSES_MODE}<br>
+     * For the generation of Addresses from given PrivateKeys
+     * <br><br>
+     */
+    public int kernelMode;
     /**
      * Lazy initialization. The configuration is changed on demand.
      */
