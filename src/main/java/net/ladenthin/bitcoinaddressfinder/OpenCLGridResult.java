@@ -23,96 +23,91 @@ import java.nio.ByteBuffer;
 
 public class OpenCLGridResult {
 
-	private final ByteBufferUtility byteBufferUtility = new ByteBufferUtility(true);
+    private final ByteBufferUtility byteBufferUtility = new ByteBufferUtility(true);
+    
+    private final BigInteger secretKeyBase;
+    private final int workSize;
+    private ByteBuffer result;
+    
+    OpenCLGridResult(BigInteger secretKeyBase, int workSize, ByteBuffer result) {
+        this.secretKeyBase = secretKeyBase;
+        this.workSize = workSize;
+        this.result = result;
+    }
 
-	private final BigInteger secretKeyBase;
-	private final int workSize;
-	private ByteBuffer result;
+    public BigInteger getSecretKeyBase() {
+        return secretKeyBase;
+    }
 
-	OpenCLGridResult(BigInteger secretKeyBase, int workSize, ByteBuffer result) {
-		this.secretKeyBase = secretKeyBase;
-		this.workSize = workSize;
-		this.result = result;
-	}
+    public int getWorkSize() {
+        return workSize;
+    }
 
-	public BigInteger getSecretKeyBase() {
-		return secretKeyBase;
-	}
-
-	public int getWorkSize() {
-		return workSize;
-	}
-
-	public ByteBuffer getResult() {
-		return result;
-	}
-
-	public void freeResult() {
-		// free and do not use anymore
-		byteBufferUtility.freeByteBuffer(result);
-		result = null;
-	}
-
-	/**
-	 * Time consuming.
-	 */
-	public PublicKeyBytes[] getPublicKeyBytes() {
-		PublicKeyBytes[] publicKeys = new PublicKeyBytes[workSize];
-		for (int i = 0; i < workSize; i++) {
-			PublicKeyBytes publicKeyBytes = getPublicKeyFromByteBufferXY(result, i, secretKeyBase);
-			publicKeys[i] = publicKeyBytes;
-		}
-		return publicKeys;
-	}
-
-	/**
-	 * Read the inner bytes in reverse order.
-	 */
-	private static final PublicKeyBytes getPublicKeyFromByteBufferXY(ByteBuffer b, int keyNumber,
-			BigInteger secretKeyBase) {
-		BigInteger secret = AbstractProducer.calculateSecretKey(secretKeyBase, keyNumber);
-		if (BigInteger.ZERO.equals(secret)) {
-			// the calculated key is invalid, return a fallback
-			return PublicKeyBytes.INVALID_KEY_ONE;
-		}
-		byte[] uncompressed = new byte[PublicKeyBytes.PUBLIC_KEY_UNCOMPRESSED_BYTES];
-		uncompressed[0] = PublicKeyBytes.PARITY_UNCOMPRESSED;
-
-		int keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * keyNumber;
-
-		// read ByteBuffer
-		byte[] yx = new byte[PublicKeyBytes.TWO_COORDINATES_NUM_BYTES];
-		for (int i = 0; i < PublicKeyBytes.TWO_COORDINATES_NUM_BYTES; i++) {
-			yx[yx.length - 1 - i] = b.get(keyOffsetInByteBuffer + i);
-		}
-
-		// copy x
-		System.arraycopy(yx, PublicKeyBytes.ONE_COORDINATE_NUM_BYTES, uncompressed, PublicKeyBytes.PARITY_BYTES_LENGTH,
-				PublicKeyBytes.ONE_COORDINATE_NUM_BYTES);
-		// copy y
-		System.arraycopy(yx, 0, uncompressed,
-				PublicKeyBytes.PARITY_BYTES_LENGTH + PublicKeyBytes.ONE_COORDINATE_NUM_BYTES,
-				PublicKeyBytes.ONE_COORDINATE_NUM_BYTES);
-
-		// TODO wieso deaktiviert?
-		if (false) {
-			assertValidResult(uncompressed);
-		}
-		
-		PublicKeyBytes publicKeyBytes = new PublicKeyBytes(secret, uncompressed);
-		return publicKeyBytes;
-	}
-
-	private static void assertValidResult(byte[] uncompressed) {
-		boolean invalid = true;
-		for (int i = 1; i < uncompressed.length; i++) {
-			if (uncompressed[i] != 0) {
-				invalid = false;
-				break;
-			}
-		}
-		if (invalid) {
-			throw new RuntimeException("Invalid result from GPU, all uncompressed key bytes are 0.");
-		}
-	}
+    public ByteBuffer getResult() {
+        return result;
+    }
+    
+    public void freeResult() {
+        // free and do not use anymore
+        byteBufferUtility.freeByteBuffer(result);
+        result = null;
+    }
+    
+    /**
+     * Time consuming.
+     */
+    public PublicKeyBytes[] getPublicKeyBytes() {
+        PublicKeyBytes[] publicKeys = new PublicKeyBytes[workSize];
+        for (int i = 0; i < workSize; i++) {
+            PublicKeyBytes publicKeyBytes = getPublicKeyFromByteBufferXY(result, i, secretKeyBase);
+            publicKeys[i] = publicKeyBytes;
+        }
+        return publicKeys;
+    }
+    
+    /**
+     * Read the inner bytes in reverse order.
+     */
+    private static final PublicKeyBytes getPublicKeyFromByteBufferXY(ByteBuffer b, int keyNumber, BigInteger secretKeyBase) {
+        BigInteger secret = AbstractProducer.calculateSecretKey(secretKeyBase, keyNumber);
+        if(BigInteger.ZERO.equals(secret)) {
+            // the calculated key is invalid, return a fallback
+            return PublicKeyBytes.INVALID_KEY_ONE;
+        }
+        byte[] uncompressed = new byte[PublicKeyBytes.PUBLIC_KEY_UNCOMPRESSED_BYTES];
+        uncompressed[0] = PublicKeyBytes.PARITY_UNCOMPRESSED;
+        
+        int keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES*keyNumber;
+        
+        // read ByteBuffer
+        byte[] yx = new byte[PublicKeyBytes.TWO_COORDINATES_NUM_BYTES];
+        for (int i = 0; i < PublicKeyBytes.TWO_COORDINATES_NUM_BYTES; i++) {
+            yx[yx.length-1-i] = b.get(keyOffsetInByteBuffer+i);
+        }
+        
+        // copy x
+        System.arraycopy(yx, PublicKeyBytes.ONE_COORDINATE_NUM_BYTES, uncompressed, PublicKeyBytes.PARITY_BYTES_LENGTH, PublicKeyBytes.ONE_COORDINATE_NUM_BYTES);
+        // copy y
+        System.arraycopy(yx, 0, uncompressed, PublicKeyBytes.PARITY_BYTES_LENGTH+PublicKeyBytes.ONE_COORDINATE_NUM_BYTES, PublicKeyBytes.ONE_COORDINATE_NUM_BYTES);
+        
+        if (false) {
+            assertValidResult(uncompressed);
+        }
+        PublicKeyBytes publicKeyBytes = new PublicKeyBytes(secret, uncompressed);
+        return publicKeyBytes;
+    }
+    
+    private static void assertValidResult(byte[] uncompressed) {
+        boolean invalid = true;
+        for (int i = 1; i < uncompressed.length; i++) {
+            if (uncompressed[i] != 0) {
+                invalid = false;
+                break;
+            }
+        }
+        if (invalid) {
+            throw new RuntimeException("Invalid result from GPU, all uncompressed key bytes are 0.");
+        }
+    }
+    
 }
