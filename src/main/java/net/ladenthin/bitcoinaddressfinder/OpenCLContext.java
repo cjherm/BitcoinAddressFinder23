@@ -54,7 +54,9 @@ import org.slf4j.LoggerFactory;
 public class OpenCLContext {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+    public static final int GEN_PUBLIC_KEYS_MODE = 0;
+    public static final int GEN_ADDRESSES_MODE = 1;
+
     public String[] getOpenCLPrograms() throws IOException {
         List<String> resourceNamesContent = getResourceNamesContent(getResourceNames());
         List<String> resourceNamesContentWithReplacements = new ArrayList<>();
@@ -84,8 +86,10 @@ public class OpenCLContext {
         return resourceNames;
     }
 
-    private final static String NON_CHUNK_KERNEL_NAME = "generateKeysKernel_grid";
-    private final static String CHUNK_KERNEL_NAME = "generateKeyChunkKernel_grid";
+    private final static String PBK_NONCHUNK_KERNEL_NAME = "generateKeysKernel_grid";
+    private final static String PBK_CHUNK_KERNEL_NAME = "generateKeyChunkKernel_grid";
+    private static final String ADR_CHUNK_KERNEL_NAME = ""; // TODO define kernel name
+    private static final String ADR_NONCHUNK_KERNEL_NAME = ""; // TODO define kernel name
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
@@ -156,13 +160,35 @@ public class OpenCLContext {
         clBuildProgram(program, 0, null, null, null, null);
         
         // Create the kernel
-        if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, CHUNK_KERNEL_NAME, null);
-        } else {
-            kernel = clCreateKernel(program, NON_CHUNK_KERNEL_NAME, null);
-        }
+        setKernel();
 
         openClTask = new OpenClTask(context, producerOpenCL);
+    }
+
+    private void setKernel() {
+        if (producerOpenCL.kernelMode == GEN_PUBLIC_KEYS_MODE) {
+            setPublicKeyKernel();
+        } else if (producerOpenCL.kernelMode == GEN_ADDRESSES_MODE) {
+            setAddressKernel();
+        } else {
+            // TODO Implement else-case
+        }
+    }
+
+    private void setPublicKeyKernel() {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, PBK_CHUNK_KERNEL_NAME, null);
+        } else {
+            kernel = clCreateKernel(program, PBK_NONCHUNK_KERNEL_NAME, null);
+        }
+    }
+
+    private void setAddressKernel() {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, ADR_CHUNK_KERNEL_NAME, null);
+        } else {
+            kernel = clCreateKernel(program, ADR_NONCHUNK_KERNEL_NAME, null);
+        }
     }
 
     protected OpenClTask getOpenClTask() {
@@ -199,6 +225,11 @@ public class OpenCLContext {
             e.printStackTrace();
         }
         return openCLGridResult;
+    }
+
+    public OpenCLGridResult createAddresses(BigInteger[] privateKeysArray) {
+        // TODO Implement method
+        return null;
     }
 
     private static List<String> getResourceNamesContent(List<String> resourceNames) throws IOException {
