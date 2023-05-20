@@ -20,11 +20,12 @@ public class TestHelper {
     private static final int PRIVATE_KEY_MAX_BIT_LENGTH = 256;
     private static final int HEX_RADIX = 16;
 
-    public static OpenCLContext createOpenCLContext(boolean chunkMode) {
+    public static OpenCLContext createOpenCLContext(boolean chunkMode, int kernelMode) {
         new OpenCLPlatformAssume().assumeOpenCLLibraryLoadableAndOneOpenCL2_0OrGreaterDeviceAvailable();
         CProducerOpenCL producerOpenCL = new CProducerOpenCL();
         producerOpenCL.gridNumBits = GRID_NUM_BITS;
         producerOpenCL.chunkMode = chunkMode;
+        producerOpenCL.kernelMode = kernelMode;
         OpenCLContext openCLContext = new OpenCLContext(producerOpenCL);
 
         try {
@@ -131,6 +132,11 @@ public class TestHelper {
 
     public static String hexStringFromPublicKeyBytes(PublicKeyBytes publicKeyBytes) {
         return Hex.encodeHexString(publicKeyBytes.getUncompressed());
+    }
+
+    public static String hexStringFromAddressBytes(AddressBytes addressBytes) {
+        // TODO Implement method
+        return null;
     }
 
     public static Map<String, String> createMapFromBigIntegerArrayAndPublicKeyBytesArray(BigInteger[] keyArray, PublicKeyBytes[] valueArray) {

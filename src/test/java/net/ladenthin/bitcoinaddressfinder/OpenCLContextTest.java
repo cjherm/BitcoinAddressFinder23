@@ -19,15 +19,17 @@ public class OpenCLContextTest {
     public static final int CHUNK_SIZE = 256;
 
     private static final String PRIVATE_KEY_HEX_STRING = "c297e4944f46f3b9f04cf4b3984f49bd4ee40dec33991066fa15cdb227933469";
-
     private static final String PUBLIC_KEY_HEX_STRING = "045f399867ee13c5ac525259f036c90f455b11d667acfcdfc36791288547633611e8416a53aea83bd55691a5721775a581bd1e8e09dd3db4021a6f6daebdbcc9da";
+    private static final String ADDRESS_HEX_STRING = "1MYEKfUnUpw6714iJ7Tm4Ndrqzpx2ufWpa";
+
     private static final boolean CHUNK_MODE = true;
+    private static final boolean NON_CHUNK_MODE = false;
 
     @Test
     public void test_generateSinglePublicKey_specificPrivateKey() {
         // arrange
         BigInteger[] privateKeysArray = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createKeys(privateKeysArray);
@@ -46,7 +48,7 @@ public class OpenCLContextTest {
     public void test_generateSinglePublicKey_randomPrivateKey() {
         //arrange
         BigInteger[] privateKeysArray = TestHelper.generateRandomUncompressedPrivateKeys(1);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createKeys(privateKeysArray);
@@ -66,7 +68,7 @@ public class OpenCLContextTest {
     public void test_generate256PublicKeys_specificPrivateKey_chunkMode() {
         //arrange
         BigInteger[] privateKeysArray = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createKeys(privateKeysArray);
@@ -88,7 +90,7 @@ public class OpenCLContextTest {
     public void test_generate256PublicKeys_randomPrivateKeys_nonChunkMode() {
         //arrange
         BigInteger[] privateKeysArray = TestHelper.generateRandomUncompressedPrivateKeys(CHUNK_SIZE);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(false);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createKeys(privateKeysArray);
@@ -105,39 +107,34 @@ public class OpenCLContextTest {
         assertThatKeyMap(resultKeysMap).isEqualTo(expectedKeysMap);
     }
 
+    @Test
+    public void test_generateSingleAddress_specificSinglePrivateKey() {
+        // arrange
+        BigInteger[] privateKeysArray = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createAddresses(privateKeysArray);
+        AddressBytes[] addressBytesResult = openCLGridResult.getAddressBytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        String resultPublicKeyAsHexString = TestHelper.hexStringFromAddressBytes(addressBytesResult[0]);
+        assertThat(resultPublicKeyAsHexString, is(equalTo(ADDRESS_HEX_STRING)));
+    }
+
     @Ignore
     @Test
-    public void test_generateSingleAddress_specificPublicKey() {
+    public void test_generateSingleAddress_randomSinglePrivateKey() {
         // TODO write test
     }
 
     @Ignore
     @Test
-    public void test_generateSingleAddress_randomPublicKey() {
-        // TODO write test
-    }
-
-    @Ignore
-    @Test
-    public void test_generateSingleAddress_specificPrivateKey() {
-        // TODO write test
-    }
-
-    @Ignore
-    @Test
-    public void test_generateSingleAddress_randomPrivateKey() {
-        // TODO write test
-    }
-
-    @Ignore
-    @Test
-    public void test_generate256Addresses_randomPublicKeys() {
-        // TODO write test
-    }
-
-    @Ignore
-    @Test
-    public void test_generate256Addresses_randomPrivateKeys() {
+    public void test_generate256Addresses_random256PrivateKeys() {
         // TODO write test
     }
 }
