@@ -83,8 +83,9 @@ public class OpenCLContext {
         resourceNames.add("inc_ecc_secp256k1custom.cl");
         return resourceNames;
     }
-    
-    private final static String KERNEL_NAME = "generateKeysKernel_grid";
+
+    private final static String NON_CHUNK_KERNEL_NAME = "generateKeysKernel_grid";
+    private final static String CHUNK_KERNEL_NAME = "generateKeyChunkKernel_grid";
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
@@ -101,6 +102,11 @@ public class OpenCLContext {
         this.producerOpenCL = producerOpenCL;
     }
     
+    /**
+     * Sets all properties and parameters to finally create the OpenCL kernel.
+     *
+     * @throws IOException When an error occurs while reading a resource.
+     */
     public void init() throws IOException {
         
         // #################### general ####################
@@ -150,12 +156,16 @@ public class OpenCLContext {
         clBuildProgram(program, 0, null, null, null, null);
         
         // Create the kernel
-        kernel = clCreateKernel(program, KERNEL_NAME, null);
-        
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, CHUNK_KERNEL_NAME, null);
+        } else {
+            kernel = clCreateKernel(program, NON_CHUNK_KERNEL_NAME, null);
+        }
+
         openClTask = new OpenClTask(context, producerOpenCL);
     }
 
-    OpenClTask getOpenClTask() {
+    protected OpenClTask getOpenClTask() {
         return openClTask;
     }
 
@@ -167,11 +177,27 @@ public class OpenCLContext {
         clReleaseContext(context);
     }
 
-    public OpenCLGridResult createKeys(BigInteger privateKeyBase) {
-        openClTask.setSrcPrivateKeyChunk(privateKeyBase);
+    /**
+     * This method executes the OpenCL kernel to generate publicKeys. Depending on the parameter <strong>chunkMode</strong> it
+     * will automatically generate new privateKeys based on the first privateKey that was passed.
+     *
+     * @param privateKeys In case of <strong>chunkMode = true</strong> this method only needs
+     *                    one privateKey, but in case of <strong>chunkMode = false</strong>
+     *                    it needs exactly as many private keys as the work size.
+     * @return publicKeys as {@link OpenCLGridResult}
+     */
+    public OpenCLGridResult createKeys(BigInteger[] privateKeys) {
+        openClTask.setSrcPrivateKeys(privateKeys);
         ByteBuffer dstByteBuffer = openClTask.executeKernel(kernel, commandQueue);
 
-        OpenCLGridResult openCLGridResult = new OpenCLGridResult(privateKeyBase, producerOpenCL.getWorkSize(), dstByteBuffer);
+        OpenCLGridResult openCLGridResult = null;
+        try {
+            openCLGridResult = new OpenCLGridResult(privateKeys, producerOpenCL.getWorkSize(), dstByteBuffer,
+                    producerOpenCL.chunkMode);
+        } catch (InvalidWorkSizeException e) {
+            // TODO Handle a thrown InvalidWorkSizeException
+            e.printStackTrace();
+        }
         return openCLGridResult;
     }
 

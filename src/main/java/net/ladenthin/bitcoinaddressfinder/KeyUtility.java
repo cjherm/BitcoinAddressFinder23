@@ -63,7 +63,7 @@ public class KeyUtility {
         return address.toBase58();
     }
 
-    public BigInteger createSecret(int maximumBitLength, Random random) {
+    public static BigInteger createSecret(int maximumBitLength, Random random) {
         BigInteger secret = new BigInteger(maximumBitLength, random);
         return secret;
     }
@@ -220,7 +220,6 @@ public class KeyUtility {
      * BigInteger, according to SRP specification
      *
      * @param bigInteger BigInteger, must not be null
-     *
      * @return byte array (leading byte is always != 0), empty array if
      * BigInteger is zero.
      */
@@ -228,6 +227,16 @@ public class KeyUtility {
         byte[] bytes = bigInteger.toByteArray();
         if (bytes[0] == 0) {
             return Arrays.copyOfRange(bytes, 1, bytes.length);
+        }
+        return bytes;
+    }
+
+    public static byte[] bigIntegersToBytes(BigInteger[] privateKeys) {
+        byte[] bytes = new byte[PublicKeyBytes.PRIVATE_KEY_MAX_NUM_BYTES * privateKeys.length];
+        for (int i = 0; i < privateKeys.length; i++) {
+            byte[] loopBytes = bigIntegerToBytes(privateKeys[i]);
+            int offset = i * PublicKeyBytes.PRIVATE_KEY_MAX_NUM_BYTES;
+            System.arraycopy(loopBytes, 0, bytes, offset, loopBytes.length);
         }
         return bytes;
     }
