@@ -80,6 +80,11 @@ public class OpenCLGridResult {
         return publicKeys;
     }
 
+    public AddressBytes[] getAddressBytes() {
+        // TODO Implement method
+        return null;
+    }
+
     /**
      * Read the inner bytes in reverse order.
      */
