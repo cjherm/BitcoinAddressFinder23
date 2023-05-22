@@ -36,7 +36,8 @@ public class CProducer {
      * For the generation of Addresses from given PrivateKeys
      * <br><br>
      */
-    public int kernelMode;
+    // TODO set default value to ensure compability with older impl for now
+    public int kernelMode = OpenCLContext.GEN_PUBLIC_KEYS_MODE;
     /**
      * Lazy initialization. The configuration is changed on demand.
      */
