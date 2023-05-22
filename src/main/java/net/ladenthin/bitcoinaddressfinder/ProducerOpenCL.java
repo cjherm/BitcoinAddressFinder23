@@ -63,7 +63,7 @@ public class ProducerOpenCL extends AbstractProducer {
             BigInteger[] privateKeys = {secretBase};
 
             waitTillFreeThreadsInPool();
-            OpenCLGridResult createKeys = openCLContext.createKeys(privateKeys);
+            OpenCLGridResult createKeys = openCLContext.createResult(privateKeys);
             
             resultReaderThreadPoolExecutor.submit(
                 () ->{

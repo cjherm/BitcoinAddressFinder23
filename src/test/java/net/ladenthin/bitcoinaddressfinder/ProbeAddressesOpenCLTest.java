@@ -37,12 +37,9 @@ import org.junit.rules.TemporaryFolder;
 import static org.jocl.CL.*;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducer;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
-import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLBuilder;
-import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLPlatform;
 import net.ladenthin.bitcoinaddressfinder.staticaddresses.TestAddresses42;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
@@ -419,7 +416,7 @@ public class ProbeAddressesOpenCLTest {
         BigInteger secretBase = producerOpenCL.setLeastSignificantBitToZero(secret);
         BigInteger[] secrets = { secretBase };
 
-        openCLContext.createKeys(secrets);
+        openCLContext.createResult(secrets);
         openCLContext.release();
     }
     
@@ -443,7 +440,7 @@ public class ProbeAddressesOpenCLTest {
         
         BigInteger[] secrets = { secretBase };
 
-        openCLContext.createKeys(secrets);
+        openCLContext.createResult(secrets);
         openCLContext.release();
     }
     
@@ -496,7 +493,7 @@ public class ProbeAddressesOpenCLTest {
         BigInteger secretBase = producerOpenCL.setLeastSignificantBitToZero(secret);
         
         BigInteger[] privateKeys = { secretBase };
-        OpenCLGridResult createKeys = openCLContext.createKeys(privateKeys);
+        OpenCLGridResult createKeys = openCLContext.createResult(privateKeys);
         PublicKeyBytes[] publicKeys = createKeys.getPublicKeyBytes();
         createKeys.freeResult();
         
