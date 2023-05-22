@@ -27,15 +27,17 @@ public class OpenCLGridResult {
     private final BigInteger[] secretKeys;
     private final int workSize;
     private final boolean chunkMode;
+    private final int kernelMode;
     private ByteBuffer result;
 
-    OpenCLGridResult(BigInteger[] secretKeys, int workSize, ByteBuffer result, boolean chunkMode)
+    OpenCLGridResult(BigInteger[] secretKeys, int workSize, ByteBuffer result, boolean chunkMode, int kernelMode)
             throws InvalidWorkSizeException {
         checkPrivateKeysAndWorkSize(secretKeys, workSize, chunkMode);
         this.secretKeys = secretKeys;
         this.workSize = workSize;
         this.result = result;
         this.chunkMode = chunkMode;
+        this.kernelMode = kernelMode;
     }
 
     private void checkPrivateKeysAndWorkSize(BigInteger[] secretKeys, int workSize, boolean chunkMode)
@@ -65,6 +67,11 @@ public class OpenCLGridResult {
      * @return the calculated public keys
      */
     public PublicKeyBytes[] getPublicKeyBytes() {
+        if (!(kernelMode == OpenCLContext.GEN_PUBLIC_KEYS_MODE)) {
+            // TODO handle this case
+            System.out.println("OpenCLGridResult does not contain generated public keys!");
+            return new PublicKeyBytes[0];
+        }
         PublicKeyBytes[] publicKeys = new PublicKeyBytes[workSize];
         for (int i = 0; i < workSize; i++) {
             PublicKeyBytes publicKeyBytes;
@@ -81,6 +88,11 @@ public class OpenCLGridResult {
     }
 
     public AddressBytes[] getAddressBytes() {
+        if (!(kernelMode == OpenCLContext.GEN_ADDRESSES_MODE)) {
+            // TODO handle this case
+            System.out.println("OpenCLGridResult does not contain generated addresses!");
+            return new AddressBytes[0];
+        }
         // TODO Implement method
         return null;
     }
