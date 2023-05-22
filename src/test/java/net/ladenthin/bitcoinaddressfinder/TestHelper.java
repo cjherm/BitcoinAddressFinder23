@@ -135,8 +135,7 @@ public class TestHelper {
     }
 
     public static String hexStringFromAddressBytes(AddressBytes addressBytes) {
-        // TODO Implement method
-        return null;
+        return Hex.encodeHexString(addressBytes.getUncompressed());
     }
 
     public static Map<String, String> createMapFromBigIntegerArrayAndPublicKeyBytesArray(BigInteger[] keyArray, PublicKeyBytes[] valueArray) {

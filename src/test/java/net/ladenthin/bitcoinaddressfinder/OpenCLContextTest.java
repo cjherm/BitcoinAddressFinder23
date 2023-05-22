@@ -128,8 +128,8 @@ public class OpenCLContextTest {
         openCLGridResult.freeResult();
 
         // assert
-        String resultPublicKeyAsHexString = TestHelper.hexStringFromAddressBytes(addressBytesResult[0]);
-        assertThat(resultPublicKeyAsHexString, is(equalTo(ADDRESS_HEX_STRING)));
+        String resultAddressAsHexString = TestHelper.hexStringFromAddressBytes(addressBytesResult[0]);
+        assertThat(resultAddressAsHexString, is(equalTo(ADDRESS_HEX_STRING)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
