@@ -56,6 +56,7 @@ public class OpenCLContext {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final int GEN_PUBLIC_KEYS_MODE = 0;
     public static final int GEN_ADDRESSES_MODE = 1;
+    private int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
         List<String> resourceNamesContent = getResourceNamesContent(getResourceNames());
@@ -167,28 +168,36 @@ public class OpenCLContext {
 
     private void setKernel() {
         if (producerOpenCL.kernelMode == GEN_PUBLIC_KEYS_MODE) {
-            setPublicKeyKernel();
+            setPublicKeyGeneratorKernel();
         } else if (producerOpenCL.kernelMode == GEN_ADDRESSES_MODE) {
-            setAddressKernel();
+            setAddressGeneratorKernel();
         } else {
             // TODO Implement else-case
         }
     }
 
-    private void setPublicKeyKernel() {
+    private void setPublicKeyGeneratorKernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, PBK_CHUNK_KERNEL_NAME, null);
+            kernel = clCreateKernel(program, PBK_CHUNK_KERNEL_NAME, errorCode);
         } else {
-            kernel = clCreateKernel(program, PBK_NONCHUNK_KERNEL_NAME, null);
+            kernel = clCreateKernel(program, PBK_NONCHUNK_KERNEL_NAME, errorCode);
         }
     }
 
-    private void setAddressKernel() {
+    private void setAddressGeneratorKernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, ADR_CHUNK_KERNEL_NAME, null);
+            kernel = clCreateKernel(program, ADR_CHUNK_KERNEL_NAME, errorCode);
         } else {
-            kernel = clCreateKernel(program, ADR_NONCHUNK_KERNEL_NAME, null);
+            kernel = clCreateKernel(program, ADR_NONCHUNK_KERNEL_NAME, errorCode);
         }
+    }
+
+    public int getErrorCode() {
+        return errorCode[0];
+    }
+
+    public String getErrorCodeString() {
+        return CL.stringFor_errorCode(getErrorCode());
     }
 
     protected OpenClTask getOpenClTask() {
@@ -204,32 +213,30 @@ public class OpenCLContext {
     }
 
     /**
-     * This method executes the OpenCL kernel to generate publicKeys. Depending on the parameter <strong>chunkMode</strong> it
-     * will automatically generate new privateKeys based on the first privateKey that was passed.
+     * This method executes the OpenCL kernel to generate publicKeys or addresses, depending on the parameter
+     * {@link CProducerOpenCL#kernelMode}.
+     * <br><br>
+     * The parameter {@link CProducerOpenCL#chunkMode} will determine if the given array has to be fully filled
+     * with privateKeys or will only need a single one a the first element in the array.
      *
      * @param privateKeys In case of <strong>chunkMode = true</strong> this method only needs
      *                    one privateKey, but in case of <strong>chunkMode = false</strong>
      *                    it needs exactly as many private keys as the work size.
-     * @return publicKeys as {@link OpenCLGridResult}
+     * @return publicKeys or addresses as {@link OpenCLGridResult}
      */
-    public OpenCLGridResult createKeys(BigInteger[] privateKeys) {
+    public OpenCLGridResult createResult(BigInteger[] privateKeys) {
         openClTask.setSrcPrivateKeys(privateKeys);
         ByteBuffer dstByteBuffer = openClTask.executeKernel(kernel, commandQueue);
 
         OpenCLGridResult openCLGridResult = null;
         try {
             openCLGridResult = new OpenCLGridResult(privateKeys, producerOpenCL.getWorkSize(), dstByteBuffer,
-                    producerOpenCL.chunkMode);
+                    producerOpenCL.chunkMode, producerOpenCL.kernelMode);
         } catch (InvalidWorkSizeException e) {
             // TODO Handle a thrown InvalidWorkSizeException
             e.printStackTrace();
         }
         return openCLGridResult;
-    }
-
-    public OpenCLGridResult createAddresses(BigInteger[] privateKeysArray) {
-        // TODO Implement method
-        return null;
     }
 
     private static List<String> getResourceNamesContent(List<String> resourceNames) throws IOException {

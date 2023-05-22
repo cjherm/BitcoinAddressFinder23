@@ -1,5 +1,6 @@
 package net.ladenthin.bitcoinaddressfinder;
 
+import org.jocl.CL;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -22,6 +23,8 @@ public class OpenCLContextTest {
     private static final String PUBLIC_KEY_HEX_STRING = "045f399867ee13c5ac525259f036c90f455b11d667acfcdfc36791288547633611e8416a53aea83bd55691a5721775a581bd1e8e09dd3db4021a6f6daebdbcc9da";
     private static final String ADDRESS_HEX_STRING = "1MYEKfUnUpw6714iJ7Tm4Ndrqzpx2ufWpa";
 
+    private static final String ERROR_CODE_SUCCESS = CL.stringFor_errorCode(CL.CL_SUCCESS);
+
     private static final boolean CHUNK_MODE = true;
     private static final boolean NON_CHUNK_MODE = false;
 
@@ -32,9 +35,8 @@ public class OpenCLContextTest {
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createKeys(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
-
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
@@ -42,6 +44,7 @@ public class OpenCLContextTest {
         // assert
         String resultPublicKeyAsHexString = TestHelper.hexStringFromPublicKeyBytes(publicKeysResult[0]);
         assertThat(resultPublicKeyAsHexString, is(equalTo(PUBLIC_KEY_HEX_STRING)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
     @Test
@@ -51,7 +54,7 @@ public class OpenCLContextTest {
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createKeys(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
@@ -62,6 +65,7 @@ public class OpenCLContextTest {
         String resultPublicKeyAsHexString = TestHelper.hexStringFromPublicKeyBytes(publicKeysResult[0]);
         String expectedPublicKeyAsHexString = TestHelper.uncompressedPublicKeyHexStringFromPrivateKey(privateKeysArray[0]);
         assertThat(resultPublicKeyAsHexString, is(equalTo(expectedPublicKeyAsHexString)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
     @Test
@@ -71,7 +75,7 @@ public class OpenCLContextTest {
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createKeys(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
@@ -84,6 +88,7 @@ public class OpenCLContextTest {
         String[] expectedPublicKeysAsHexStringArray = TestHelper.uncompressedPublicKeysHexStringArrayFromPrivateKeysArray(privateKeysChunk);
         Map<String, String> expectedKeysMap = TestHelper.createMapFromSecretAndPublicKeys(privateKeysChunk, expectedPublicKeysAsHexStringArray);
         assertThatKeyMap(resultKeysMap).isEqualTo(expectedKeysMap);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
     @Test
@@ -93,7 +98,7 @@ public class OpenCLContextTest {
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createKeys(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
@@ -105,6 +110,7 @@ public class OpenCLContextTest {
         String[] expectedPublicKeysAsHexStringArray = TestHelper.uncompressedPublicKeysHexStringArrayFromPrivateKeysArray(privateKeysArray);
         Map<String, String> expectedKeysMap = TestHelper.createMapFromSecretAndPublicKeys(privateKeysArray, expectedPublicKeysAsHexStringArray);
         assertThatKeyMap(resultKeysMap).isEqualTo(expectedKeysMap);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
     @Test
@@ -114,7 +120,7 @@ public class OpenCLContextTest {
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createAddresses(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
         AddressBytes[] addressBytesResult = openCLGridResult.getAddressBytes();
 
         // cleanup
@@ -124,6 +130,7 @@ public class OpenCLContextTest {
         // assert
         String resultPublicKeyAsHexString = TestHelper.hexStringFromAddressBytes(addressBytesResult[0]);
         assertThat(resultPublicKeyAsHexString, is(equalTo(ADDRESS_HEX_STRING)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
     @Ignore
