@@ -17,6 +17,8 @@
 // @formatter:on
 package net.ladenthin.bitcoinaddressfinder;
 
+import net.ladenthin.bitcoinaddressfinder.configuration.CProducer;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
@@ -67,11 +69,6 @@ public class OpenCLGridResult {
      * @return the calculated public keys
      */
     public PublicKeyBytes[] getPublicKeyBytes() {
-        if (!(kernelMode == OpenCLContext.GEN_PUBLIC_KEYS_MODE)) {
-            // TODO handle this case
-            System.out.println("OpenCLGridResult does not contain generated public keys!");
-            return new PublicKeyBytes[0];
-        }
         PublicKeyBytes[] publicKeys = new PublicKeyBytes[workSize];
         for (int i = 0; i < workSize; i++) {
             PublicKeyBytes publicKeyBytes;
@@ -87,21 +84,26 @@ public class OpenCLGridResult {
         return publicKeys;
     }
 
-    public AddressBytes[] getAddressBytes() {
-        if (!(kernelMode == OpenCLContext.GEN_ADDRESSES_MODE)) {
-            // TODO handle this case
-            System.out.println("OpenCLGridResult does not contain generated addresses!");
-            return new AddressBytes[0];
+    /**
+     * Generated with ChatGPT
+     * Prompt: "i need a java method which will revert the order in a byte array"
+     *
+     * @param array to be reverted
+     * @return reverted array
+     */
+    public static byte[] reverseByteArray(byte[] array) {
+        byte[] reversedArray = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            reversedArray[i] = array[array.length - 1 - i];
         }
-        // TODO Implement method
-        return null;
+        return reversedArray;
     }
 
     /**
      * Read the inner bytes in reverse order.
      */
-    private static PublicKeyBytes getPublicKeyFromByteBufferXY(ByteBuffer b, int keyNumber,
-                                                               BigInteger secretKeyBase) {
+    private PublicKeyBytes getPublicKeyFromByteBufferXY(ByteBuffer b, int keyNumber,
+                                                        BigInteger secretKeyBase) {
 
         BigInteger secret = AbstractProducer.calculateSecretKey(secretKeyBase, keyNumber);
 
@@ -114,7 +116,15 @@ public class OpenCLGridResult {
 
         // Same way as in OpenCL kernel:
         // int r_offset = PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY * global_id;
-        int keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * keyNumber;
+        int keyOffsetInByteBuffer;
+        if (kernelMode == OpenCLContext.GEN_PUBLIC_KEYS_MODE) {
+            keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * keyNumber;
+        } else if (kernelMode == OpenCLContext.GEN_SHA256_MODE) {
+            keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * keyNumber;
+        } else {
+            // TODO handle else case
+            return null;
+        }
 
         // read ByteBuffer
         byte[] yx = new byte[PublicKeyBytes.TWO_COORDINATES_NUM_BYTES];
@@ -131,5 +141,52 @@ public class OpenCLGridResult {
                 PublicKeyBytes.ONE_COORDINATE_NUM_BYTES);
 
         return new PublicKeyBytes(secret, uncompressed);
+    }
+
+    public Sha256Bytes[] getSha256Bytes() {
+        Sha256Bytes[] sha256Bytes = new Sha256Bytes[workSize];
+        for (int currentWorkItem = 0; currentWorkItem < workSize; currentWorkItem++) {
+            int workItemOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * currentWorkItem;
+            // TODO 128 store in constant
+            byte[] resultBytesFromWorkItem = retrieveBytesFromResult(workItemOffsetInByteBuffer, 128);
+            sha256Bytes[currentWorkItem] = new Sha256Bytes(resultBytesFromWorkItem);
+        }
+        return sha256Bytes;
+    }
+
+    private byte[] retrieveBytesFromResult(int byteBufferOffset, int numberOfBytesToRetrieve) {
+        // TODO store that value in a constant
+        int swapGroupNumBytes = 4;
+        byte[] retrievedBytesInCorrectOrder = new byte[numberOfBytesToRetrieve];
+        int[] readIndexes = createReadIndices(numberOfBytesToRetrieve, swapGroupNumBytes);
+        for (int i = 0; i < numberOfBytesToRetrieve; i++) {
+            retrievedBytesInCorrectOrder[i] = result.get(byteBufferOffset + readIndexes[i]);
+        }
+        return retrievedBytesInCorrectOrder;
+    }
+
+    /**
+     * Will create an array with indexes to deal with reversed elements in another array.
+     * Example: result = 2, 1, 0, 5, 4, 3, 8, 7, 6 when each group of 3 indices are reversed
+     *
+     * @param totalNumberOfIndices     how many indices should be created
+     * @param reversedIndicesGroupSize size of groups of reveresed indices
+     * @return array containing the correct indices
+     */
+    protected static int[] createReadIndices(int totalNumberOfIndices, int reversedIndicesGroupSize) {
+        int[] indexArray = new int[totalNumberOfIndices];
+        int groupStartIndex = (reversedIndicesGroupSize - 1);
+        int groupEndIndex = 0;
+        int step = groupStartIndex;
+        for (int i = 0; i < totalNumberOfIndices; i++) {
+            indexArray[i] = step;
+            step--;
+            if (step < groupEndIndex) {
+                groupStartIndex += reversedIndicesGroupSize;
+                groupEndIndex += reversedIndicesGroupSize;
+                step = groupStartIndex;
+            }
+        }
+        return indexArray;
     }
 }
