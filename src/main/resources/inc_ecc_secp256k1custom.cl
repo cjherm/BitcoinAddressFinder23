@@ -22,11 +22,26 @@ k_local[0] = 0x929f72dc;
 
 /*
  * Generate a public key from a private key.
+ * @param r out: x coordinate with leading parity, a pointer to an u32 array
+ * with a size of 9.
+ * @param k in: scalar to multiply the basepoint, a pointer to an u32 array with
+ * a size of 8.
+ */
+
+__attribute__((always_inline)) void calculate_sha256(PRIVATE_AS sha256_ctx_t *ctx, PRIVATE_AS const u32 *digest, const int len, u32 *target);
+__attribute__((always_inline)) void array_copy_from_to(const u32 *src, const int start_index_src, u32 *dest, const int start_index_dest, const int len);
+__attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, uchar* byteArray, const int numElements);
+void sha256_padding_to_128_byte_array(const uchar *input, const int numInputBytes, uchar *output);
+void storeByteArrayToU32Array(const uchar *byteArray, u32 *u32Array, const uint arrayLength);
+
+/*
+ * Generate a public key from a private key.
  * @param r out: x coordinate with leading parity, a pointer to an u32 array with a size of 9.
  * @param k in: scalar to multiply the basepoint, a pointer to an u32 array with a size of 8.
  */
 __kernel void generateKeysKernel_parse_public(__global u32 *r, __global const u32 *k)
 {
+
     u32 g_local[PUBLIC_KEY_LENGTH_WITH_PARITY];
     u32 r_local[PUBLIC_KEY_LENGTH_WITH_PARITY];
     u32 k_local[PRIVATE_KEY_LENGTH];
@@ -78,6 +93,7 @@ __kernel void generateKeysKernel_parse_public(__global u32 *r, __global const u3
  */
 __kernel void get_precalculated_g(__global u32 *r)
 {
+
     u32 g_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
     secp256k1_t g_xy_local;
     const u32 g_parity = SECP256K1_G_PARITY;
@@ -105,6 +121,7 @@ __kernel void get_precalculated_g(__global u32 *r)
 
 __kernel void generateKeysKernel_transform_public(__global u32 *r, __global const u32 *k)
 {
+
     u32 g_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
     u32 r_local[PUBLIC_KEY_LENGTH_WITH_PARITY];
     u32 k_local[PRIVATE_KEY_LENGTH];
@@ -270,6 +287,251 @@ __kernel void generateKeysKernel_grid(__global u32 *r, __global const u32 *k) {
   r[r_offset + 15] = y_local[7];
 }
 
-__kernel void test_kernel_do_nothing(__global u32 *r, __global const u32 *k)
-{
+/*
+ * Calculates the public key and then hashes the result once with Sha256
+ * @param r out: result storing public key and its sha256 hash
+ * @param k in: single private key
+ */
+__kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32 *k) {
+
+    u32 x_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
+    u32 y_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
+    u32 k_local[PRIVATE_KEY_LENGTH];
+
+    // to store the public keys coordinates for hashing
+    u32 digest[32];
+    uchar padded_byte_digest_1024[128];
+
+    // to store the result of the sha256 hash
+    u32 sha256_hash[SHA256_HASH_LEN];
+
+    secp256k1_t g_xy_local;
+
+    // get_global_id(dim) where dim is the dimension index (0 for first, 1 for
+    // second dimension etc.)
+    u32 global_id = get_global_id(0);
+
+    // global to local
+    k_local[0] = k[0] | global_id;
+    k_local[1] = k[1];
+    k_local[2] = k[2];
+    k_local[3] = k[3];
+    k_local[4] = k[4];
+    k_local[5] = k[5];
+    k_local[6] = k[6];
+    k_local[7] = k[7];
+
+    set_precomputed_basepoint_g(&g_xy_local);
+
+    point_mul_xy(x_local, y_local, k_local, &g_xy_local);
+
+    // the byte length of the result
+    int r_offset = PUBKEY_LEN_WITHOUT_PARITY_WITH_SHA256 * global_id;
+
+    // write the x-coordinate into the result array
+    array_copy_from_to(x_local, 0, r, r_offset, PUBLIC_KEY_ONE_COORDINATE_LENGTH);
+
+    // write the y-coordinate into the result array
+    array_copy_from_to(y_local, 0, r, (r_offset + PUBLIC_KEY_ONE_COORDINATE_LENGTH), PUBLIC_KEY_ONE_COORDINATE_LENGTH);
+
+    // copy x to digest
+    digest[0] = x_local[7];
+    digest[1] = x_local[6];
+    digest[2] = x_local[5];
+    digest[3] = x_local[4];
+    digest[4] = x_local[3];
+    digest[5] = x_local[2];
+    digest[6] = x_local[1];
+    digest[7] = x_local[0];
+
+    // copy y to digest
+    digest[8] = y_local[7];
+    digest[9] = y_local[6];
+    digest[10] = y_local[5];
+    digest[11] = y_local[4];
+    digest[12] = y_local[3];
+    digest[13] = y_local[2];
+    digest[14] = y_local[1];
+    digest[15] = y_local[0];
+
+    uchar byteArray[65];
+
+    storeU32ToByteArray(digest, byteArray, 17);
+
+    sha256_padding_to_128_byte_array(byteArray, 65, padded_byte_digest_1024);
+
+    storeByteArrayToU32Array(padded_byte_digest_1024, digest, 128);
+
+    sha256_ctx_t ctx;
+
+    calculate_sha256(&ctx, digest, 128, sha256_hash);
+
+    // write the sha256-hash into the result array
+    array_copy_from_to(sha256_hash, 0, r, (r_offset + PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY), SHA256_HASH_LEN);
+}
+
+/*
+ * Calculates the public key and then hashes the result once with Sha256
+ * @param r out: result storing public key and its sha256 hash
+ * @param k in: private key grid
+ */
+__kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) {
+
+    u32 x_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
+    u32 y_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
+    u32 k_local[PRIVATE_KEY_LENGTH];
+
+    // to store the public keys coordinates for hashing
+    u32 digest[32];
+    uchar padded_byte_digest_1024[128];
+
+    // to store the result of the sha256 hash
+    u32 sha256_hash[SHA256_HASH_LEN];
+
+    secp256k1_t g_xy_local;
+
+    // get_global_id(dim) where dim is the dimension index (0 for first, 1 for
+    // second dimension etc.)
+    u32 global_id = get_global_id(0);
+
+    // new offset for private keys
+    int k_offset = PRIVATE_KEY_LENGTH * global_id;
+
+    // get private key from private key grid
+    k_local[0] = k[0 + k_offset];
+    k_local[1] = k[1 + k_offset];
+    k_local[2] = k[2 + k_offset];
+    k_local[3] = k[3 + k_offset];
+    k_local[4] = k[4 + k_offset];
+    k_local[5] = k[5 + k_offset];
+    k_local[6] = k[6 + k_offset];
+    k_local[7] = k[7 + k_offset];
+
+    set_precomputed_basepoint_g(&g_xy_local);
+
+    point_mul_xy(x_local, y_local, k_local, &g_xy_local);
+
+    // the byte length of the result
+    int r_offset = PUBKEY_LEN_WITHOUT_PARITY_WITH_SHA256 * global_id;
+
+    // write the x-coordinate into the result array
+    array_copy_from_to(x_local, 0, r, r_offset, PUBLIC_KEY_ONE_COORDINATE_LENGTH);
+
+    // write the y-coordinate into the result array
+    array_copy_from_to(y_local, 0, r, (r_offset + PUBLIC_KEY_ONE_COORDINATE_LENGTH), PUBLIC_KEY_ONE_COORDINATE_LENGTH);
+
+    // copy x to digest
+    digest[0] = x_local[7];
+    digest[1] = x_local[6];
+    digest[2] = x_local[5];
+    digest[3] = x_local[4];
+    digest[4] = x_local[3];
+    digest[5] = x_local[2];
+    digest[6] = x_local[1];
+    digest[7] = x_local[0];
+
+    // copy y to digest
+    digest[8] = y_local[7];
+    digest[9] = y_local[6];
+    digest[10] = y_local[5];
+    digest[11] = y_local[4];
+    digest[12] = y_local[3];
+    digest[13] = y_local[2];
+    digest[14] = y_local[1];
+    digest[15] = y_local[0];
+
+    uchar byteArray[65];
+
+    storeU32ToByteArray(digest, byteArray, 17);
+
+    sha256_padding_to_128_byte_array(byteArray, 65, padded_byte_digest_1024);
+
+    storeByteArrayToU32Array(padded_byte_digest_1024, digest, 128);
+
+    sha256_ctx_t ctx;
+
+    calculate_sha256(&ctx, digest, 128, sha256_hash);
+
+    // write the sha256-hash into the result array
+    array_copy_from_to(sha256_hash, 0, r, (r_offset + PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY), SHA256_HASH_LEN);
+}
+
+__attribute__((always_inline)) void calculate_sha256(PRIVATE_AS sha256_ctx_t *ctx, PRIVATE_AS const u32 *digest, const int len, u32* target) {
+
+    sha256_init(ctx);
+    sha256_update(ctx, digest, len);
+
+    for(int i = 0; i < SHA256_HASH_LEN; i++){
+        target[i] = ctx->h[i];
+    }
+}
+
+__attribute__((always_inline)) void array_copy_from_to(const u32 *src, const int start_index_src, u32 *dest, const int start_index_dest, const int len) {
+    for (int i = 0; i < len; i++) {
+        dest[start_index_dest + i] = src[start_index_src + i];
+    }
+}
+
+__attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, uchar* byteArray, const int numElements) {
+    byteArray[0] = PUBLIC_KEY_PARITY_BYTE; // Set the first element to 4
+
+    for (int i = 0; i < numElements; i++) {
+        uint value = u32Array[i];
+        int byteIndex = i * 4 + 1; // Start from the second byte
+
+        byteArray[byteIndex + 0] = (value >> 24) & 0xFF;
+        byteArray[byteIndex + 1] = (value >> 16) & 0xFF;
+        byteArray[byteIndex + 2] = (value >> 8) & 0xFF;
+        byteArray[byteIndex + 3] = value & 0xFF;
+    }
+}
+
+/*
+ *  the input must be in bytes, padding will only be done bytewise and not bitwise
+ *  output muste be byte array with size 128
+ *  input must be smaller than 120 bytes
+ */
+void sha256_padding_to_128_byte_array(const uchar *input, const int numInputBytes, uchar *output) {
+
+    // copy input to output
+    for(int i = 0; i < numInputBytes; i++){
+        output[i] = input[i];
+    }
+
+    // store bits 10000000 in output right after the last input byte
+    output[numInputBytes] = 128;
+
+    // number of bytes containing 00000000
+    int numZeroBytes = 128 - 8 - numInputBytes - 1;
+
+    for(int i = (numInputBytes + 1); i < (numInputBytes + 1 + numZeroBytes); i++){
+        output[i] = 0;
+    }
+
+    int offset = numInputBytes + 1 + numZeroBytes;
+    long numInputBits = numInputBytes * 8;
+
+    output[(offset + 0)] = numInputBits >> 56 & 0xFF;
+    output[(offset + 1)] = numInputBits >> 48 & 0xFF;
+    output[(offset + 2)] = numInputBits >> 40 & 0xFF;
+    output[(offset + 3)] = numInputBits >> 32 & 0xFF;
+    output[(offset + 4)] = numInputBits >> 24 & 0xFF;
+    output[(offset + 5)] = numInputBits >> 16 & 0xFF;
+    output[(offset + 6)] = numInputBits >> 8 & 0xFF;
+    output[(offset + 7)] = numInputBits & 0xFF;
+}
+
+void storeByteArrayToU32Array(const uchar *byteArray, u32 *u32Array, const uint arrayLength) {
+    for (uint i = 0; i < arrayLength / 4; i++) {
+        u32 bits1to8 = byteArray[i * 4 + 3];
+        u32 bits9to16 = byteArray[i * 4 + 2] << 8;
+        u32 bits17to24 = byteArray[i * 4 + 1] << 16;
+        u32 bits25to32 = byteArray[i * 4] << 24;
+        u32 bits1to32 = bits1to8 | bits9to16 | bits17to24 | bits25to32;
+        u32Array[i] = bits1to32;
+    }
+}
+
+__kernel void test_kernel_do_nothing(__global u32 *r, __global const u32 *k) {
+    // empty kernel
 }
