@@ -508,7 +508,7 @@ public class ProbeAddressesOpenCLTest {
         }
         hashPublicKeys(publicKeys, souts);
         hashPublicKeysFast(publicKeys, souts);
-        privateKeys = TestHelper.generateChunkOutOfSinglePrivateKey(privateKeys[0], 256);
+        privateKeys = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(privateKeys[0], 256);
         assertPublicKeyBytesCalculatedCorrect(publicKeys, privateKeys, souts, keyUtility, producerOpenCL.chunkMode);
     }
 

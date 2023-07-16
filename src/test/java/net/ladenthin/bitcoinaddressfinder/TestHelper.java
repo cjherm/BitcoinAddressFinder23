@@ -38,10 +38,6 @@ public class TestHelper {
         return openCLContext;
     }
 
-    public static String uncompressedPublicKeyHexStringFromPrivateKey(BigInteger privateKey) {
-        return Hex.encodeHexString(ECKey.publicKeyFromPrivate(privateKey, false));
-    }
-
     public static BigInteger[] generateRandomUncompressedPrivateKeys(int arraySize) {
         List<BigInteger> privateKeysList = new LinkedList<>();
         while (privateKeysList.size() < arraySize) {
@@ -71,7 +67,7 @@ public class TestHelper {
         return true;
     }
 
-    public static BigInteger[] generateChunkOutOfSinglePrivateKey(BigInteger singlePrivateKey, int arraySize) {
+    public static BigInteger[] generateChunkOfPrivateKeysOutOfSinglePrivateKey(BigInteger singlePrivateKey, int arraySize) {
         BigInteger[] chunk = new BigInteger[arraySize];
         chunk[0] = singlePrivateKey;
         for (int i = 1; i < chunk.length; i++) {
@@ -127,16 +123,20 @@ public class TestHelper {
         return uncompressedPublicKeysStringArray;
     }
 
+    public static String uncompressedPublicKeyHexStringFromPrivateKey(BigInteger privateKey) {
+        return Hex.encodeHexString(uncompressedPublicKeyFromPrivateKey(privateKey));
+    }
+
+    public static byte[] uncompressedPublicKeyFromPrivateKey(BigInteger privateKey) {
+        return ECKey.publicKeyFromPrivate(privateKey, false);
+    }
+
     public static String hexStringFromBigInteger(BigInteger bigInteger) {
         return bigInteger.toString(HEX_RADIX);
     }
 
     public static String hexStringFromPublicKeyBytes(PublicKeyBytes publicKeyBytes) {
         return Hex.encodeHexString(publicKeyBytes.getUncompressed());
-    }
-
-    public static String hexStringFromAddressBytes(AddressBytes addressBytes) {
-        return Hex.encodeHexString(addressBytes.getUncompressed());
     }
 
     public static Map<String, String> createMapFromBigIntegerArrayAndPublicKeyBytesArray(BigInteger[] keyArray, PublicKeyBytes[] valueArray) {
@@ -189,7 +189,7 @@ public class TestHelper {
         return hexStringFromBigInteger(new BigInteger(sha256HashResult));
     }
 
-    public static Map<String, String> createMapOfPublicKeyBytesAndSha256Bytes(PublicKeyBytes[] keyArray) {
+    public static Map<String, String> createMapOfPublicKeyBytesAndSha256Bytes(PublicKeyBytes[] keyArray, Sha256Bytes[] valueArray) {
         Map<String, String> map = new HashMap<>();
         for (PublicKeyBytes key : keyArray) {
             String keyString = hexStringFromPublicKeyBytes(key);
