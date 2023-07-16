@@ -56,6 +56,7 @@ public class OpenCLContext {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final int GEN_PUBLIC_KEYS_MODE = 0;
     public static final int GEN_ADDRESSES_MODE = 1;
+    public static final int GEN_SHA256_MODE = 2;
     private int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
@@ -93,6 +94,8 @@ public class OpenCLContext {
     private final static String PBK_CHUNK_KERNEL_NAME = "generateKeyChunkKernel_grid";
     private static final String ADR_CHUNK_KERNEL_NAME = ""; // TODO define kernel name
     private static final String ADR_NONCHUNK_KERNEL_NAME = ""; // TODO define kernel name
+    private final static String SHA256_CHUNK_KERNEL_NAME = "generateSha256ChunkKernel_grid";
+    private final static String SHA256_NONCHUNK_KERNEL_NAME = "generateSha256Kernel_grid";
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
@@ -173,6 +176,8 @@ public class OpenCLContext {
             setPublicKeyGeneratorKernel();
         } else if (producerOpenCL.kernelMode == GEN_ADDRESSES_MODE) {
             setAddressGeneratorKernel();
+        } else if (producerOpenCL.kernelMode == GEN_SHA256_MODE) {
+            setSha256Kernel();
         } else {
             // TODO Implement else-case
         }
@@ -191,6 +196,14 @@ public class OpenCLContext {
             kernel = clCreateKernel(program, ADR_CHUNK_KERNEL_NAME, errorCode);
         } else {
             kernel = clCreateKernel(program, ADR_NONCHUNK_KERNEL_NAME, errorCode);
+        }
+    }
+
+    private void setSha256Kernel() {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, SHA256_CHUNK_KERNEL_NAME, errorCode);
+        } else {
+            kernel = clCreateKernel(program, SHA256_NONCHUNK_KERNEL_NAME, errorCode);
         }
     }
 
