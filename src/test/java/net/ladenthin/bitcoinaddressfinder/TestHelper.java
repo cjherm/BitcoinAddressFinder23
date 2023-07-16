@@ -1,5 +1,6 @@
 package net.ladenthin.bitcoinaddressfinder;
 
+import com.google.common.hash.Hashing;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
 import org.apache.commons.codec.binary.Hex;
 import org.bitcoinj.core.ECKey;
@@ -168,6 +169,76 @@ public class TestHelper {
         return new ActualMap<>(actualMap);
     }
 
+    public static byte[] calculateSha256FromByteArray(byte[] digest) {
+        return Hashing.sha256().hashBytes(digest).asBytes();
+    }
+
+    /**
+     * Written by ChatGPT. Input was: "i need a java method to turn a hexString to a byte array".
+     */
+    public static byte[] byteArrayFromHexString(String hexString) {
+        int length = hexString.length();
+        byte[] byteArray = new byte[length / 2];
+        for (int i = 0; i < length; i += 2) {
+            byteArray[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i + 1), 16));
+        }
+        return byteArray;
+    }
+
+    public static String hexStringFromByteArray(byte[] sha256HashResult) {
+        return hexStringFromBigInteger(new BigInteger(sha256HashResult));
+    }
+
+    public static Map<String, String> createMapOfPublicKeyBytesAndSha256Bytes(PublicKeyBytes[] keyArray) {
+        Map<String, String> map = new HashMap<>();
+        for (PublicKeyBytes key : keyArray) {
+            String keyString = hexStringFromPublicKeyBytes(key);
+            byte[] valueBytes = calculateSha256FromByteArray(key.getUncompressed());
+            String valueString = hexStringFromByteArray(valueBytes);
+            map.put(keyString, valueString);
+        }
+        return map;
+    }
+
+    /**
+     * Generates the sha256 hash for each public key and stores both as hex Strings.
+     *
+     * @param publicKeys Array containing public keys as PublicKeyBytes elements.
+     * @return map Containing the public keys and their sha256 both as hex Strings.
+     */
+    public static Map<String, String> createExpectedMapOfPublicKeyBytesAndSha256Bytes(PublicKeyBytes[] publicKeys) {
+        Map<String, String> map = new HashMap<>();
+        for (PublicKeyBytes publicKey : publicKeys) {
+            String publicKeyHexString = hexStringFromPublicKeyBytes(publicKey);
+            byte[] sha256Bytes = calculateSha256FromByteArray(publicKey.getUncompressed());
+            String sha256HexString = hexStringFromByteArray(sha256Bytes);
+            map.put(publicKeyHexString, sha256HexString);
+        }
+        return map;
+    }
+
+    /**
+     * Generates the public key for each private key and stores both as hex Strings.
+     *
+     * @param privateKeys Array containing private keys as BigInteger elements.
+     * @return map Containing the private keys and their public keys both as hex Strings.
+     */
+    public static Map<String, String> createExpectedMapOfPrivateKeysToPublicKeys(BigInteger[] privateKeys) {
+        Map<String, String> map = new HashMap<>();
+        for (BigInteger privateKey : privateKeys) {
+            String privateKeyHexString = hexStringFromBigInteger(privateKey);
+            String publicKeyHexString = uncompressedPublicKeyHexStringFromPrivateKey(privateKey);
+            map.put(privateKeyHexString, publicKeyHexString);
+        }
+        return map;
+    }
+
+    /**
+     * Map storing actual values for better test assertions. Compares size and if both are equal.
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     */
     public static class ActualMap<K, V> {
 
         private final Map<K, V> actualMap;
@@ -189,9 +260,9 @@ public class TestHelper {
                 String reason = "Current Element: " + i + "/" + (actualMap.size() - 1);
                 final V actualValue = actualMap.get(expectedKey);
                 final V expectedValue = expectedMap.get(expectedKey);
-                reason += "\nprivateKey = " + expectedKey.toString();
-                reason += "\nexpectedPublicKey = " + expectedValue.toString();
-                reason += "\nactualValue = " + actualValue.toString();
+                reason += "\n\t  expectedKey = " + expectedKey.toString();
+                reason += "\n\texpectedValue = " + expectedValue.toString();
+                reason += "\n\t  actualValue = " + actualValue.toString();
                 assertThat(reason, actualValue, is(equalTo(expectedValue)));
                 System.out.println(reason);
                 i++;
