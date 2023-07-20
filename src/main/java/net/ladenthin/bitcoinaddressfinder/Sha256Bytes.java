@@ -10,6 +10,7 @@ public class Sha256Bytes {
 
     private final byte[] completeResultBytes;
     private byte[] firstSha256Bytes;
+    private byte[] secondSha256Bytes;
 
     /**
      * @param completeResultBytes Containing the complete result from the OpenCL kernel as byte array.
@@ -28,6 +29,18 @@ public class Sha256Bytes {
             firstSha256Bytes = retrieveBytes(PublicKeyBytes.TWO_COORDINATES_NUM_BYTES, OpenCLGridResult.TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256);
         }
         return firstSha256Bytes;
+    }
+
+    /**
+     * If not already done, this method will retrieve all bytes representing the second SHA256 hash.
+     *
+     * @return sha256 hash as byte array
+     */
+    public byte[] getSecondSha256Bytes() {
+        if (secondSha256Bytes == null) {
+            secondSha256Bytes = retrieveBytes(OpenCLGridResult.TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256, OpenCLGridResult.TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256);
+        }
+        return secondSha256Bytes;
     }
 
     private byte[] retrieveBytes(int startReadIndex, int endReadIndex) {
