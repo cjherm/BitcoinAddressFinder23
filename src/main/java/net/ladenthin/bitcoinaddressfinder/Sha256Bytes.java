@@ -5,6 +5,9 @@ package net.ladenthin.bitcoinaddressfinder;
  */
 public class Sha256Bytes {
 
+    public static final int SHA256_NUM_BITS = 256;
+    public static final int ONE_SHA256_NUM_BYTES = (SHA256_NUM_BITS / PublicKeyBytes.BITS_PER_BYTE);
+
     private final byte[] completeResultBytes;
     private byte[] firstSha256Bytes;
 
@@ -22,7 +25,7 @@ public class Sha256Bytes {
      */
     public byte[] getFirstSha256Bytes() {
         if (firstSha256Bytes == null) {
-            firstSha256Bytes = retrieveBytes(PublicKeyBytes.TWO_COORDINATES_NUM_BYTES, PublicKeyBytes.TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256);
+            firstSha256Bytes = retrieveBytes(PublicKeyBytes.TWO_COORDINATES_NUM_BYTES, OpenCLGridResult.TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256);
         }
         return firstSha256Bytes;
     }

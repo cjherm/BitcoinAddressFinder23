@@ -17,15 +17,15 @@
 // @formatter:on
 package net.ladenthin.bitcoinaddressfinder;
 
-import net.ladenthin.bitcoinaddressfinder.configuration.CProducer;
-
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 public class OpenCLGridResult {
 
-    private final ByteBufferUtility byteBufferUtility = new ByteBufferUtility(true);
+    public static final int TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256 = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES + Sha256Bytes.ONE_SHA256_NUM_BYTES;
+    public static final int TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 = TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256 + Sha256Bytes.ONE_SHA256_NUM_BYTES;
 
+    private final ByteBufferUtility byteBufferUtility = new ByteBufferUtility(true);
     private final BigInteger[] secretKeys;
     private final int workSize;
     private final boolean chunkMode;
@@ -120,7 +120,7 @@ public class OpenCLGridResult {
         if (kernelMode == OpenCLContext.GEN_PUBLIC_KEYS_MODE) {
             keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * keyNumber;
         } else if (kernelMode == OpenCLContext.GEN_SHA256_MODE) {
-            keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * keyNumber;
+            keyOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * keyNumber;
         } else {
             // TODO handle else case
             return null;
@@ -146,17 +146,16 @@ public class OpenCLGridResult {
     public Sha256Bytes[] getSha256Bytes() {
         Sha256Bytes[] sha256Bytes = new Sha256Bytes[workSize];
         for (int currentWorkItem = 0; currentWorkItem < workSize; currentWorkItem++) {
-            int workItemOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * currentWorkItem;
-            // TODO 128 store in constant
-            byte[] resultBytesFromWorkItem = retrieveBytesFromResult(workItemOffsetInByteBuffer, 128);
+            int workItemOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * currentWorkItem;
+            byte[] resultBytesFromWorkItem = retrieveBytesFromResult(workItemOffsetInByteBuffer, TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256);
             sha256Bytes[currentWorkItem] = new Sha256Bytes(resultBytesFromWorkItem);
         }
         return sha256Bytes;
     }
 
     private byte[] retrieveBytesFromResult(int byteBufferOffset, int numberOfBytesToRetrieve) {
-        // TODO store that value in a constant
-        int swapGroupNumBytes = 4;
+        // each 32 bits are stored in 4 bytes in a reversed order
+        int swapGroupNumBytes = Sha256Bytes.ONE_SHA256_NUM_BYTES / PublicKeyBytes.BITS_PER_BYTE;
         byte[] retrievedBytesInCorrectOrder = new byte[numberOfBytesToRetrieve];
         int[] readIndexes = createReadIndices(numberOfBytesToRetrieve, swapGroupNumBytes);
         for (int i = 0; i < numberOfBytesToRetrieve; i++) {

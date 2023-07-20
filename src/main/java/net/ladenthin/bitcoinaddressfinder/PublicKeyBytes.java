@@ -47,15 +47,10 @@ public class PublicKeyBytes {
     public static final BigInteger MAX_PRIVATE_KEY = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
 
     public static final int PRIVATE_KEY_MAX_NUM_BITS = 256;
-    public static final int SHA256_NUM_BITS = 256;
     public static final int BITS_PER_BYTE = 8;
     public static final int PRIVATE_KEY_MAX_NUM_BYTES = PRIVATE_KEY_MAX_NUM_BITS / BITS_PER_BYTE;
-
     public static final int ONE_COORDINATE_NUM_BYTES = 32;
-    public static final int ONE_SHA256_NUM_BYTES = (SHA256_NUM_BITS / BITS_PER_BYTE);
     public static final int TWO_COORDINATES_NUM_BYTES = ONE_COORDINATE_NUM_BYTES * 2;
-    public static final int TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256 = TWO_COORDINATES_NUM_BYTES + ONE_SHA256_NUM_BYTES;
-    public static final int TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 = TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256 + ONE_SHA256_NUM_BYTES;
     public static final int PARITY_BYTES_LENGTH = 1;
 
     public static final int LAST_Y_COORDINATE_BYTE_INDEX = PublicKeyBytes.PARITY_BYTES_LENGTH + PublicKeyBytes.TWO_COORDINATES_NUM_BYTES - 1;
