@@ -4,6 +4,7 @@ import com.google.common.hash.Hashing;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
 import org.apache.commons.codec.binary.Hex;
 import org.bitcoinj.core.ECKey;
+import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.hamcrest.Matchers;
 
 import java.io.IOException;
@@ -121,6 +122,20 @@ public class TestHelper {
         return Hashing.sha256().hashBytes(digest).asBytes();
     }
 
+    /**
+     * Hashes a given byte array with RIPEMD-160.
+     *
+     * @param digest To be hashed
+     * @return Hashed byte array with the size of 20 bytes
+     */
+    public static byte[] calculateRipemd160FromByteArray(byte[] input) {
+        RIPEMD160Digest digest = new RIPEMD160Digest();
+        digest.update(input, 0, input.length);
+        byte[] out = new byte[Ripemd160Bytes.LENGTH_IN_BYTES];
+        digest.doFinal(out, 0);
+        return out;
+    }
+
     public static BigInteger[] calculatePrivateKeyChunkFromSinglePrivateKey(BigInteger singlePrivateKey, int arraySize) {
         BigInteger[] chunk = new BigInteger[arraySize];
         chunk[0] = singlePrivateKey;
@@ -181,9 +196,8 @@ public class TestHelper {
      * Method written by OpenAI/ChatGPT.
      * Prompt: "I need a java method to turn a hexString to a byte array".
      */
-
     /**
-     * Transforms a {@link String} into a byte array.
+     * Transforms a hex in a {@link String} into a byte array.
      *
      * @param hexString To be transformed into a byte array
      * @return The byte array of the given hex {@link String}
@@ -195,6 +209,16 @@ public class TestHelper {
             byteArray[i / 2] = (byte) ((Character.digit(hexString.charAt(i), HEX_RADIX) << 4) + Character.digit(hexString.charAt(i + 1), HEX_RADIX));
         }
         return byteArray;
+    }
+
+    /**
+     * Transforms a {@link String} into a byte array.
+     *
+     * @param input To be transformed into a byte array
+     * @return The byte array of the given {@link String}
+     */
+    public static byte[] transformStringToBytes(String input) {
+        return input.getBytes();
     }
 
     /**
