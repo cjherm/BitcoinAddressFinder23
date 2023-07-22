@@ -143,49 +143,61 @@ public class OpenCLGridResult {
         return new PublicKeyBytes(secret, uncompressed);
     }
 
+    /**
+     * This method will retrieve the <strong> uncompressed Public Key with parity</strong>,
+     * the first SHA256 hash of this key and the second SHA256 hash from the previous hash
+     * from the {@link OpenCLGridResult} and store them in {@link Sha256Bytes} array.
+     *
+     * @return array of {@link Sha256Bytes}
+     */
     public Sha256Bytes[] getSha256Bytes() {
+        Sha256Bytes[] sha256Bytes;
+
+        if (chunkMode) {
+            sha256Bytes = getSha256BytesInChunkMode();
+        } else {
+            sha256Bytes = getSha256BytesInNonChunkMode();
+        }
+
+        return sha256Bytes;
+    }
+
+    private Sha256Bytes[] getSha256BytesInChunkMode() {
         Sha256Bytes[] sha256Bytes = new Sha256Bytes[workSize];
         for (int currentWorkItem = 0; currentWorkItem < workSize; currentWorkItem++) {
-            int workItemOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * currentWorkItem;
-            byte[] resultBytesFromWorkItem = retrieveBytesFromResult(workItemOffsetInByteBuffer, TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256);
-            sha256Bytes[currentWorkItem] = new Sha256Bytes(resultBytesFromWorkItem);
+            PublicKeyBytes publicKeyBytes = getPublicKeyFromByteBufferXY(result, currentWorkItem, secretKeys[0]);
+            sha256Bytes[currentWorkItem] = readBufferForSha256Bytes(currentWorkItem, publicKeyBytes.getUncompressed());
         }
         return sha256Bytes;
     }
 
-    private byte[] retrieveBytesFromResult(int byteBufferOffset, int numberOfBytesToRetrieve) {
-        // each 32 bits are stored in 4 bytes in a reversed order
-        int swapGroupNumBytes = Sha256Bytes.ONE_SHA256_NUM_BYTES / PublicKeyBytes.BITS_PER_BYTE;
-        byte[] retrievedBytesInCorrectOrder = new byte[numberOfBytesToRetrieve];
-        int[] readIndexes = createReadIndices(numberOfBytesToRetrieve, swapGroupNumBytes);
-        for (int i = 0; i < numberOfBytesToRetrieve; i++) {
-            retrievedBytesInCorrectOrder[i] = result.get(byteBufferOffset + readIndexes[i]);
+    private Sha256Bytes[] getSha256BytesInNonChunkMode() {
+        Sha256Bytes[] sha256Bytes = new Sha256Bytes[workSize];
+        for (int currentWorkItem = (workSize - 1); currentWorkItem >= 0; currentWorkItem--) {
+            PublicKeyBytes publicKeyBytes = getPublicKeyFromByteBufferXY(result, currentWorkItem, secretKeys[workSize - 1 - currentWorkItem]);
+            sha256Bytes[currentWorkItem] = readBufferForSha256Bytes(currentWorkItem, publicKeyBytes.getUncompressed());
         }
-        return retrievedBytesInCorrectOrder;
+        return sha256Bytes;
     }
 
-    /**
-     * Will create an array with indexes to deal with reversed elements in another array.
-     * Example: result = 2, 1, 0, 5, 4, 3, 8, 7, 6 when each group of 3 indices are reversed
-     *
-     * @param totalNumberOfIndices     how many indices should be created
-     * @param reversedIndicesGroupSize size of groups of reveresed indices
-     * @return array containing the correct indices
-     */
-    protected static int[] createReadIndices(int totalNumberOfIndices, int reversedIndicesGroupSize) {
-        int[] indexArray = new int[totalNumberOfIndices];
-        int groupStartIndex = (reversedIndicesGroupSize - 1);
-        int groupEndIndex = 0;
-        int step = groupStartIndex;
-        for (int i = 0; i < totalNumberOfIndices; i++) {
-            indexArray[i] = step;
-            step--;
-            if (step < groupEndIndex) {
-                groupStartIndex += reversedIndicesGroupSize;
-                groupEndIndex += reversedIndicesGroupSize;
-                step = groupStartIndex;
-            }
+    private Sha256Bytes readBufferForSha256Bytes(int currentWorkItem, byte[] pubKeyUncompressed) {
+        int workItemOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * currentWorkItem;
+        byte[] hash1hash2yx = new byte[TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256];
+        int index = 0;
+        for (int i = (TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 - 1); i >= 0; i--) {
+            hash1hash2yx[i] = result.get(workItemOffsetInByteBuffer + index);
+            index++;
         }
-        return indexArray;
+        // copy first sha256 hash
+        byte[] firstSha256Hash = new byte[Sha256Bytes.ONE_SHA256_NUM_BYTES];
+        System.arraycopy(hash1hash2yx, Sha256Bytes.ONE_SHA256_NUM_BYTES, firstSha256Hash, 0,
+                Sha256Bytes.ONE_SHA256_NUM_BYTES);
+
+        // copy second sha256 hash
+        byte[] secondSha256Hash = new byte[Sha256Bytes.ONE_SHA256_NUM_BYTES];
+        System.arraycopy(hash1hash2yx, 0, secondSha256Hash, 0,
+                Sha256Bytes.ONE_SHA256_NUM_BYTES);
+
+        return new Sha256Bytes(pubKeyUncompressed, firstSha256Hash, secondSha256Hash);
     }
 }
