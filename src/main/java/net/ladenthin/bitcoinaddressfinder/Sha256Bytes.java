@@ -1,7 +1,7 @@
 package net.ladenthin.bitcoinaddressfinder;
 
 /**
- * Data structure to retrieve and hold SHA256 hash bytes together with the uncompressed public key with parity.
+ * Data structure to retrieve and hold SHA-256 hash bytes together with the uncompressed public key with parity.
  */
 public class Sha256Bytes {
 
@@ -13,9 +13,9 @@ public class Sha256Bytes {
     private final byte[] secondSha256Bytes;
 
     /**
-     * @param publicKeyUncompressed The uncompressed public key with parity to be hashed with SHA256
-     * @param firstSha256Bytes The SHA256 hash of the uncompressed public key with parity
-     * @param secondSha256Bytes The SHA256 hash of previous SHA256 hash
+     * @param publicKeyUncompressed The uncompressed public key with parity to be hashed with SHA-256
+     * @param firstSha256Bytes The SHA-256 hash of the uncompressed public key with parity
+     * @param secondSha256Bytes The SHA-256 hash of previous SHA-256 hash
      */
     public Sha256Bytes(byte[] publicKeyUncompressed, byte[] firstSha256Bytes, byte[] secondSha256Bytes) {
         this.publicKeyUncompressed = publicKeyUncompressed;
@@ -33,18 +33,18 @@ public class Sha256Bytes {
     }
 
     /**
-     * The SHA256 hash of the uncompressed public key.
+     * The SHA-256 hash of the uncompressed public key.
      *
-     * @return first SHA256 hash as byte array
+     * @return first SHA-256 hash as byte array
      */
     public byte[] getFirstSha256Bytes() {
         return firstSha256Bytes;
     }
 
     /**
-     * The SHA256 hash of the previous Sha256 hash.
+     * The SHA-256 hash of the previous SHA-256 hash.
      *
-     * @return second SHA256 hash as byte array
+     * @return second SHA-256 hash as byte array
      */
     public byte[] getSecondSha256Bytes() {
         return secondSha256Bytes;

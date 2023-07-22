@@ -85,21 +85,6 @@ public class OpenCLGridResult {
     }
 
     /**
-     * Generated with ChatGPT
-     * Prompt: "i need a java method which will revert the order in a byte array"
-     *
-     * @param array to be reverted
-     * @return reverted array
-     */
-    public static byte[] reverseByteArray(byte[] array) {
-        byte[] reversedArray = new byte[array.length];
-        for (int i = 0; i < array.length; i++) {
-            reversedArray[i] = array[array.length - 1 - i];
-        }
-        return reversedArray;
-    }
-
-    /**
      * Read the inner bytes in reverse order.
      */
     private PublicKeyBytes getPublicKeyFromByteBufferXY(ByteBuffer b, int keyNumber,
@@ -144,8 +129,8 @@ public class OpenCLGridResult {
     }
 
     /**
-     * This method will retrieve the <strong> uncompressed Public Key with parity</strong>,
-     * the first SHA256 hash of this key and the second SHA256 hash from the previous hash
+     * This method will retrieve the <strong> uncompressed public key with parity</strong>,
+     * the first SHA-256 hash of this key and the second SHA-256 hash from the previous hash
      * from the {@link OpenCLGridResult} and store them in {@link Sha256Bytes} array.
      *
      * @return array of {@link Sha256Bytes}
@@ -188,12 +173,12 @@ public class OpenCLGridResult {
             hash1hash2yx[i] = result.get(workItemOffsetInByteBuffer + index);
             index++;
         }
-        // copy first sha256 hash
+        // copy first SHA-256 hash
         byte[] firstSha256Hash = new byte[Sha256Bytes.ONE_SHA256_NUM_BYTES];
         System.arraycopy(hash1hash2yx, Sha256Bytes.ONE_SHA256_NUM_BYTES, firstSha256Hash, 0,
                 Sha256Bytes.ONE_SHA256_NUM_BYTES);
 
-        // copy second sha256 hash
+        // copy second SHA-256 hash
         byte[] secondSha256Hash = new byte[Sha256Bytes.ONE_SHA256_NUM_BYTES];
         System.arraycopy(hash1hash2yx, 0, secondSha256Hash, 0,
                 Sha256Bytes.ONE_SHA256_NUM_BYTES);
