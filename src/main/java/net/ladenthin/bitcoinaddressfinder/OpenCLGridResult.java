@@ -185,4 +185,9 @@ public class OpenCLGridResult {
 
         return new Sha256Bytes(pubKeyUncompressed, firstSha256Hash, secondSha256Hash);
     }
+
+    public Ripemd160Bytes[] getRipemd160Bytes() {
+        // TODO implement method
+        return null;
+    }
 }
