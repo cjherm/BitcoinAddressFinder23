@@ -420,15 +420,6 @@ public class OpenCLContextTest {
 
     @Test
     public void test_generateRipemd160Hash_specificSinglePrivateKey() {
-
-        // arrange
-        byte[] stringAsBytes = TestHelper.transformStringToBytes(SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
-        System.out.println(Arrays.toString(stringAsBytes));
-        byte[] ripemd160 = TestHelper.calculateRipemd160FromByteArray(stringAsBytes);
-        System.out.println(Arrays.toString(ripemd160));
-        System.out.println(transformBytesToHexString(ripemd160));
-
-
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
