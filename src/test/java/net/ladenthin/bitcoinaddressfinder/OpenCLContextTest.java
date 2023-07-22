@@ -198,7 +198,7 @@ public class OpenCLContextTest {
 
         // prepare assert
         Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(random256PrivateKeys, publicKeyBytesResult);
-        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult, sha256BytesResult);
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(random256PrivateKeys);
         Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
 
@@ -226,7 +226,7 @@ public class OpenCLContextTest {
         // prepare assert
         BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
         Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(privateKeysChunk, publicKeyBytesResult);
-        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult, sha256BytesResult);
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
         Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
 
@@ -254,7 +254,7 @@ public class OpenCLContextTest {
         // prepare assert
         BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
         Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(privateKeysChunk, publicKeyBytesResult);
-        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult, sha256BytesResult);
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
         Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
 

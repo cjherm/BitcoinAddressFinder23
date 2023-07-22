@@ -189,11 +189,11 @@ public class TestHelper {
         return hexStringFromBigInteger(new BigInteger(sha256HashResult));
     }
 
-    public static Map<String, String> createMapOfPublicKeyBytesAndSha256Bytes(PublicKeyBytes[] keyArray, Sha256Bytes[] valueArray) {
+    public static Map<String, String> createMapOfPublicKeyBytesAndSha256Bytes(Sha256Bytes[] valueArray) {
         Map<String, String> map = new HashMap<>();
-        for (PublicKeyBytes key : keyArray) {
-            String keyString = hexStringFromPublicKeyBytes(key);
-            byte[] valueBytes = calculateSha256FromByteArray(key.getUncompressed());
+        for(Sha256Bytes valueElem: valueArray){
+            String keyString = hexStringFromByteArray(valueElem.getPublicKeyUncompressed());
+            byte[] valueBytes = valueElem.getFirstSha256Bytes();
             String valueString = hexStringFromByteArray(valueBytes);
             map.put(keyString, valueString);
         }
@@ -209,7 +209,7 @@ public class TestHelper {
     public static Map<String, String> createExpectedMapOfPublicKeyBytesAndSha256Bytes(PublicKeyBytes[] publicKeys) {
         Map<String, String> map = new HashMap<>();
         for (PublicKeyBytes publicKey : publicKeys) {
-            String publicKeyHexString = hexStringFromPublicKeyBytes(publicKey);
+            String publicKeyHexString = hexStringFromByteArray(publicKey.getUncompressed());
             byte[] sha256Bytes = calculateSha256FromByteArray(publicKey.getUncompressed());
             String sha256HexString = hexStringFromByteArray(sha256Bytes);
             map.put(publicKeyHexString, sha256HexString);
@@ -250,10 +250,10 @@ public class TestHelper {
 
         public void isEqualTo(Map<K, V> expectedMap) {
             assertThat(expectedMap, Matchers.notNullValue());
-            assertThat("None identical length of both maps!", actualMap.size(), is(equalTo(expectedMap.size())));
+            assertThat("None identical length of both maps! Expected: " + expectedMap.size() + ", but was: " + actualMap.size(), actualMap.size(), is(equalTo(expectedMap.size())));
             Set<K> expectedKeys = expectedMap.keySet();
             for (K expectedKey : expectedKeys) {
-                assertThat("Contains key", true, is(actualMap.containsKey(expectedKey)));
+                assertThat("Actual map does not contain key \"" + expectedKey + "\"", actualMap.containsKey(expectedKey));
             }
             int i = 0;
             for (K expectedKey : expectedKeys) {
