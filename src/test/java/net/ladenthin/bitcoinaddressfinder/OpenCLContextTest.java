@@ -267,12 +267,13 @@ public class OpenCLContextTest {
     @Test
     public void test_generateDoubleSha256Hash_specificSinglePrivateKey() {
         // arrange
-        BigInteger[] privateKeysArray = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
+        BigInteger[] specificSinglePrivateKey = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
-        byte[] expectedSha256ByteArray = TestHelper.byteArrayFromHexString(DOUBLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
+        byte[] expectedSingleHashedSha256ByteArray = TestHelper.byteArrayFromHexString(SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
+        byte[] expectedDoubleHashedSha256ByteArray = TestHelper.byteArrayFromHexString(DOUBLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
         PublicKeyBytes publicKeyBytesResult = openCLGridResult.getPublicKeyBytes()[0];
         Sha256Bytes sha256BytesResult = openCLGridResult.getSha256Bytes()[0];
 
@@ -281,9 +282,11 @@ public class OpenCLContextTest {
         openCLGridResult.freeResult();
 
         // assert
-        byte[] sha256HashResult = sha256BytesResult.getSecondSha256Bytes();
+        byte[] firstSha256HashResult = sha256BytesResult.getFirstSha256Bytes();
+        byte[] secondSha256HashResult = sha256BytesResult.getSecondSha256Bytes();
         assertThat(publicKeyBytesResult.getUncompressed(), is(equalTo(TestHelper.byteArrayFromHexString(PUBLIC_KEY_HEX_STRING))));
-        assertThat(sha256HashResult, is(equalTo(expectedSha256ByteArray)));
+        assertThat(firstSha256HashResult, is(equalTo(expectedSingleHashedSha256ByteArray)));
+        assertThat(secondSha256HashResult, is(equalTo(expectedDoubleHashedSha256ByteArray)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 }
