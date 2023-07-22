@@ -4,9 +4,11 @@ import org.jocl.CL;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Map;
 
 import static net.ladenthin.bitcoinaddressfinder.TestHelper.assertThatKeyMap;
+import static net.ladenthin.bitcoinaddressfinder.TestHelper.transformBytesToHexString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -24,6 +26,7 @@ public class OpenCLContextTest {
     private static final String PUBLIC_KEY_HEX_STRING = "045f399867ee13c5ac525259f036c90f455b11d667acfcdfc36791288547633611e8416a53aea83bd55691a5721775a581bd1e8e09dd3db4021a6f6daebdbcc9da";
     private static final String SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING = "f2342f1a306b5920ca2f42f2ff84cfd553ac2e36ef4d9888fc6b407f167efd69";
     private static final String DOUBLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING = "5de335d1480b8cf936db349fa7a60c5c9bd9599fc6a0a5c57c4d79c3eca1350f";
+    private static final String RIPEMD160_FROM_SINGLE_SHA256_HEX_STRING = "9c3161ecfc51120be43a8a832bec45610fd11739";
     private static final String ERROR_CODE_SUCCESS = CL.stringFor_errorCode(CL.CL_SUCCESS);
 
     @Test
@@ -412,6 +415,42 @@ public class OpenCLContextTest {
         assertThatKeyMap(resultedPrivateKeysPublicKeysMap).isEqualTo(expectedPrivateKeysPublicKeysMap);
         assertThatKeyMap(resultedPublicKeysSha256HashesMap).isEqualTo(expectedPublicKeysSha256HashesMap);
         assertThatKeyMap(resultedDoubleSha256HashesMap).isEqualTo(expectedDoubleSha256HashesMap);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generateRipemd160Hash_specificSinglePrivateKey() {
+
+        // arrange
+        byte[] stringAsBytes = TestHelper.transformStringToBytes(SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
+        System.out.println(Arrays.toString(stringAsBytes));
+        byte[] ripemd160 = TestHelper.calculateRipemd160FromByteArray(stringAsBytes);
+        System.out.println(Arrays.toString(ripemd160));
+        System.out.println(transformBytesToHexString(ripemd160));
+
+
+        // arrange
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
+        byte[] expectedSingleHashedSha256ByteArray = TestHelper.transformHexStringToBytes(SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
+        byte[] expectedRipemd160ByteArray = TestHelper.transformHexStringToBytes(RIPEMD160_FROM_SINGLE_SHA256_HEX_STRING);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
+        PublicKeyBytes publicKeyBytesResult = openCLGridResult.getPublicKeyBytes()[0];
+        Sha256Bytes sha256BytesResult = openCLGridResult.getSha256Bytes()[0];
+        Ripemd160Bytes ripemd160BytesResult = openCLGridResult.getRipemd160Bytes()[0];
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        byte[] firstSha256HashResult = sha256BytesResult.getFirstSha256Bytes();
+        byte[] ripemd160HashResult = ripemd160BytesResult.getBytes();
+        assertThat(publicKeyBytesResult.getUncompressed(), is(equalTo(TestHelper.transformHexStringToBytes(PUBLIC_KEY_HEX_STRING))));
+        assertThat(firstSha256HashResult, is(equalTo(expectedSingleHashedSha256ByteArray)));
+        assertThat(ripemd160HashResult, is(equalTo(expectedRipemd160ByteArray)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 }
