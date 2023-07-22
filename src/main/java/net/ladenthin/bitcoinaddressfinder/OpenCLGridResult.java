@@ -188,8 +188,51 @@ public class OpenCLGridResult {
         return new Sha256Bytes(pubKeyUncompressed, firstSha256Hash, secondSha256Hash);
     }
 
+    /**
+     * This method will retrieve the SHA-256 hash from the public key and the RIPEMD-160 hash of that SHA-256 hash
+     * from the {@link OpenCLGridResult} and store them in a {@link Ripemd160Bytes} array.
+     *
+     * @return array of {@link Ripemd160Bytes}
+     */
     public Ripemd160Bytes[] getRipemd160Bytes() {
-        // TODO implement method
+        if (chunkMode) {
+            return getRipemd160BytesInChunkMode();
+        } else {
+            return getRipemd160BytesInNonChunkMode();
+        }
+    }
+
+    private Ripemd160Bytes[] getRipemd160BytesInChunkMode() {
+        Ripemd160Bytes[] ripemd160Bytes = new Ripemd160Bytes[workSize];
+        for (int currentWorkItem = 0; currentWorkItem < workSize; currentWorkItem++) {
+            ripemd160Bytes[currentWorkItem] = readBufferForRipemd160Bytes(currentWorkItem);
+        }
+        return ripemd160Bytes;
+    }
+
+    private Ripemd160Bytes[] getRipemd160BytesInNonChunkMode() {
+        // TODO impl method
         return null;
+    }
+
+    private Ripemd160Bytes readBufferForRipemd160Bytes(int currentWorkItem) {
+        int workItemOffsetInByteBuffer = Ripemd160Bytes.RESULT_LENGTH_IN_BYTES * currentWorkItem;
+        byte[] hash1hash2yx = new byte[Ripemd160Bytes.RESULT_LENGTH_IN_BYTES];
+        int index = 0;
+        for (int i = (Ripemd160Bytes.RESULT_LENGTH_IN_BYTES - 1); i >= 0; i--) {
+            hash1hash2yx[i] = result.get(workItemOffsetInByteBuffer + index);
+            index++;
+        }
+        // copy SHA-256 hash
+        byte[] sha256Hash = new byte[Sha256Bytes.ONE_SHA256_NUM_BYTES];
+        System.arraycopy(hash1hash2yx, Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES, sha256Hash, 0,
+                Sha256Bytes.ONE_SHA256_NUM_BYTES);
+
+        // copy RIPEMD-160 hash
+        byte[] ripemd160Hash = new byte[Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES];
+        System.arraycopy(hash1hash2yx, 0, ripemd160Hash, 0,
+                Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES);
+
+        return new Ripemd160Bytes(sha256Hash, ripemd160Hash);
     }
 }
