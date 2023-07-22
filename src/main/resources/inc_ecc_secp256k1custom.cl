@@ -303,7 +303,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
     uchar padded_byte_digest_1024[128];
 
     // to store the result of the sha256 hash
-    u32 sha256_hash[SHA256_HASH_LEN];
+    u32 sha256_hash[SHA256_HASH_U32_LEN];
 
     secp256k1_t g_xy_local;
 
@@ -367,7 +367,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
     calculate_sha256(&ctx, digest, 128, sha256_hash);
 
     // write the sha256-hash into the result array
-    array_copy_from_to(sha256_hash, 0, r, (r_offset + PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY), SHA256_HASH_LEN);
+    array_copy_from_to(sha256_hash, 0, r, (r_offset + PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY), SHA256_HASH_U32_LEN);
 }
 
 /*
@@ -386,7 +386,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
     uchar padded_byte_digest_1024[128];
 
     // to store the result of the sha256 hash
-    u32 sha256_hash[SHA256_HASH_LEN];
+    u32 sha256_hash[SHA256_HASH_U32_LEN];
 
     secp256k1_t g_xy_local;
 
@@ -453,7 +453,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
     calculate_sha256(&ctx, digest, 128, sha256_hash);
 
     // write the sha256-hash into the result array
-    array_copy_from_to(sha256_hash, 0, r, (r_offset + PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY), SHA256_HASH_LEN);
+    array_copy_from_to(sha256_hash, 0, r, (r_offset + PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY), SHA256_HASH_U32_LEN);
 }
 
 __attribute__((always_inline)) void calculate_sha256(PRIVATE_AS sha256_ctx_t *ctx, PRIVATE_AS const u32 *digest, const int len, u32* target) {
@@ -461,7 +461,7 @@ __attribute__((always_inline)) void calculate_sha256(PRIVATE_AS sha256_ctx_t *ct
     sha256_init(ctx);
     sha256_update(ctx, digest, len);
 
-    for(int i = 0; i < SHA256_HASH_LEN; i++){
+    for(int i = 0; i < SHA256_HASH_U32_LEN; i++){
         target[i] = ctx->h[i];
     }
 }
