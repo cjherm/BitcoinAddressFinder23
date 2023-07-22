@@ -15,12 +15,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+/**
+ * Helper class including several utility methods for better testing of {@link OpenCLContext}.
+ */
 public class TestHelper {
 
-    private static final int GRID_NUM_BITS = 8;
-    private static final int PRIVATE_KEY_MAX_BIT_LENGTH = 256;
-    private static final int HEX_RADIX = 16;
+    public static final int GRID_NUM_BITS = 8;
+    public static final int PRIVATE_KEY_MAX_BIT_LENGTH = 256;
+    public static final int HEX_RADIX = 16;
+    public static final int BINARY_RADIX = 2;
 
+    /**
+     * Creates and initializes an {@link OpenCLContext} for testing. Will set the value of
+     * the field <code>int gridNumBits</code> in {@link ProducerOpenCL} to {@link TestHelper#GRID_NUM_BITS}.
+     *
+     * @param chunkMode  If the {@link OpenCLContext} should use the <code>chunkMode</code> for private keys
+     * @param kernelMode With what <code>kernelMode</code> the {@link OpenCLContext} should run
+     * @return {@link OpenCLContext}
+     */
     public static OpenCLContext createOpenCLContext(boolean chunkMode, int kernelMode) {
         new OpenCLPlatformAssume().assumeOpenCLLibraryLoadableAndOneOpenCL2_0OrGreaterDeviceAvailable();
         CProducerOpenCL producerOpenCL = new CProducerOpenCL();
@@ -38,56 +50,96 @@ public class TestHelper {
         return openCLContext;
     }
 
-    public static BigInteger[] generateRandomUncompressedPrivateKeys(int arraySize) {
+    /**
+     * Generates an array of random private keys.
+     *
+     * @param number of private keys to be generated
+     * @return array of {@link BigInteger}s storing the generated private keys
+     */
+    public static BigInteger[] generateRandomPrivateKeys(int number) {
         List<BigInteger> privateKeysList = new LinkedList<>();
-        while (privateKeysList.size() < arraySize) {
+        while (privateKeysList.size() < number) {
             BigInteger candidate = KeyUtility.createSecret(PRIVATE_KEY_MAX_BIT_LENGTH, new SecureRandom());
             if (validBitcoinPrivateKey(candidate)) {
                 privateKeysList.add(candidate);
             }
         }
-        BigInteger[] privateKeysArray = new BigInteger[arraySize];
-        for (int i = 0; i < arraySize; i++) {
+        BigInteger[] privateKeysArray = new BigInteger[number];
+        for (int i = 0; i < number; i++) {
             privateKeysArray[i] = privateKeysList.get(i);
         }
         return privateKeysArray;
     }
 
+    /**
+     * Validates if the given private key is valid in regard to BITCOIN.
+     *
+     * @param candidate to be validated
+     * @return <code>true</code> if the given private key is valid, <code>false</code> otherwise
+     */
     @SuppressWarnings("RedundantIfStatement")
     public static boolean validBitcoinPrivateKey(BigInteger candidate) {
         // Check if the private key is within the valid range
         BigInteger minPrivateKey = BigInteger.ONE;
-        BigInteger maxPrivateKey = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", 16);
+        BigInteger maxPrivateKey = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", HEX_RADIX);
         if (!(candidate.compareTo(minPrivateKey) >= 0 && candidate.compareTo(maxPrivateKey) <= 0)) {
             return false;
         }
-        if (candidate.toString(2).length() != 256) {
+        if (candidate.toString(BINARY_RADIX).length() != PublicKeyBytes.PRIVATE_KEY_MAX_NUM_BITS) {
             return false;
         }
         return true;
     }
 
-    public static BigInteger[] generateChunkOfPrivateKeysOutOfSinglePrivateKey(BigInteger singlePrivateKey, int arraySize) {
+    /**
+     * Calculates the uncompressed public key from a given private key.
+     *
+     * @param privateKey As a {@link BigInteger}
+     * @return The uncompressed public key as a hex {@link String}
+     */
+    public static String calculatePublicKeyAsHexStringFromPrivateKey(BigInteger privateKey) {
+        return Hex.encodeHexString(calculatePublicKeyAsBytesFromPrivateKey(privateKey));
+    }
+
+    /**
+     * Calculates the uncompressed public key from a given private key.
+     *
+     * @param privateKey As a {@link BigInteger}
+     * @return The uncompressed public key as a byte array
+     */
+    public static byte[] calculatePublicKeyAsBytesFromPrivateKey(BigInteger privateKey) {
+        return ECKey.publicKeyFromPrivate(privateKey, false);
+    }
+
+    /**
+     * Hashes a given byte array with SHA-256.
+     *
+     * @param digest To be hashed
+     * @return Hashed byte array with the size of 32 bytes
+     */
+    public static byte[] calculateSha256FromByteArray(byte[] digest) {
+        return Hashing.sha256().hashBytes(digest).asBytes();
+    }
+
+    public static BigInteger[] calculatePrivateKeyChunkFromSinglePrivateKey(BigInteger singlePrivateKey, int arraySize) {
         BigInteger[] chunk = new BigInteger[arraySize];
         chunk[0] = singlePrivateKey;
         for (int i = 1; i < chunk.length; i++) {
-            chunk[i] = bitwiseOrWithLast32Bits(singlePrivateKey, i);
+            chunk[i] = bitwiseOrOperationWithLast32Bits(singlePrivateKey, i);
         }
         return chunk;
     }
 
-    /**
-     * Simulates the or operation in OpenCL when using the chunk mode
-     * <p>
-     * This method will perform a bitwise OR-operation with the last 32 bits of a given BigInteger with the given value
-     * <p>
-     * <strong>The content of this method was generated with OpenAI/ChatGPT</strong>
+    /*
+     * Method written by OpenAI/ChatGPT.
      *
-     * @param number The secret key as a BigInteger
-     * @param value  The value which in OpenCL would be the global_id
-     * @return The updated number
+     * Simulates the or operation in OpenCL when using the chunk mode
+     * This method will perform a bitwise OR-operation with the last 32 bits of a given BigInteger with the given value
+     *
+     * BigInteger number: The secret key as a BigInteger
+     *         int value: The value which in OpenCL would be the global_id
      */
-    public static BigInteger bitwiseOrWithLast32Bits(BigInteger number, int value) {
+    private static BigInteger bitwiseOrOperationWithLast32Bits(BigInteger number, int value) {
         // Mask for the last 32 bits
         BigInteger mask = BigInteger.valueOf(0xFFFFFFFFL);
 
@@ -101,7 +153,23 @@ public class TestHelper {
         return number.and(mask.not()).or(result);
     }
 
-    public static BigInteger[] createBigIntegerArrayFromHexStringArray(String[] hexStringArray) {
+    /**
+     * Transforms a hex {@link String} into an array of {@link BigInteger}s.
+     *
+     * @param hexString To be transformed into an array of {@link BigInteger}s
+     * @return The {@link BigInteger} array of the given hex {@link String}
+     */
+    public static BigInteger[] transformHexStringToBigIntegerArray(String hexString) {
+        return transformHexStringArrayToBigIntegerArray(new String[]{hexString});
+    }
+
+    /**
+     * Transforms an array of hex {@link String}s into an array of {@link BigInteger}s.
+     *
+     * @param hexStringArray To be transformed into an array of {@link BigInteger}s
+     * @return The {@link BigInteger} array of the given hex {@link String} array
+     */
+    public static BigInteger[] transformHexStringArrayToBigIntegerArray(String[] hexStringArray) {
         BigInteger[] bigIntegerArray = new BigInteger[hexStringArray.length];
         for (int i = 0; i < hexStringArray.length; i++) {
             bigIntegerArray[i] = new BigInteger(hexStringArray[i], HEX_RADIX);
@@ -109,150 +177,169 @@ public class TestHelper {
         return bigIntegerArray;
     }
 
-    public static BigInteger[] createBigIntegerArrayFromSingleHexString(String hexString) {
-        return createBigIntegerArrayFromHexStringArray(new String[]{hexString});
-    }
-
-    public static String[] uncompressedPublicKeysHexStringArrayFromPrivateKeysArray(BigInteger[] privateKeysArray) {
-        String[] uncompressedPublicKeysStringArray = new String[privateKeysArray.length];
-        for (int i = 0; i < privateKeysArray.length; i++) {
-            uncompressedPublicKeysStringArray[i] = uncompressedPublicKeyHexStringFromPrivateKey(privateKeysArray[i]);
-        }
-        return uncompressedPublicKeysStringArray;
-    }
-
-    public static String uncompressedPublicKeyHexStringFromPrivateKey(BigInteger privateKey) {
-        return Hex.encodeHexString(uncompressedPublicKeyFromPrivateKey(privateKey));
-    }
-
-    public static byte[] uncompressedPublicKeyFromPrivateKey(BigInteger privateKey) {
-        return ECKey.publicKeyFromPrivate(privateKey, false);
-    }
-
-    public static String hexStringFromBigInteger(BigInteger bigInteger) {
-        return bigInteger.toString(HEX_RADIX);
-    }
-
-    public static String hexStringFromPublicKeyBytes(PublicKeyBytes publicKeyBytes) {
-        return Hex.encodeHexString(publicKeyBytes.getUncompressed());
-    }
-
-    public static Map<String, String> createMapFromBigIntegerArrayAndPublicKeyBytesArray(BigInteger[] keyArray, PublicKeyBytes[] valueArray) {
-        Map<String, String> map = new HashMap<>();
-        if (keyArray.length != valueArray.length) {
-            return null;
-        }
-        for (int i = 0; i < keyArray.length; i++) {
-            String keyString = hexStringFromBigInteger(keyArray[i]);
-            String valueString = hexStringFromPublicKeyBytes(valueArray[i]);
-            map.put(keyString, valueString);
-        }
-        return map;
-    }
-
-    public static Map<String, String> createMapFromSecretAndPublicKeys(BigInteger[] keyArray, String[] valueArray) {
-        Map<String, String> map = new HashMap<>();
-        if (keyArray.length != valueArray.length) {
-            return null;
-        }
-        for (int i = 0; i < keyArray.length; i++) {
-            String keyString = hexStringFromBigInteger(keyArray[i]);
-            String valueString = valueArray[i];
-            map.put(keyString, valueString);
-        }
-        return map;
-    }
-
-    public static <K, V> ActualMap<K, V> assertThatKeyMap(Map<K, V> actualMap) {
-        return new ActualMap<>(actualMap);
-    }
-
-    public static byte[] calculateSha256FromByteArray(byte[] digest) {
-        return Hashing.sha256().hashBytes(digest).asBytes();
-    }
+    /*
+     * Method written by OpenAI/ChatGPT.
+     * Prompt: "I need a java method to turn a hexString to a byte array".
+     */
 
     /**
-     * Written by ChatGPT. Input was: "i need a java method to turn a hexString to a byte array".
+     * Transforms a {@link String} into a byte array.
+     *
+     * @param hexString To be transformed into a byte array
+     * @return The byte array of the given hex {@link String}
      */
-    public static byte[] byteArrayFromHexString(String hexString) {
+    public static byte[] transformHexStringToBytes(String hexString) {
         int length = hexString.length();
         byte[] byteArray = new byte[length / 2];
         for (int i = 0; i < length; i += 2) {
-            byteArray[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i + 1), 16));
+            byteArray[i / 2] = (byte) ((Character.digit(hexString.charAt(i), HEX_RADIX) << 4) + Character.digit(hexString.charAt(i + 1), HEX_RADIX));
         }
         return byteArray;
     }
 
-    public static String hexStringFromByteArray(byte[] array) {
-        return Hex.encodeHexString(array);
+    /**
+     * Transforms a {@link BigInteger} into a hex {@link String}.
+     *
+     * @param bigInteger To be transformed into a hex {@link String}
+     * @return The hexadecimal representation of the given {@link BigInteger}
+     */
+    public static String transformBigIntegerToHexString(BigInteger bigInteger) {
+        return bigInteger.toString(HEX_RADIX);
     }
 
-    public static Map<String, String> createMapOfPublicKeyBytesAndSha256Bytes(Sha256Bytes[] valueArray) {
+    /**
+     * Transforms {@link PublicKeyBytes} into a hex {@link String}.
+     *
+     * @param publicKeyBytes To be transformed into a hex {@link String}
+     * @return The hexadecimal representation of the given {@link PublicKeyBytes}
+     */
+    public static String transformPublicKeyBytesToHexString(PublicKeyBytes publicKeyBytes) {
+        return Hex.encodeHexString(publicKeyBytes.getUncompressed());
+    }
+
+    /**
+     * Transforms a given array of bytes into a hex {@link String}.
+     *
+     * @param bytes To be transformed into a hex {@link String}
+     * @return The hexadecimal representation of the given bytes
+     */
+    public static String transformBytesToHexString(byte[] bytes) {
+        return Hex.encodeHexString(bytes);
+    }
+
+    /**
+     * Stores the private keys and their public keys in a {@link HashMap} as hex {@link String}s.
+     *
+     * @param privateKeys Array of {@link BigInteger} containing private keys
+     * @param publicKeys  Array of {@link BigInteger} containing public keys
+     * @return {@link HashMap} containing the private key and its public key both as hex {@link String}s
+     * or <code>null</code> if the length of both given arrays are not equal
+     */
+    public static Map<String, String> createResultedMapOfPrivateKeysAndTheirPublicKeys(BigInteger[] privateKeys, PublicKeyBytes[] publicKeys) {
         Map<String, String> map = new HashMap<>();
-        for(Sha256Bytes valueElem: valueArray){
-            String keyString = hexStringFromByteArray(valueElem.getPublicKeyUncompressed());
-            byte[] valueBytes = valueElem.getFirstSha256Bytes();
-            String valueString = hexStringFromByteArray(valueBytes);
-            map.put(keyString, valueString);
+        if (privateKeys.length != publicKeys.length) {
+            return null;
         }
-        return map;
-    }
-
-    public static Map<String, String> createMapOfDoubleSha256Bytes(Sha256Bytes[] sha256BytesResult) {
-        Map<String, String> map = new HashMap<>();
-        for (Sha256Bytes sha256Bytes : sha256BytesResult) {
-            byte[] keyBytes =  sha256Bytes.getFirstSha256Bytes();
-            String keyString = hexStringFromByteArray(keyBytes);
-            byte[] valueBytes = sha256Bytes.getSecondSha256Bytes();
-            String valueString = hexStringFromByteArray(valueBytes);
-            map.put(keyString, valueString);
+        for (int i = 0; i < privateKeys.length; i++) {
+            String privateKeyHexString = transformBigIntegerToHexString(privateKeys[i]);
+            String publicKeyHexString = transformPublicKeyBytesToHexString(publicKeys[i]);
+            map.put(privateKeyHexString, publicKeyHexString);
         }
         return map;
     }
 
     /**
-     * Generates the sha256 hash for each public key and stores both as hex Strings.
+     * Stores the public keys and their SHA-256 hashes (both initially stored in the given {@link Sha256Bytes} array)
+     * in a {@link HashMap} as hex {@link String}s.
      *
-     * @param publicKeys Array containing public keys as PublicKeyBytes elements.
-     * @return map Containing the public keys and their sha256 both as hex Strings.
+     * @param sha256Hashes Array of {@link Sha256Bytes} containing the public keys and their SHA-256 hashes
+     * @return {@link HashMap} containing the public key and its SHA-256 hash both as hex {@link String}s
      */
-    public static Map<String, String> createExpectedMapOfPublicKeyBytesAndSha256Bytes(PublicKeyBytes[] publicKeys) {
+    public static Map<String, String> createResultedMapOfPublicKeysAndTheirSha256Hashes(Sha256Bytes[] sha256Hashes) {
+        Map<String, String> map = new HashMap<>();
+        for (Sha256Bytes sha256Bytes : sha256Hashes) {
+            byte[] publicKeyBytes = sha256Bytes.getPublicKeyUncompressed();
+            String publicKeyHexString = transformBytesToHexString(publicKeyBytes);
+            byte[] firstSha256Bytes = sha256Bytes.getFirstSha256Bytes();
+            String firstSha256String = transformBytesToHexString(firstSha256Bytes);
+            map.put(publicKeyHexString, firstSha256String);
+        }
+        return map;
+    }
+
+    /**
+     * Stores both SHA-256 hashes (both initially stored in the given {@link Sha256Bytes} array)
+     * in a {@link HashMap} as hex {@link String}s.
+     *
+     * @param sha256Hashes Array of {@link Sha256Bytes} containing both SHA-256 hashes
+     * @return {@link HashMap} containing both SHA-256 hashes as hex {@link String}s
+     */
+    public static Map<String, String> createResultedMapOfSha256HashesAndTheirSha256Hashes(Sha256Bytes[] sha256Hashes) {
+        Map<String, String> map = new HashMap<>();
+        for (Sha256Bytes sha256Bytes : sha256Hashes) {
+            byte[] firstSha256Bytes = sha256Bytes.getFirstSha256Bytes();
+            String firstSha256String = transformBytesToHexString(firstSha256Bytes);
+            byte[] secondSha256Bytes = sha256Bytes.getSecondSha256Bytes();
+            String secondSha256String = transformBytesToHexString(secondSha256Bytes);
+            map.put(firstSha256String, secondSha256String);
+        }
+        return map;
+    }
+
+    /**
+     * Generates the public keys for each given private key and stores both as hex {@link String}s.
+     *
+     * @param privateKeys Array of {@link BigInteger} containing private keys
+     * @return {@link HashMap} containing the private keys and their public keys both as hex {@link String}s
+     */
+    public static Map<String, String> createExpectedMapOfPrivateKeysToPublicKeys(BigInteger[] privateKeys) {
+        Map<String, String> map = new HashMap<>();
+        for (BigInteger privateKey : privateKeys) {
+            String privateKeyHexString = transformBigIntegerToHexString(privateKey);
+            String publicKeyHexString = calculatePublicKeyAsHexStringFromPrivateKey(privateKey);
+            map.put(privateKeyHexString, publicKeyHexString);
+        }
+        return map;
+    }
+
+    /**
+     * Generates the SHA-256 hashes for each public key and stores both as hex {@link String}s.
+     *
+     * @param publicKeys Array of {@link BigInteger} containing public keys
+     * @return {@link HashMap} containing the public keys and their SHA-256 both as hex {@link String}s
+     */
+    public static Map<String, String> createExpectedMapOfPublicKeysToSha256Hashes(PublicKeyBytes[] publicKeys) {
         Map<String, String> map = new HashMap<>();
         for (PublicKeyBytes publicKey : publicKeys) {
-            String publicKeyHexString = hexStringFromPublicKeyBytes(publicKey);
-            byte[] sha256Bytes = calculateSha256FromByteArray(publicKey.getUncompressed());
-            String sha256HexString = hexStringFromByteArray(sha256Bytes);
+            String publicKeyHexString = transformPublicKeyBytesToHexString(publicKey);
+            byte[] publicKeyBytes = publicKey.getUncompressed();
+            byte[] sha256Bytes = calculateSha256FromByteArray(publicKeyBytes);
+            String sha256HexString = transformBytesToHexString(sha256Bytes);
             map.put(publicKeyHexString, sha256HexString);
         }
         return map;
     }
 
     /**
-     * Generates the public key for each private key and stores both as hex Strings.
+     * Generates the SHA-256 hashes for each first SHA-256 hash and stores both as hex {@link String}s.
      *
-     * @param privateKeys Array containing private keys as BigInteger elements.
-     * @return map Containing the private keys and their public keys both as hex Strings.
+     * @param sha256Hashes Array of {@link Sha256Bytes} containing SHA-256 hashes
+     * @return {@link HashMap} containing the first SHA-256 and the calculated second SHA-256 hash as hex {@link String}s
      */
-    public static Map<String, String> createExpectedMapOfPrivateKeysToPublicKeys(BigInteger[] privateKeys) {
+    public static Map<String, String> createExpectedMapOfSha256HashesToSha256Hases(Sha256Bytes[] sha256Hashes) {
         Map<String, String> map = new HashMap<>();
-        for (BigInteger privateKey : privateKeys) {
-            String privateKeyHexString = hexStringFromBigInteger(privateKey);
-            String publicKeyHexString = uncompressedPublicKeyHexStringFromPrivateKey(privateKey);
-            map.put(privateKeyHexString, publicKeyHexString);
+        for (Sha256Bytes sha256Bytes : sha256Hashes) {
+            byte[] firstSha256HashBytes = sha256Bytes.getFirstSha256Bytes();
+            String firstSha256HashHexString = transformBytesToHexString(firstSha256HashBytes);
+            byte[] secondSha256HashBytes = calculateSha256FromByteArray(firstSha256HashBytes);
+            String secondSha256HashHexString = transformBytesToHexString(secondSha256HashBytes);
+            map.put(firstSha256HashHexString, secondSha256HashHexString);
         }
         return map;
     }
 
-    public static Map<String, String> createExpectedMapOfDoubleSha256Bytes(Sha256Bytes[] sha256BytesResult) {
-        Map<String, String> map = new HashMap<>();
-        for (Sha256Bytes sha256Bytes : sha256BytesResult) {
-            byte[] firstSha256HashBytes = sha256Bytes.getFirstSha256Bytes();
-            String firstSha256HashHexString = hexStringFromByteArray(firstSha256HashBytes);
-            byte[] secondSha256HashBytes = calculateSha256FromByteArray(firstSha256HashBytes);
-            String secondSha256HashHexString = hexStringFromByteArray(secondSha256HashBytes);
-            map.put(firstSha256HashHexString, secondSha256HashHexString);
-        }
-        return map;
+    public static <K, V> ActualMap<K, V> assertThatKeyMap(Map<K, V> actualMap) {
+        return new ActualMap<>(actualMap);
     }
 
     /**
