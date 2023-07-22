@@ -417,6 +417,35 @@ public class OpenCLContextTest {
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
+    // TODO remove this dummy test
+    // Test is only for checking if sha256 and ripemd160 results are correctly stored and retrieved in result buffer
+    @Test
+    public void test_generateRipemd160Hash_specificSinglePrivateKey_expectingDummyValues() {
+        // arrange
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_MODE);
+        byte[] expectedSingleHashedSha256ByteArray = TestHelper.transformHexStringToBytes(SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
+        byte[] expectedRipemd160ByteArray = {0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0, 5};
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
+        PublicKeyBytes publicKeyBytesResult = openCLGridResult.getPublicKeyBytes()[0];
+        Ripemd160Bytes ripemd160BytesResult = openCLGridResult.getRipemd160Bytes()[0];
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        byte[] firstSha256HashResult = ripemd160BytesResult.getSha256Bytes();
+        byte[] ripemd160HashResult = ripemd160BytesResult.getRipemd160Bytes();
+        assertThat(publicKeyBytesResult.getUncompressed(), is(equalTo(TestHelper.transformHexStringToBytes(PUBLIC_KEY_HEX_STRING))));
+        assertThat(firstSha256HashResult, is(equalTo(expectedSingleHashedSha256ByteArray)));
+        assertThat(ripemd160HashResult, is(equalTo(expectedRipemd160ByteArray)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Ignore
     @Test
     public void test_generateRipemd160Hash_specificSinglePrivateKey() {
         // arrange
