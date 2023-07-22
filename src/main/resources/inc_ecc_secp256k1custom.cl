@@ -551,14 +551,11 @@ __kernel void generateRipemd160ChunkKernel_grid(__global u32 *r, __global const 
 
     // write the RIPEMD-160 hash into the result array
     int r_offset_ripemd160_hash = r_offset_sha256_hash + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
-    r[r_offset_ripemd160_hash + 0] = ripemd160_hash[7];
-    r[r_offset_ripemd160_hash + 1] = ripemd160_hash[6];
-    r[r_offset_ripemd160_hash + 2] = ripemd160_hash[5];
-    r[r_offset_ripemd160_hash + 3] = ripemd160_hash[4];
-    r[r_offset_ripemd160_hash + 4] = ripemd160_hash[3];
-    r[r_offset_ripemd160_hash + 5] = ripemd160_hash[2];
-    r[r_offset_ripemd160_hash + 6] = ripemd160_hash[1];
-    r[r_offset_ripemd160_hash + 7] = ripemd160_hash[0];
+    r[r_offset_ripemd160_hash + 0] = ripemd160_hash[4];
+    r[r_offset_ripemd160_hash + 1] = ripemd160_hash[3];
+    r[r_offset_ripemd160_hash + 2] = ripemd160_hash[2];
+    r[r_offset_ripemd160_hash + 3] = ripemd160_hash[1];
+    r[r_offset_ripemd160_hash + 4] = ripemd160_hash[0];
 }
 
  /*
@@ -570,14 +567,11 @@ __kernel void generateRipemd160ChunkKernel_grid(__global u32 *r, __global const 
 __attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *digest, u32 *ripemd160_hash){
 
     // dummy impl for initial testing
-    ripemd160_hash[0] = 0;
-    ripemd160_hash[1] = 1;
-    ripemd160_hash[2] = 2;
-    ripemd160_hash[3] = 3;
-    ripemd160_hash[4] = 4;
-    ripemd160_hash[5] = 5;
-    ripemd160_hash[6] = 6;
-    ripemd160_hash[7] = 7;
+    ripemd160_hash[0] = 1;
+    ripemd160_hash[1] = 2;
+    ripemd160_hash[2] = 3;
+    ripemd160_hash[3] = 4;
+    ripemd160_hash[4] = 5;
 }
 
  /*
