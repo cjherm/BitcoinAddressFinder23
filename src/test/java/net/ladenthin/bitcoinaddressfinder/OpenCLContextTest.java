@@ -1,14 +1,13 @@
 package net.ladenthin.bitcoinaddressfinder;
 
 import org.jocl.CL;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Map;
 
 import static net.ladenthin.bitcoinaddressfinder.TestHelper.assertThatKeyMap;
-import static net.ladenthin.bitcoinaddressfinder.TestHelper.transformBytesToHexString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -422,7 +421,7 @@ public class OpenCLContextTest {
     public void test_generateRipemd160Hash_specificSinglePrivateKey() {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_MODE);
         byte[] expectedSingleHashedSha256ByteArray = TestHelper.transformHexStringToBytes(SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
         byte[] expectedRipemd160ByteArray = TestHelper.transformHexStringToBytes(RIPEMD160_FROM_SINGLE_SHA256_HEX_STRING);
 

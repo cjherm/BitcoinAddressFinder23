@@ -131,7 +131,7 @@ public class TestHelper {
     public static byte[] calculateRipemd160FromByteArray(byte[] input) {
         RIPEMD160Digest digest = new RIPEMD160Digest();
         digest.update(input, 0, input.length);
-        byte[] out = new byte[Ripemd160Bytes.LENGTH_IN_BYTES];
+        byte[] out = new byte[Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES];
         digest.doFinal(out, 0);
         return out;
     }
