@@ -91,7 +91,7 @@ public class OpenClTask {
         } else if (cProducer.kernelMode == OpenCLContext.GEN_SHA256_MODE) {
             return AddressBytes.PUB_KEY_WITHOUT_PARITY_WITH_DOUBLE_SHA256_BYTE_LEN * cProducer.getWorkSize();
         }else if(cProducer.kernelMode == OpenCLContext.GEN_RIPEMD160_MODE){
-            return Ripemd160Bytes.RESULT_LENGTH_IN_32_BITS * cProducer.getWorkSize();
+            return Ripemd160Bytes.RESULT_LENGTH_IN_BYTES * cProducer.getWorkSize();
         } else {
             // TODO handle that case
             return -1;
