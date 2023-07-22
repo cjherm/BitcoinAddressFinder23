@@ -27,13 +27,13 @@ public class OpenCLContextTest {
     private static final String ERROR_CODE_SUCCESS = CL.stringFor_errorCode(CL.CL_SUCCESS);
 
     @Test
-    public void test_generateSinglePublicKey_specificPrivateKey() {
+    public void test_generateSinglePublicKey_specificSinglePrivateKey() {
         // arrange
-        BigInteger[] privateKeysArray = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
+        BigInteger[] specificSinglePrivateKey = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
         // cleanup
         openCLContext.release();
@@ -46,13 +46,13 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateSinglePublicKey_randomPrivateKey() {
+    public void test_generateSinglePublicKey_randomSinglePrivateKey() {
         //arrange
-        BigInteger[] privateKeysArray = TestHelper.generateRandomUncompressedPrivateKeys(1);
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomUncompressedPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
@@ -61,7 +61,7 @@ public class OpenCLContextTest {
 
         // assert
         String resultPublicKeyAsHexString = TestHelper.hexStringFromPublicKeyBytes(publicKeysResult[0]);
-        String expectedPublicKeyAsHexString = TestHelper.uncompressedPublicKeyHexStringFromPrivateKey(privateKeysArray[0]);
+        String expectedPublicKeyAsHexString = TestHelper.uncompressedPublicKeyHexStringFromPrivateKey(randomSinglePrivateKey[0]);
         assertThat(resultPublicKeyAsHexString, is(equalTo(expectedPublicKeyAsHexString)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
@@ -69,11 +69,11 @@ public class OpenCLContextTest {
     @Test
     public void test_generate256PublicKeys_specificSinglePrivateKey_chunkMode() {
         //arrange
-        BigInteger[] privateKeysArray = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
+        BigInteger[] specificSinglePrivateKey = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
@@ -81,7 +81,7 @@ public class OpenCLContextTest {
         openCLGridResult.freeResult();
 
         // assert
-        BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(privateKeysArray[0], CHUNK_SIZE);
+        BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
         Map<String, String> resultKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(privateKeysChunk, publicKeysResult);
         String[] expectedPublicKeysAsHexStringArray = TestHelper.uncompressedPublicKeysHexStringArrayFromPrivateKeysArray(privateKeysChunk);
         Map<String, String> expectedKeysMap = TestHelper.createMapFromSecretAndPublicKeys(privateKeysChunk, expectedPublicKeysAsHexStringArray);
@@ -92,11 +92,11 @@ public class OpenCLContextTest {
     @Test
     public void test_generate256PublicKeys_randomSinglePrivateKey_chunkMode() {
         //arrange
-        BigInteger[] privateKeysArray = TestHelper.generateRandomUncompressedPrivateKeys(1);
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomUncompressedPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
@@ -104,7 +104,7 @@ public class OpenCLContextTest {
         openCLGridResult.freeResult();
 
         // assert
-        BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(privateKeysArray[0], CHUNK_SIZE);
+        BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
         Map<String, String> resultKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(privateKeysChunk, publicKeysResult);
         String[] expectedPublicKeysAsHexStringArray = TestHelper.uncompressedPublicKeysHexStringArrayFromPrivateKeysArray(privateKeysChunk);
         Map<String, String> expectedKeysMap = TestHelper.createMapFromSecretAndPublicKeys(privateKeysChunk, expectedPublicKeysAsHexStringArray);
@@ -115,11 +115,11 @@ public class OpenCLContextTest {
     @Test
     public void test_generate256PublicKeys_random256PrivateKeys_nonChunkMode() {
         //arrange
-        BigInteger[] randomPrivateKeys = TestHelper.generateRandomUncompressedPrivateKeys(CHUNK_SIZE);
+        BigInteger[] random256PrivateKeys = TestHelper.generateRandomUncompressedPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEYS_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomPrivateKeys);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
         PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
@@ -127,9 +127,9 @@ public class OpenCLContextTest {
         openCLGridResult.freeResult();
 
         // assert
-        Map<String, String> resultKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(randomPrivateKeys, publicKeysResult);
-        String[] expectedPublicKeysAsHexStringArray = TestHelper.uncompressedPublicKeysHexStringArrayFromPrivateKeysArray(randomPrivateKeys);
-        Map<String, String> expectedKeysMap = TestHelper.createMapFromSecretAndPublicKeys(randomPrivateKeys, expectedPublicKeysAsHexStringArray);
+        Map<String, String> resultKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(random256PrivateKeys, publicKeysResult);
+        String[] expectedPublicKeysAsHexStringArray = TestHelper.uncompressedPublicKeysHexStringArrayFromPrivateKeysArray(random256PrivateKeys);
+        Map<String, String> expectedKeysMap = TestHelper.createMapFromSecretAndPublicKeys(random256PrivateKeys, expectedPublicKeysAsHexStringArray);
         assertThatKeyMap(resultKeysMap).isEqualTo(expectedKeysMap);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
@@ -137,12 +137,12 @@ public class OpenCLContextTest {
     @Test
     public void test_generateSingleSha256Hash_specificSinglePrivateKey() {
         // arrange
-        BigInteger[] privateKeysArray = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
+        BigInteger[] specificSinglePrivateKey = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
         byte[] expectedSha256ByteArray = TestHelper.byteArrayFromHexString(SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
         PublicKeyBytes publicKeyBytesResult = openCLGridResult.getPublicKeyBytes()[0];
         Sha256Bytes sha256BytesResult = openCLGridResult.getSha256Bytes()[0];
 
@@ -160,13 +160,13 @@ public class OpenCLContextTest {
     @Test
     public void test_generateSingleSha256Hash_randomSinglePrivateKey() {
         // arrange
-        BigInteger[] privateKeysArray = TestHelper.generateRandomUncompressedPrivateKeys(1);
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomUncompressedPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
-        byte[] expectedPublicKey = TestHelper.uncompressedPublicKeyFromPrivateKey(privateKeysArray[0]);
+        byte[] expectedPublicKey = TestHelper.uncompressedPublicKeyFromPrivateKey(randomSinglePrivateKey[0]);
         byte[] expectedSha256Hash = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(privateKeysArray);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
         PublicKeyBytes publicKeyBytesResult = openCLGridResult.getPublicKeyBytes()[0];
         Sha256Bytes sha256BytesResult = openCLGridResult.getSha256Bytes()[0];
 
@@ -182,7 +182,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256Sha256Hashes_random256PrivateKeys_nonChunkMode() {
+    public void test_generate256SingleSha256Hashes_random256PrivateKeys_nonChunkMode() {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomUncompressedPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
@@ -198,8 +198,9 @@ public class OpenCLContextTest {
 
         // prepare assert
         Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(random256PrivateKeys, publicKeyBytesResult);
-        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(random256PrivateKeys);
+
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
 
         // assert
@@ -209,7 +210,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256Sha256Hashes_specificSinglePrivateKeys_chunkMode() {
+    public void test_generate256SingleSha256Hashes_specificSinglePrivateKey_chunkMode() {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
@@ -226,8 +227,9 @@ public class OpenCLContextTest {
         // prepare assert
         BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
         Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(privateKeysChunk, publicKeyBytesResult);
-        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
+
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
 
         // assert
@@ -237,7 +239,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256Sha256Hashes_randomSinglePrivateKeys_chunkMode() {
+    public void test_generate256SingleSha256Hashes_randomSinglePrivateKey_chunkMode() {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomUncompressedPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
@@ -254,8 +256,9 @@ public class OpenCLContextTest {
         // prepare assert
         BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
         Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(privateKeysChunk, publicKeyBytesResult);
-        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
+
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
         Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
 
         // assert
