@@ -106,6 +106,8 @@ public class OpenCLGridResult {
             keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * keyNumber;
         } else if (kernelMode == OpenCLContext.GEN_SHA256_MODE) {
             keyOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * keyNumber;
+        } else if (kernelMode == OpenCLContext.GEN_RIPEMD160_MODE) {
+            keyOffsetInByteBuffer = Ripemd160Bytes.RESULT_LENGTH_IN_BYTES * keyNumber;
         } else {
             // TODO handle else case
             return null;
