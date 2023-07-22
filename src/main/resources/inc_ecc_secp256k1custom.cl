@@ -28,11 +28,13 @@ k_local[0] = 0x929f72dc;
  * a size of 8.
  */
 
-__attribute__((always_inline)) void calculate_sha256(PRIVATE_AS sha256_ctx_t *ctx, PRIVATE_AS const u32 *digest, const int len, u32 *target);
+__attribute__((always_inline)) void calculate_first_sha256(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
+__attribute__((always_inline)) void calculate_second_sha256(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
 __attribute__((always_inline)) void array_copy_from_to(const u32 *src, const int start_index_src, u32 *dest, const int start_index_dest, const int len);
-__attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, uchar* byteArray, const int numElements);
-void sha256_padding_to_128_byte_array(const uchar *input, const int numInputBytes, uchar *output);
+__attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, const int numU32Elements, uchar *byteArray, const int byteArrayOffset);
+__attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output);
 void storeByteArrayToU32Array(const uchar *byteArray, u32 *u32Array, const uint arrayLength);
+__attribute__((always_inline)) void create_public_key_from_coordinates(uchar *public_key_byte_array, const u32 *x_coordinate, const u32 *y_coordinate);
 
 /*
  * Generate a public key from a private key.
@@ -297,13 +299,11 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
     u32 x_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
     u32 y_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
     u32 k_local[PRIVATE_KEY_LENGTH];
+    uchar public_key[PUBLIC_KEY_BYTES_WITH_PARITY];
 
-    // to store the public keys coordinates for hashing
-    u32 digest[32];
-    uchar padded_byte_digest_1024[128];
-
-    // to store the result of the sha256 hash
-    u32 sha256_hash[SHA256_HASH_U32_LEN];
+    // to store the results of the sha256 hashes
+    u32 first_sha256_hash[SHA256_HASH_U32_LEN];
+    u32 second_sha256_hash[SHA256_HASH_U32_LEN];
 
     secp256k1_t g_xy_local;
 
@@ -325,49 +325,55 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
 
     point_mul_xy(x_local, y_local, k_local, &g_xy_local);
 
-    // the byte length of the result
-    int r_offset = PUBKEY_LEN_WITHOUT_PARITY_WITH_SHA256 * global_id;
-
     // write the x-coordinate into the result array
-    array_copy_from_to(x_local, 0, r, r_offset, PUBLIC_KEY_ONE_COORDINATE_LENGTH);
+    int r_offset_x = PUBKEY_LEN_WITHOUT_PARITY_WITH_SHA256 * global_id;
+    r[r_offset_x + 0] = x_local[0];
+    r[r_offset_x + 1] = x_local[1];
+    r[r_offset_x + 2] = x_local[2];
+    r[r_offset_x + 3] = x_local[3];
+    r[r_offset_x + 4] = x_local[4];
+    r[r_offset_x + 5] = x_local[5];
+    r[r_offset_x + 6] = x_local[6];
+    r[r_offset_x + 7] = x_local[7];
 
     // write the y-coordinate into the result array
-    array_copy_from_to(y_local, 0, r, (r_offset + PUBLIC_KEY_ONE_COORDINATE_LENGTH), PUBLIC_KEY_ONE_COORDINATE_LENGTH);
+    int r_offset_y = r_offset_x + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
+    r[r_offset_y + 0] = y_local[0];
+    r[r_offset_y + 1] = y_local[1];
+    r[r_offset_y + 2] = y_local[2];
+    r[r_offset_y + 3] = y_local[3];
+    r[r_offset_y + 4] = y_local[4];
+    r[r_offset_y + 5] = y_local[5];
+    r[r_offset_y + 6] = y_local[6];
+    r[r_offset_y + 7] = y_local[7];
 
-    // copy x to digest
-    digest[0] = x_local[7];
-    digest[1] = x_local[6];
-    digest[2] = x_local[5];
-    digest[3] = x_local[4];
-    digest[4] = x_local[3];
-    digest[5] = x_local[2];
-    digest[6] = x_local[1];
-    digest[7] = x_local[0];
+    create_public_key_from_coordinates(public_key, x_local, y_local);
 
-    // copy y to digest
-    digest[8] = y_local[7];
-    digest[9] = y_local[6];
-    digest[10] = y_local[5];
-    digest[11] = y_local[4];
-    digest[12] = y_local[3];
-    digest[13] = y_local[2];
-    digest[14] = y_local[1];
-    digest[15] = y_local[0];
+    calculate_first_sha256(public_key, first_sha256_hash);
 
-    uchar byteArray[65];
+    // write the first sha256-hash into the result array
+    int r_offset_first_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
+    r[r_offset_first_hash + 0] = first_sha256_hash[7];
+    r[r_offset_first_hash + 1] = first_sha256_hash[6];
+    r[r_offset_first_hash + 2] = first_sha256_hash[5];
+    r[r_offset_first_hash + 3] = first_sha256_hash[4];
+    r[r_offset_first_hash + 4] = first_sha256_hash[3];
+    r[r_offset_first_hash + 5] = first_sha256_hash[2];
+    r[r_offset_first_hash + 6] = first_sha256_hash[1];
+    r[r_offset_first_hash + 7] = first_sha256_hash[0];
 
-    storeU32ToByteArray(digest, byteArray, 17);
+    calculate_second_sha256(first_sha256_hash, second_sha256_hash);
 
-    sha256_padding_to_128_byte_array(byteArray, 65, padded_byte_digest_1024);
-
-    storeByteArrayToU32Array(padded_byte_digest_1024, digest, 128);
-
-    sha256_ctx_t ctx;
-
-    calculate_sha256(&ctx, digest, 128, sha256_hash);
-
-    // write the sha256-hash into the result array
-    array_copy_from_to(sha256_hash, 0, r, (r_offset + PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY), SHA256_HASH_U32_LEN);
+    // write the second sha256-hash into the result array
+    int r_offset_second_hash = r_offset_first_hash + SHA256_HASH_U32_LEN;
+    r[r_offset_second_hash + 0] = second_sha256_hash[7];
+    r[r_offset_second_hash + 1] = second_sha256_hash[6];
+    r[r_offset_second_hash + 2] = second_sha256_hash[5];
+    r[r_offset_second_hash + 3] = second_sha256_hash[4];
+    r[r_offset_second_hash + 4] = second_sha256_hash[3];
+    r[r_offset_second_hash + 5] = second_sha256_hash[2];
+    r[r_offset_second_hash + 6] = second_sha256_hash[1];
+    r[r_offset_second_hash + 7] = second_sha256_hash[0];
 }
 
 /*
@@ -442,28 +448,84 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
 
     uchar byteArray[65];
 
-    storeU32ToByteArray(digest, byteArray, 17);
+    storeU32ToByteArray(digest, byteArray, 17, 0);
 
-    sha256_padding_to_128_byte_array(byteArray, 65, padded_byte_digest_1024);
+    sha256_padding(byteArray, 65, padded_byte_digest_1024);
 
     storeByteArrayToU32Array(padded_byte_digest_1024, digest, 128);
 
-    sha256_ctx_t ctx;
+    calculate_first_sha256(digest, sha256_hash);
 
-    calculate_sha256(&ctx, digest, 128, sha256_hash);
-
-    // write the sha256-hash into the result array
-    array_copy_from_to(sha256_hash, 0, r, (r_offset + PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY), SHA256_HASH_U32_LEN);
+    // write the first sha256-hash into the result array
+    int r_offset_first_hash = r_offset + PUBLIC_KEY_ONE_COORDINATE_LENGTH + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
+    r[r_offset_first_hash + 0] = sha256_hash[7];
+    r[r_offset_first_hash + 1] = sha256_hash[6];
+    r[r_offset_first_hash + 2] = sha256_hash[5];
+    r[r_offset_first_hash + 3] = sha256_hash[4];
+    r[r_offset_first_hash + 4] = sha256_hash[3];
+    r[r_offset_first_hash + 5] = sha256_hash[2];
+    r[r_offset_first_hash + 6] = sha256_hash[1];
+    r[r_offset_first_hash + 7] = sha256_hash[0];
 }
 
-__attribute__((always_inline)) void calculate_sha256(PRIVATE_AS sha256_ctx_t *ctx, PRIVATE_AS const u32 *digest, const int len, u32* target) {
+__attribute__((always_inline)) void calculate_first_sha256(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash) {
 
-    sha256_init(ctx);
-    sha256_update(ctx, digest, len);
+    // digest to be hashed
+    u32 digest_u32[SHA256_HASH_BYTES_LEN];
 
-    for(int i = 0; i < SHA256_HASH_U32_LEN; i++){
-        target[i] = ctx->h[i];
-    }
+    // padded byte array for correct sha256 digest length
+    uchar padded_digest_bytes[DOUBLE_SIZED_SHA256_INPUT_BYTES];
+
+    // prepare hash
+    sha256_padding(digest_bytes, PUBLIC_KEY_BYTES_WITH_PARITY, padded_digest_bytes);
+    storeByteArrayToU32Array(padded_digest_bytes, digest_u32, DOUBLE_SIZED_SHA256_INPUT_BYTES);
+
+    // perform hash
+    sha256_ctx_t ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, digest_u32, DOUBLE_SIZED_SHA256_INPUT_BYTES);
+
+    // store hash in output
+    sha256_hash[0] = ctx.h[0];
+    sha256_hash[1] = ctx.h[1];
+    sha256_hash[2] = ctx.h[2];
+    sha256_hash[3] = ctx.h[3];
+    sha256_hash[4] = ctx.h[4];
+    sha256_hash[5] = ctx.h[5];
+    sha256_hash[6] = ctx.h[6];
+    sha256_hash[7] = ctx.h[7];
+}
+
+__attribute__((always_inline)) void calculate_second_sha256(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash){
+
+    // unpadded digest as byte array (needed for bytewise padding)
+    uchar unpadded_digest_bytes[SHA256_HASH_BYTES_LEN];
+
+    // padded digest as byte array
+    uchar padded_digest_bytes[SINGLE_SIZED_SHA256_INPUT_BYTES];
+
+    // padded digest as u32 array
+    u32 padded_digest_u32[SINGLE_SIZED_SHA256_INPUT_U32];
+
+    storeU32ToByteArray(unpadded_digest_u32, SHA256_HASH_U32_LEN, unpadded_digest_bytes, 0);
+
+    sha256_padding(unpadded_digest_bytes, SHA256_HASH_BYTES_LEN, padded_digest_bytes);
+    storeByteArrayToU32Array(padded_digest_bytes, padded_digest_u32, SINGLE_SIZED_SHA256_INPUT_BYTES);
+
+    // perform hash
+    sha256_ctx_t ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, padded_digest_u32, SINGLE_SIZED_SHA256_INPUT_BYTES);
+
+    // store hash in output
+    sha256_hash[0] = ctx.h[0];
+    sha256_hash[1] = ctx.h[1];
+    sha256_hash[2] = ctx.h[2];
+    sha256_hash[3] = ctx.h[3];
+    sha256_hash[4] = ctx.h[4];
+    sha256_hash[5] = ctx.h[5];
+    sha256_hash[6] = ctx.h[6];
+    sha256_hash[7] = ctx.h[7];
 }
 
 __attribute__((always_inline)) void array_copy_from_to(const u32 *src, const int start_index_src, u32 *dest, const int start_index_dest, const int len) {
@@ -472,13 +534,10 @@ __attribute__((always_inline)) void array_copy_from_to(const u32 *src, const int
     }
 }
 
-__attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, uchar* byteArray, const int numElements) {
-    byteArray[0] = PUBLIC_KEY_PARITY_BYTE; // Set the first element to 4
-
-    for (int i = 0; i < numElements; i++) {
+__attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, const int numU32Elements, uchar *byteArray, const int byteArrayOffset) {
+    for (int i = 0; i < numU32Elements; i++) {
         uint value = u32Array[i];
-        int byteIndex = i * 4 + 1; // Start from the second byte
-
+        int byteIndex = i * 4 + byteArrayOffset;
         byteArray[byteIndex + 0] = (value >> 24) & 0xFF;
         byteArray[byteIndex + 1] = (value >> 16) & 0xFF;
         byteArray[byteIndex + 2] = (value >> 8) & 0xFF;
@@ -491,7 +550,16 @@ __attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, uch
  *  output muste be byte array with size 128
  *  input must be smaller than 120 bytes
  */
-void sha256_padding_to_128_byte_array(const uchar *input, const int numInputBytes, uchar *output) {
+__attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output) {
+
+    int multiples_of_64 = 0;
+    int temp = numInputBytes;
+    while(temp > 0){
+        multiples_of_64 = multiples_of_64 + 1;
+        temp = temp - SINGLE_SIZED_SHA256_INPUT_BYTES;
+    }
+
+    int output_size = multiples_of_64 * SINGLE_SIZED_SHA256_INPUT_BYTES;
 
     // copy input to output
     for(int i = 0; i < numInputBytes; i++){
@@ -502,13 +570,13 @@ void sha256_padding_to_128_byte_array(const uchar *input, const int numInputByte
     output[numInputBytes] = 128;
 
     // number of bytes containing 00000000
-    int numZeroBytes = 128 - 8 - numInputBytes - 1;
+    int numZeroBytes = output_size - 8 - numInputBytes - 1;
+    int offset = numInputBytes + 1 + numZeroBytes;
 
-    for(int i = (numInputBytes + 1); i < (numInputBytes + 1 + numZeroBytes); i++){
+    for(int i = (numInputBytes + 1); i < offset; i++){
         output[i] = 0;
     }
 
-    int offset = numInputBytes + 1 + numZeroBytes;
     long numInputBits = numInputBytes * 8;
 
     output[(offset + 0)] = numInputBits >> 56 & 0xFF;
@@ -530,6 +598,36 @@ void storeByteArrayToU32Array(const uchar *byteArray, u32 *u32Array, const uint 
         u32 bits1to32 = bits1to8 | bits9to16 | bits17to24 | bits25to32;
         u32Array[i] = bits1to32;
     }
+}
+
+__attribute__((always_inline)) void create_public_key_from_coordinates(uchar *public_key_byte_array, const u32 *x_coordinate, const u32 *y_coordinate) {
+
+    u32 public_key_u32_array[PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY];
+
+    // copy x to public_key_u32_array
+    public_key_u32_array[0] = x_coordinate[7];
+    public_key_u32_array[1] = x_coordinate[6];
+    public_key_u32_array[2] = x_coordinate[5];
+    public_key_u32_array[3] = x_coordinate[4];
+    public_key_u32_array[4] = x_coordinate[3];
+    public_key_u32_array[5] = x_coordinate[2];
+    public_key_u32_array[6] = x_coordinate[1];
+    public_key_u32_array[7] = x_coordinate[0];
+
+    // copy y to public_key_u32_array
+    public_key_u32_array[8] = y_coordinate[7];
+    public_key_u32_array[9] = y_coordinate[6];
+    public_key_u32_array[10] = y_coordinate[5];
+    public_key_u32_array[11] = y_coordinate[4];
+    public_key_u32_array[12] = y_coordinate[3];
+    public_key_u32_array[13] = y_coordinate[2];
+    public_key_u32_array[14] = y_coordinate[1];
+    public_key_u32_array[15] = y_coordinate[0];
+
+    // Set the first element to 4
+    public_key_byte_array[0] = PUBLIC_KEY_PARITY_BYTE;
+
+    storeU32ToByteArray(public_key_u32_array, PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY, public_key_byte_array, 1);
 }
 
 __kernel void test_kernel_do_nothing(__global u32 *r, __global const u32 *k) {
