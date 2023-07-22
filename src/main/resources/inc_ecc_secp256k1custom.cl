@@ -34,6 +34,7 @@ __attribute__((always_inline)) void create_public_key_from_coordinates(uchar *pu
 __attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output);
 __attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
 __attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
+__attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *sha256_hash, u32 *ripemd160_hash);
 
 /*
  * Generate a public key from a private key.
@@ -467,6 +468,25 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
     r[r_offset_second_hash + 5] = second_sha256_hash[2];
     r[r_offset_second_hash + 6] = second_sha256_hash[1];
     r[r_offset_second_hash + 7] = second_sha256_hash[0];
+}
+
+ /*
+  * Calculates the RIPEMD-160 hash from a given digest.
+  *
+  * INPUT u32 *digest:          Pointer to the digest as u32 array to be hashed
+  * OUTPUT u32 *ripemd160_hash: Pointer to the resulting hash as an u32 array
+  */
+__attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *digest, u32 *ripemd160_hash){
+
+    // dummy impl for initial testing
+    ripemd160_hash[0] = 0;
+    ripemd160_hash[1] = 1;
+    ripemd160_hash[2] = 2;
+    ripemd160_hash[3] = 3;
+    ripemd160_hash[4] = 4;
+    ripemd160_hash[5] = 5;
+    ripemd160_hash[6] = 6;
+    ripemd160_hash[7] = 7;
 }
 
  /*
