@@ -291,9 +291,9 @@ __kernel void generateKeysKernel_grid(__global u32 *r, __global const u32 *k) {
 
 /*
  * Calculates the public key from a given private key. Will manipulate that private key depending on the global id.
- * Then hashes the calculated public key twice with Sha256.
+ * Then hashes the calculated public key twice with SHA-256.
  *
- * OUTPUT u32 *r:   The u32 array storing the result of this kernel
+ * OUTPUT u32 *r:   The u32 array storing the result of this kernel (x,y coordinates, first hash, second hash)
  * INPUT u32 *k:    The u32 array storing the initial private key which will be modified in this kernel method
  */
 __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32 *k) {
@@ -303,7 +303,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
     u32 k_local[PRIVATE_KEY_LENGTH];
     uchar public_key[PUBLIC_KEY_BYTES_WITH_PARITY];
 
-    // to store the results of the sha256 hashes
+    // to store the results of the SHA-256 hashes
     u32 first_sha256_hash[SHA256_HASH_U32_LEN];
     u32 second_sha256_hash[SHA256_HASH_U32_LEN];
 
@@ -353,7 +353,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
 
     calculate_first_sha256(public_key, first_sha256_hash);
 
-    // write the first sha256-hash into the result array
+    // write the first SHA-256 hash into the result array
     int r_offset_first_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
     r[r_offset_first_hash + 0] = first_sha256_hash[7];
     r[r_offset_first_hash + 1] = first_sha256_hash[6];
@@ -366,7 +366,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
 
     calculate_second_sha256(first_sha256_hash, second_sha256_hash);
 
-    // write the second sha256-hash into the result array
+    // write the second SHA-256 hash into the result array
     int r_offset_second_hash = r_offset_first_hash + SHA256_HASH_U32_LEN;
     r[r_offset_second_hash + 0] = second_sha256_hash[7];
     r[r_offset_second_hash + 1] = second_sha256_hash[6];
@@ -379,9 +379,9 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
 }
 
 /*
- * Calculates the public key from a given private key and then hashes the result twice with Sha256.
+ * Calculates the public key from a given private key and then hashes the result twice with SHA-256.
  *
- * OUTPUT u32 *r:   The u32 array storing the result of this kernel
+ * OUTPUT u32 *r:   The u32 array storing the result of this kernel (x,y coordinates, first hash, second hash)
  * INPUT u32 *k:    The u32 array storing the private key
  */
 __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) {
@@ -391,7 +391,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
     u32 k_local[PRIVATE_KEY_LENGTH];
     uchar public_key[PUBLIC_KEY_BYTES_WITH_PARITY];
 
-    // to store the results of the sha256 hashes
+    // to store the results of the SHA-256 hashes
     u32 first_sha256_hash[SHA256_HASH_U32_LEN];
     u32 second_sha256_hash[SHA256_HASH_U32_LEN];
 
@@ -444,7 +444,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
 
     calculate_first_sha256(public_key, first_sha256_hash);
 
-    // write the first sha256-hash into the result array
+    // write the first SHA-256 hash into the result array
     int r_offset_first_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
     r[r_offset_first_hash + 0] = first_sha256_hash[7];
     r[r_offset_first_hash + 1] = first_sha256_hash[6];
@@ -457,7 +457,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
 
     calculate_second_sha256(first_sha256_hash, second_sha256_hash);
 
-    // write the second sha256-hash into the result array
+    // write the second SHA-256 hash into the result array
     int r_offset_second_hash = r_offset_first_hash + SHA256_HASH_U32_LEN;
     r[r_offset_second_hash + 0] = second_sha256_hash[7];
     r[r_offset_second_hash + 1] = second_sha256_hash[6];
@@ -470,7 +470,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
 }
 
  /*
-  * Calculates the Sha256 hash from a given digest.
+  * Calculates the SHA-256 hash from a given digest.
   *
   * INPUT uchar *digest_bytes:  Pointer to the digest as byte array to be hashed
   * OUTPUT u32 *sha256_hash:     Pointer to the resulting hash as an u32 array
@@ -504,7 +504,7 @@ __attribute__((always_inline)) void calculate_first_sha256(PRIVATE_AS const ucha
 }
 
  /*
-  * Calculates the Sha256 hash from a given digest.
+  * Calculates the SHA-256 hash from a given digest.
   *
   * INPUT uchar *unpadded_digest_u32:   Pointer to the digest as u32 array to be hashed
   * OUTPUT u32 *sha256_hash:            Pointer to the resulting hash as an u32 array
@@ -542,8 +542,8 @@ __attribute__((always_inline)) void calculate_second_sha256(PRIVATE_AS const u32
 }
 
  /*
-  * This function will perform a Sha256 input padding on a given byte array.
-  * For Sha256 the input must be a multiple 64 bytes.
+  * This function will perform a SHA-256 input padding on a given byte array.
+  * For SHA-256 the input must be a multiple 64 bytes.
   * If the input smaller, a special padding operation must be performed.
   *
   * INPUT uchar *input:         Pointer to the byte array to be padded
