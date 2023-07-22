@@ -289,4 +289,129 @@ public class OpenCLContextTest {
         assertThat(secondSha256HashResult, is(equalTo(expectedDoubleHashedSha256ByteArray)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
+
+    @Test
+    public void test_generateDoubleSha256Hash_randomSinglePrivateKey() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomUncompressedPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
+        byte[] expectedPublicKey = TestHelper.uncompressedPublicKeyFromPrivateKey(randomSinglePrivateKey[0]);
+        byte[] expectedSingleHashedSha256ByteArray = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
+        byte[] expectedDoubleHashedSha256ByteArray = TestHelper.calculateSha256FromByteArray(expectedSingleHashedSha256ByteArray);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        PublicKeyBytes publicKeyBytesResult = openCLGridResult.getPublicKeyBytes()[0];
+        Sha256Bytes sha256BytesResult = openCLGridResult.getSha256Bytes()[0];
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        byte[] firstSha256HashResult = sha256BytesResult.getFirstSha256Bytes();
+        byte[] secondSha256HashResult = sha256BytesResult.getSecondSha256Bytes();
+        assertThat(publicKeyBytesResult.getUncompressed(), is(equalTo(expectedPublicKey)));
+        assertThat(firstSha256HashResult, is(equalTo(expectedSingleHashedSha256ByteArray)));
+        assertThat(secondSha256HashResult, is(equalTo(expectedDoubleHashedSha256ByteArray)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generate256DoubleSha256Hashes_specificSinglePrivateKeys_chunkMode() {
+        // arrange
+        BigInteger[] specificSinglePrivateKey = TestHelper.createBigIntegerArrayFromSingleHexString(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
+        PublicKeyBytes[] publicKeyBytesResult = openCLGridResult.getPublicKeyBytes();
+        Sha256Bytes[] sha256BytesResult = openCLGridResult.getSha256Bytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // prepare assert
+        BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
+        Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(privateKeysChunk, publicKeyBytesResult);
+        Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
+
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
+        Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
+
+        Map<String, String> resultedDoubleSha256HashesMap = TestHelper.createMapOfDoubleSha256Bytes(sha256BytesResult);
+        Map<String, String> expectedDoubleSha256HashesMap = TestHelper.createExpectedMapOfDoubleSha256Bytes(sha256BytesResult);
+
+        // assert
+        assertThatKeyMap(resultedPrivateKeysPublicKeysMap).isEqualTo(expectedPrivateKeysPublicKeysMap);
+        assertThatKeyMap(resultedPublicKeysSha256HashesMap).isEqualTo(expectedPublicKeysSha256HashesMap);
+        assertThatKeyMap(resultedDoubleSha256HashesMap).isEqualTo(expectedDoubleSha256HashesMap);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generate256DoubleSha256Hashes_randomSinglePrivateKeys_chunkMode() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomUncompressedPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        PublicKeyBytes[] publicKeyBytesResult = openCLGridResult.getPublicKeyBytes();
+        Sha256Bytes[] sha256BytesResult = openCLGridResult.getSha256Bytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // prepare assert
+        BigInteger[] privateKeysChunk = TestHelper.generateChunkOfPrivateKeysOutOfSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
+        Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(privateKeysChunk, publicKeyBytesResult);
+        Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
+
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
+        Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
+
+        Map<String, String> resultedDoubleSha256HashesMap = TestHelper.createMapOfDoubleSha256Bytes(sha256BytesResult);
+        Map<String, String> expectedDoubleSha256HashesMap = TestHelper.createExpectedMapOfDoubleSha256Bytes(sha256BytesResult);
+
+        // assert
+        assertThatKeyMap(resultedPrivateKeysPublicKeysMap).isEqualTo(expectedPrivateKeysPublicKeysMap);
+        assertThatKeyMap(resultedPublicKeysSha256HashesMap).isEqualTo(expectedPublicKeysSha256HashesMap);
+        assertThatKeyMap(resultedDoubleSha256HashesMap).isEqualTo(expectedDoubleSha256HashesMap);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generate256DoubleSha256Hashes_random256PrivateKeys_nonChunkMode() {
+        // arrange
+        BigInteger[] random256PrivateKeys = TestHelper.generateRandomUncompressedPrivateKeys(CHUNK_SIZE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_SHA256_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
+        PublicKeyBytes[] publicKeyBytesResult = openCLGridResult.getPublicKeyBytes();
+        Sha256Bytes[] sha256BytesResult = openCLGridResult.getSha256Bytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // prepare assert
+        Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createMapFromBigIntegerArrayAndPublicKeyBytesArray(random256PrivateKeys, publicKeyBytesResult);
+        Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(random256PrivateKeys);
+
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createMapOfPublicKeyBytesAndSha256Bytes(sha256BytesResult);
+        Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeyBytesAndSha256Bytes(publicKeyBytesResult);
+
+        Map<String, String> resultedDoubleSha256HashesMap = TestHelper.createMapOfDoubleSha256Bytes(sha256BytesResult);
+        Map<String, String> expectedDoubleSha256HashesMap = TestHelper.createExpectedMapOfDoubleSha256Bytes(sha256BytesResult);
+
+        // assert
+        assertThatKeyMap(resultedPrivateKeysPublicKeysMap).isEqualTo(expectedPrivateKeysPublicKeysMap);
+        assertThatKeyMap(resultedPublicKeysSha256HashesMap).isEqualTo(expectedPublicKeysSha256HashesMap);
+        assertThatKeyMap(resultedDoubleSha256HashesMap).isEqualTo(expectedDoubleSha256HashesMap);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
 }
