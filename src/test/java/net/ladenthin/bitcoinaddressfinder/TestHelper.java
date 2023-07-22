@@ -198,6 +198,18 @@ public class TestHelper {
         return map;
     }
 
+    public static Map<String, String> createMapOfDoubleSha256Bytes(Sha256Bytes[] sha256BytesResult) {
+        Map<String, String> map = new HashMap<>();
+        for (Sha256Bytes sha256Bytes : sha256BytesResult) {
+            byte[] keyBytes =  sha256Bytes.getFirstSha256Bytes();
+            String keyString = hexStringFromByteArray(keyBytes);
+            byte[] valueBytes = sha256Bytes.getSecondSha256Bytes();
+            String valueString = hexStringFromByteArray(valueBytes);
+            map.put(keyString, valueString);
+        }
+        return map;
+    }
+
     /**
      * Generates the sha256 hash for each public key and stores both as hex Strings.
      *
@@ -227,6 +239,18 @@ public class TestHelper {
             String privateKeyHexString = hexStringFromBigInteger(privateKey);
             String publicKeyHexString = uncompressedPublicKeyHexStringFromPrivateKey(privateKey);
             map.put(privateKeyHexString, publicKeyHexString);
+        }
+        return map;
+    }
+
+    public static Map<String, String> createExpectedMapOfDoubleSha256Bytes(Sha256Bytes[] sha256BytesResult) {
+        Map<String, String> map = new HashMap<>();
+        for (Sha256Bytes sha256Bytes : sha256BytesResult) {
+            byte[] firstSha256HashBytes = sha256Bytes.getFirstSha256Bytes();
+            String firstSha256HashHexString = hexStringFromByteArray(firstSha256HashBytes);
+            byte[] secondSha256HashBytes = calculateSha256FromByteArray(firstSha256HashBytes);
+            String secondSha256HashHexString = hexStringFromByteArray(secondSha256HashBytes);
+            map.put(firstSha256HashHexString, secondSha256HashHexString);
         }
         return map;
     }
