@@ -32,8 +32,8 @@ __attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, con
 __attribute__((always_inline)) void storeByteArrayToU32Array(const uchar *byteArray, u32 *u32Array, const uint arrayLength);
 __attribute__((always_inline)) void create_public_key_from_coordinates(uchar *public_key_byte_array, const u32 *x_coordinate, const u32 *y_coordinate);
 __attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output);
-__attribute__((always_inline)) void calculate_first_sha256(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
-__attribute__((always_inline)) void calculate_second_sha256(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
+__attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
+__attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
 
 /*
  * Generate a public key from a private key.
@@ -351,7 +351,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
 
     create_public_key_from_coordinates(public_key, x_local, y_local);
 
-    calculate_first_sha256(public_key, first_sha256_hash);
+    calculate_sha256_from_bytes(public_key, first_sha256_hash);
 
     // write the first SHA-256 hash into the result array
     int r_offset_first_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
@@ -364,7 +364,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
     r[r_offset_first_hash + 6] = first_sha256_hash[1];
     r[r_offset_first_hash + 7] = first_sha256_hash[0];
 
-    calculate_second_sha256(first_sha256_hash, second_sha256_hash);
+    calculate_sha256_from_u32(first_sha256_hash, second_sha256_hash);
 
     // write the second SHA-256 hash into the result array
     int r_offset_second_hash = r_offset_first_hash + SHA256_HASH_U32_LEN;
@@ -442,7 +442,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
 
     create_public_key_from_coordinates(public_key, x_local, y_local);
 
-    calculate_first_sha256(public_key, first_sha256_hash);
+    calculate_sha256_from_bytes(public_key, first_sha256_hash);
 
     // write the first SHA-256 hash into the result array
     int r_offset_first_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
@@ -455,7 +455,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
     r[r_offset_first_hash + 6] = first_sha256_hash[1];
     r[r_offset_first_hash + 7] = first_sha256_hash[0];
 
-    calculate_second_sha256(first_sha256_hash, second_sha256_hash);
+    calculate_sha256_from_u32(first_sha256_hash, second_sha256_hash);
 
     // write the second SHA-256 hash into the result array
     int r_offset_second_hash = r_offset_first_hash + SHA256_HASH_U32_LEN;
@@ -475,7 +475,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
   * INPUT uchar *digest_bytes:  Pointer to the digest as byte array to be hashed
   * OUTPUT u32 *sha256_hash:     Pointer to the resulting hash as an u32 array
   */
-__attribute__((always_inline)) void calculate_first_sha256(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash) {
+__attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash) {
 
     // digest to be hashed
     u32 digest_u32[SHA256_HASH_BYTES_LEN];
@@ -509,7 +509,7 @@ __attribute__((always_inline)) void calculate_first_sha256(PRIVATE_AS const ucha
   * INPUT uchar *unpadded_digest_u32:   Pointer to the digest as u32 array to be hashed
   * OUTPUT u32 *sha256_hash:            Pointer to the resulting hash as an u32 array
   */
-__attribute__((always_inline)) void calculate_second_sha256(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash){
+__attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash){
 
     // unpadded digest as byte array (needed for bytewise padding)
     uchar unpadded_digest_bytes[SHA256_HASH_BYTES_LEN];
