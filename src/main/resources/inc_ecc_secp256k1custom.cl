@@ -470,6 +470,97 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
     r[r_offset_second_hash + 7] = second_sha256_hash[0];
 }
 
+/*
+ * Calculates the public key from a given private key and then hashes the result with SHA-256 and again with RIPEMD-160.
+ *
+ * OUTPUT u32 *r:   The u32 array storing the result of this kernel (x,y coordinates, first hash, second hash)
+ * INPUT u32 *k:    The u32 array storing the private key
+ */
+__kernel void generateRipemd160ChunkKernel_grid(__global u32 *r, __global const u32 *k) {
+
+    u32 x_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
+    u32 y_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
+    u32 k_local[PRIVATE_KEY_LENGTH];
+    uchar public_key[PUBLIC_KEY_BYTES_WITH_PARITY];
+
+    // to store the results of the SHA-256 and RIPEMD-160 hashes
+    u32 sha256_hash[SHA256_HASH_U32_LEN];
+    u32 ripemd160_hash[RIPEMD160_HASH_U32_LEN];
+
+    secp256k1_t g_xy_local;
+
+    // get_global_id(dim) where dim is the dimension index (0 for first, 1 for
+    // second dimension etc.)
+    u32 global_id = get_global_id(0);
+
+    // new offset for private keys
+    int k_offset = PRIVATE_KEY_LENGTH * global_id;
+
+    // get private key from private key grid
+    k_local[0] = k[0 + k_offset];
+    k_local[1] = k[1 + k_offset];
+    k_local[2] = k[2 + k_offset];
+    k_local[3] = k[3 + k_offset];
+    k_local[4] = k[4 + k_offset];
+    k_local[5] = k[5 + k_offset];
+    k_local[6] = k[6 + k_offset];
+    k_local[7] = k[7 + k_offset];
+
+    set_precomputed_basepoint_g(&g_xy_local);
+
+    point_mul_xy(x_local, y_local, k_local, &g_xy_local);
+
+    // write the x-coordinate into the result array
+    int r_offset_x = RESULT_U32_LEN_WITH_RIPEMD160 * global_id;
+    r[r_offset_x + 0] = x_local[0];
+    r[r_offset_x + 1] = x_local[1];
+    r[r_offset_x + 2] = x_local[2];
+    r[r_offset_x + 3] = x_local[3];
+    r[r_offset_x + 4] = x_local[4];
+    r[r_offset_x + 5] = x_local[5];
+    r[r_offset_x + 6] = x_local[6];
+    r[r_offset_x + 7] = x_local[7];
+
+    // write the y-coordinate into the result array
+    int r_offset_y = r_offset_x + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
+    r[r_offset_y + 0] = y_local[0];
+    r[r_offset_y + 1] = y_local[1];
+    r[r_offset_y + 2] = y_local[2];
+    r[r_offset_y + 3] = y_local[3];
+    r[r_offset_y + 4] = y_local[4];
+    r[r_offset_y + 5] = y_local[5];
+    r[r_offset_y + 6] = y_local[6];
+    r[r_offset_y + 7] = y_local[7];
+
+    create_public_key_from_coordinates(public_key, x_local, y_local);
+
+    calculate_sha256_from_bytes(public_key, sha256_hash);
+
+    // write the SHA-256 hash into the result array
+    int r_offset_sha256_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
+    r[r_offset_sha256_hash + 0] = sha256_hash[7];
+    r[r_offset_sha256_hash + 1] = sha256_hash[6];
+    r[r_offset_sha256_hash + 2] = sha256_hash[5];
+    r[r_offset_sha256_hash + 3] = sha256_hash[4];
+    r[r_offset_sha256_hash + 4] = sha256_hash[3];
+    r[r_offset_sha256_hash + 5] = sha256_hash[2];
+    r[r_offset_sha256_hash + 6] = sha256_hash[1];
+    r[r_offset_sha256_hash + 7] = sha256_hash[0];
+
+    calculate_ripemd160_from_u32(sha256_hash, ripemd160_hash);
+
+    // write the RIPEMD-160 hash into the result array
+    int r_offset_ripemd160_hash = r_offset_sha256_hash + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
+    r[r_offset_ripemd160_hash + 0] = ripemd160_hash[7];
+    r[r_offset_ripemd160_hash + 1] = ripemd160_hash[6];
+    r[r_offset_ripemd160_hash + 2] = ripemd160_hash[5];
+    r[r_offset_ripemd160_hash + 3] = ripemd160_hash[4];
+    r[r_offset_ripemd160_hash + 4] = ripemd160_hash[3];
+    r[r_offset_ripemd160_hash + 5] = ripemd160_hash[2];
+    r[r_offset_ripemd160_hash + 6] = ripemd160_hash[1];
+    r[r_offset_ripemd160_hash + 7] = ripemd160_hash[0];
+}
+
  /*
   * Calculates the RIPEMD-160 hash from a given digest.
   *

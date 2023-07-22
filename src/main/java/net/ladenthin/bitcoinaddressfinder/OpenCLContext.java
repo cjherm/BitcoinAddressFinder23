@@ -96,6 +96,7 @@ public class OpenCLContext {
     private static final String ADR_NONCHUNK_KERNEL_NAME = ""; // TODO define kernel name
     private final static String SHA256_CHUNK_KERNEL_NAME = "generateSha256ChunkKernel_grid";
     private final static String SHA256_NONCHUNK_KERNEL_NAME = "generateSha256Kernel_grid";
+    private final static String RIPEMD160_CHUNK_KERNEL_NAME = "generateRipemd160ChunkKernel_grid";
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
