@@ -428,7 +428,6 @@ public class OpenCLContextTest {
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
         PublicKeyBytes publicKeyBytesResult = openCLGridResult.getPublicKeyBytes()[0];
-        Sha256Bytes sha256BytesResult = openCLGridResult.getSha256Bytes()[0];
         Ripemd160Bytes ripemd160BytesResult = openCLGridResult.getRipemd160Bytes()[0];
 
         // cleanup
@@ -436,8 +435,8 @@ public class OpenCLContextTest {
         openCLGridResult.freeResult();
 
         // assert
-        byte[] firstSha256HashResult = sha256BytesResult.getFirstSha256Bytes();
-        byte[] ripemd160HashResult = ripemd160BytesResult.getBytes();
+        byte[] firstSha256HashResult = ripemd160BytesResult.getSha256Bytes();
+        byte[] ripemd160HashResult = ripemd160BytesResult.getRipemd160Bytes();
         assertThat(publicKeyBytesResult.getUncompressed(), is(equalTo(TestHelper.transformHexStringToBytes(PUBLIC_KEY_HEX_STRING))));
         assertThat(firstSha256HashResult, is(equalTo(expectedSingleHashedSha256ByteArray)));
         assertThat(ripemd160HashResult, is(equalTo(expectedRipemd160ByteArray)));
