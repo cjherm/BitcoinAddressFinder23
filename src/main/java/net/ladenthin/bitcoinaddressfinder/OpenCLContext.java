@@ -57,6 +57,7 @@ public class OpenCLContext {
     public static final int GEN_PUBLIC_KEYS_MODE = 0;
     public static final int GEN_ADDRESSES_MODE = 1;
     public static final int GEN_SHA256_MODE = 2;
+    public static final int GEN_RIPEMD160_MODE = 3;
     private int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
@@ -179,6 +180,8 @@ public class OpenCLContext {
             setAddressGeneratorKernel();
         } else if (producerOpenCL.kernelMode == GEN_SHA256_MODE) {
             setSha256Kernel();
+        } else if (producerOpenCL.kernelMode == GEN_RIPEMD160_MODE) {
+            setRipemd150Kernel();
         } else {
             // TODO Implement else-case
         }
@@ -205,6 +208,14 @@ public class OpenCLContext {
             kernel = clCreateKernel(program, SHA256_CHUNK_KERNEL_NAME, errorCode);
         } else {
             kernel = clCreateKernel(program, SHA256_NONCHUNK_KERNEL_NAME, errorCode);
+        }
+    }
+
+    private void setRipemd150Kernel() {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, RIPEMD160_CHUNK_KERNEL_NAME, errorCode);
+        } else {
+            // TODO implement else case
         }
     }
 
