@@ -100,6 +100,7 @@ public class OpenCLContext {
     private final static String SHA256_CHUNK_KERNEL_NAME = "generateSha256ChunkKernel_grid";
     private final static String SHA256_NONCHUNK_KERNEL_NAME = "generateSha256Kernel_grid";
     private final static String RIPEMD160_CHUNK_KERNEL_NAME = "generateRipemd160ChunkKernel_grid";
+    private final static String RIPEMD160_NONCHUNK_KERNEL_NAME = "generateRipemd160Kernel_grid";
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
@@ -217,7 +218,7 @@ public class OpenCLContext {
         if (producerOpenCL.chunkMode) {
             kernel = clCreateKernel(program, RIPEMD160_CHUNK_KERNEL_NAME, errorCode);
         } else {
-            // TODO implement else case
+            kernel = clCreateKernel(program, RIPEMD160_NONCHUNK_KERNEL_NAME, errorCode);
         }
     }
 
