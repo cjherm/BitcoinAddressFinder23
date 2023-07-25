@@ -558,10 +558,10 @@ __kernel void generateRipemd160ChunkKernel_grid(__global u32 *r, __global const 
  /*
   * Calculates the RIPEMD-160 hash from a given digest.
   *
-  * INPUT u32 *digest:          Pointer to the digest as u32 array to be hashed
-  * OUTPUT u32 *ripemd160_hash: Pointer to the resulting hash as an u32 array
+  * INPUT u32 *unpadded_digest_u32: Pointer to the digest as u32 array to be hashed
+  * OUTPUT u32 *ripemd160_hash:     Pointer to the resulting hash as an u32 array
   */
-__attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *digest, u32 *ripemd160_hash){
+__attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *unpadded_digest_u32, u32 *ripemd160_hash){
 
     // dummy impl for initial testing
     ripemd160_hash[0] = 1;
