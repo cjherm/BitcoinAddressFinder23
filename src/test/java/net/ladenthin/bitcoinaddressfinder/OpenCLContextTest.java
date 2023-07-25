@@ -1,7 +1,6 @@
 package net.ladenthin.bitcoinaddressfinder;
 
 import org.jocl.CL;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -21,11 +20,11 @@ public class OpenCLContextTest {
 
     private static final boolean CHUNK_MODE = true;
     private static final boolean NON_CHUNK_MODE = false;
+    // TODO change private key example to: c297e4944f46f3b9f04cf4b3984f49bd4ee40dec33991066fa15cdb227933469 (and all following as well)
     private static final String PRIVATE_KEY_HEX_STRING = "c297e4944f46f3b9f04cf4b3984f49bd4ee40dec33991066fa15cdb227933469";
     private static final String PUBLIC_KEY_HEX_STRING = "045f399867ee13c5ac525259f036c90f455b11d667acfcdfc36791288547633611e8416a53aea83bd55691a5721775a581bd1e8e09dd3db4021a6f6daebdbcc9da";
     private static final String SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING = "f2342f1a306b5920ca2f42f2ff84cfd553ac2e36ef4d9888fc6b407f167efd69";
     private static final String DOUBLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING = "5de335d1480b8cf936db349fa7a60c5c9bd9599fc6a0a5c57c4d79c3eca1350f";
-    private static final String RIPEMD160_FROM_SINGLE_SHA256_HEX_STRING = "9c3161ecfc51120be43a8a832bec45610fd11739";
     private static final String ERROR_CODE_SUCCESS = CL.stringFor_errorCode(CL.CL_SUCCESS);
 
     @Test
