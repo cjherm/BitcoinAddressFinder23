@@ -31,7 +31,7 @@ k_local[0] = 0x929f72dc;
 __attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, const int numU32Elements, uchar *byteArray, const int byteArrayOffset);
 __attribute__((always_inline)) void storeByteArrayToU32Array(const uchar *byteArray, u32 *u32Array, const uint arrayLength);
 __attribute__((always_inline)) void create_public_key_from_coordinates(uchar *public_key_byte_array, const u32 *x_coordinate, const u32 *y_coordinate);
-__attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output);
+__attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output, int *numOutputBytes);
 __attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
 __attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
 __attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *sha256_hash, u32 *ripemd160_hash);
@@ -585,14 +585,17 @@ __attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const
     // padded byte array for correct sha256 digest length
     uchar padded_digest_bytes[DOUBLE_SIZED_SHA256_INPUT_BYTES];
 
+    // size in bytes of the input to be hashed
+    int padded_digest_size;
+
     // prepare hash
-    sha256_padding(digest_bytes, PUBLIC_KEY_BYTES_WITH_PARITY, padded_digest_bytes);
-    storeByteArrayToU32Array(padded_digest_bytes, digest_u32, DOUBLE_SIZED_SHA256_INPUT_BYTES);
+    sha256_padding(digest_bytes, PUBLIC_KEY_BYTES_WITH_PARITY, padded_digest_bytes, &padded_digest_size);
+    storeByteArrayToU32Array(padded_digest_bytes, digest_u32, padded_digest_size);
 
     // perform hash
     sha256_ctx_t ctx;
     sha256_init(&ctx);
-    sha256_update(&ctx, digest_u32, DOUBLE_SIZED_SHA256_INPUT_BYTES);
+    sha256_update(&ctx, digest_u32, padded_digest_size);
 
     // store hash in output
     sha256_hash[0] = ctx.h[0];
@@ -622,15 +625,19 @@ __attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u
     // padded digest as u32 array
     u32 padded_digest_u32[SINGLE_SIZED_SHA256_INPUT_U32];
 
+    // size in bytes of the input to be hashed
+    int padded_digest_size;
+
     storeU32ToByteArray(unpadded_digest_u32, SHA256_HASH_U32_LEN, unpadded_digest_bytes, 0);
 
-    sha256_padding(unpadded_digest_bytes, SHA256_HASH_BYTES_LEN, padded_digest_bytes);
-    storeByteArrayToU32Array(padded_digest_bytes, padded_digest_u32, SINGLE_SIZED_SHA256_INPUT_BYTES);
+    sha256_padding(unpadded_digest_bytes, SHA256_HASH_BYTES_LEN, padded_digest_bytes, &padded_digest_size);
+
+    storeByteArrayToU32Array(padded_digest_bytes, padded_digest_u32, padded_digest_size);
 
     // perform hash
     sha256_ctx_t ctx;
     sha256_init(&ctx);
-    sha256_update(&ctx, padded_digest_u32, SINGLE_SIZED_SHA256_INPUT_BYTES);
+    sha256_update(&ctx, padded_digest_u32, padded_digest_size);
 
     // store hash in output
     sha256_hash[0] = ctx.h[0];
@@ -651,8 +658,9 @@ __attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u
   * INPUT uchar *input:         Pointer to the byte array to be padded
   * PARAM int numInputBytes:    Size of the byte array to be padded
   * OUTPUT uchar *output:       Pointer to the byte array to store the padded byte array
+  * OUTPUT int *numOutputBytes: Pointer to a int to store the size of the output in bytes
   */
-__attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output) {
+__attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output, int *numOutputBytes) {
 
     int multiples_of_64 = 0;
     int temp = numInputBytes;
@@ -662,6 +670,7 @@ __attribute__((always_inline)) void sha256_padding(const uchar *input, const int
     }
 
     int output_size = multiples_of_64 * SINGLE_SIZED_SHA256_INPUT_BYTES;
+    *numOutputBytes = output_size;
 
     // copy input to output
     for(int i = 0; i < numInputBytes; i++){
