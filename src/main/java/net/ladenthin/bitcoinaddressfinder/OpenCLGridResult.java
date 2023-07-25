@@ -217,24 +217,11 @@ public class OpenCLGridResult {
      * @return array of {@link Ripemd160Bytes}
      */
     public Ripemd160Bytes[] getRipemd160Bytes() {
-        if (chunkMode) {
-            return getRipemd160BytesInChunkMode();
-        } else {
-            return getRipemd160BytesInNonChunkMode();
-        }
-    }
-
-    private Ripemd160Bytes[] getRipemd160BytesInChunkMode() {
         Ripemd160Bytes[] ripemd160Bytes = new Ripemd160Bytes[workSize];
         for (int currentWorkItem = 0; currentWorkItem < workSize; currentWorkItem++) {
             ripemd160Bytes[currentWorkItem] = readBufferForRipemd160Bytes(currentWorkItem);
         }
         return ripemd160Bytes;
-    }
-
-    private Ripemd160Bytes[] getRipemd160BytesInNonChunkMode() {
-        // TODO impl method
-        return null;
     }
 
     private Ripemd160Bytes readBufferForRipemd160Bytes(int currentWorkItem) {
