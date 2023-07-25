@@ -24,6 +24,7 @@ public class OpenCLGridResult {
 
     public static final int TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256 = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES + Sha256Bytes.ONE_SHA256_NUM_BYTES;
     public static final int TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 = TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256 + Sha256Bytes.ONE_SHA256_NUM_BYTES;
+    public static final int TWO_COORDINATES_NUM_BYTES_SHA256_RIPEMD160 = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES + Sha256Bytes.ONE_SHA256_NUM_BYTES + Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES;
 
     private final ByteBufferUtility byteBufferUtility = new ByteBufferUtility(true);
     private final BigInteger[] secretKeys;
@@ -107,7 +108,7 @@ public class OpenCLGridResult {
         } else if (kernelMode == OpenCLContext.GEN_SHA256_MODE) {
             keyOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * keyNumber;
         } else if (kernelMode == OpenCLContext.GEN_RIPEMD160_MODE) {
-            keyOffsetInByteBuffer = Ripemd160Bytes.RESULT_LENGTH_IN_BYTES * keyNumber;
+            keyOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_SHA256_RIPEMD160 * keyNumber;
         } else {
             // TODO handle else case
             return null;
