@@ -563,12 +563,45 @@ __kernel void generateRipemd160ChunkKernel_grid(__global u32 *r, __global const 
   */
 __attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *unpadded_digest_u32, u32 *ripemd160_hash){
 
-    // dummy impl for initial testing
-    ripemd160_hash[0] = 1;
-    ripemd160_hash[1] = 2;
-    ripemd160_hash[2] = 3;
-    ripemd160_hash[3] = 4;
-    ripemd160_hash[4] = 5;
+    // padded digest as u32 array (16x 32bit words or 512 bits)
+    u32 padded_digest_u32[SINGLE_SIZED_SHA256_INPUT_U32];
+
+    padded_digest_u32[0] = unpadded_digest_u32[0];
+    padded_digest_u32[1] = unpadded_digest_u32[1];
+    padded_digest_u32[2] = unpadded_digest_u32[2];
+    padded_digest_u32[3] = unpadded_digest_u32[3];
+
+    padded_digest_u32[4] = unpadded_digest_u32[4];
+    padded_digest_u32[5] = unpadded_digest_u32[5];
+    padded_digest_u32[6] = unpadded_digest_u32[6];
+    padded_digest_u32[7] = unpadded_digest_u32[7];
+
+    // begin of padding bits:
+    // 2147483648 is in binary = 10000000 00000000 00000000 00000000
+    padded_digest_u32[8] = 2147483648;
+    padded_digest_u32[9] = 0;
+    padded_digest_u32[10] = 0;
+    padded_digest_u32[11] = 0;
+
+    padded_digest_u32[12] = 0;
+    padded_digest_u32[13] = 0;
+
+    // begin of 64 length bits:
+    // 65536 is in binary = 00000000 00000001 00000000 00000000
+    // (little endian for 256 decimal length of initial digest)
+    padded_digest_u32[14] = 65536;
+    padded_digest_u32[15] = 0;
+
+    ripemd160_ctx_t ctx;
+    ripemd160_init(&ctx);
+    ripemd160_update_swap(&ctx, padded_digest_u32, SINGLE_SIZED_SHA256_INPUT_BYTES);
+
+    // store hash in output
+    ripemd160_hash[0] = ctx.h[0];
+    ripemd160_hash[1] = ctx.h[1];
+    ripemd160_hash[2] = ctx.h[2];
+    ripemd160_hash[3] = ctx.h[3];
+    ripemd160_hash[4] = ctx.h[4];
 }
 
  /*
