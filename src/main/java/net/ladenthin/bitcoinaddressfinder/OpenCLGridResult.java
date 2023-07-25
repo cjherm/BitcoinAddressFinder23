@@ -154,6 +154,7 @@ public class OpenCLGridResult {
         Sha256Bytes[] sha256Bytes = new Sha256Bytes[workSize];
         for (int currentWorkItem = 0; currentWorkItem < workSize; currentWorkItem++) {
             PublicKeyBytes publicKeyBytes = getPublicKeyFromByteBufferXY(result, currentWorkItem, secretKeys[0]);
+            // TODO handle possible case for publicKeyBytes = null
             sha256Bytes[currentWorkItem] = readBufferForSha256Bytes(currentWorkItem, publicKeyBytes.getUncompressed());
         }
         return sha256Bytes;
@@ -163,6 +164,7 @@ public class OpenCLGridResult {
         Sha256Bytes[] sha256Bytes = new Sha256Bytes[workSize];
         for (int currentWorkItem = (workSize - 1); currentWorkItem >= 0; currentWorkItem--) {
             PublicKeyBytes publicKeyBytes = getPublicKeyFromByteBufferXY(result, currentWorkItem, secretKeys[workSize - 1 - currentWorkItem]);
+            // TODO handle possible case for publicKeyBytes = null
             sha256Bytes[currentWorkItem] = readBufferForSha256Bytes(currentWorkItem, publicKeyBytes.getUncompressed());
         }
         return sha256Bytes;
