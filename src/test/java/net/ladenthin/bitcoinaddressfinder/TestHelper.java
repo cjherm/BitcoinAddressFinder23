@@ -311,6 +311,25 @@ public class TestHelper {
     }
 
     /**
+     * Stores the SHA-256 hash and its RIPEMD-160 hash (both initially stored in the given {@link Ripemd160Bytes} array)
+     * in a {@link HashMap} as hex {@link String}s.
+     *
+     * @param ripemd16Hashes Array of {@link Ripemd160Bytes} containing both SHA-256 and RIPEMD-160 hashes
+     * @return {@link HashMap} containing both RIPEMD-160 hashes as hex {@link String}s
+     */
+    public static Map<String, String> createResultedMapOfSha256HashesAndTheirRipemd160Hashes(Ripemd160Bytes[] ripemd16Hashes) {
+        Map<String, String> map = new HashMap<>();
+        for (Ripemd160Bytes ripemd160Bytes : ripemd16Hashes) {
+            byte[] sha256Bytes = ripemd160Bytes.getSha256Bytes();
+            String sha256HexString = transformBytesToHexString(sha256Bytes);
+            byte[] ripemd160BytesArray = ripemd160Bytes.getRipemd160Bytes();
+            String ripemd160HexString = transformBytesToHexString(ripemd160BytesArray);
+            map.put(sha256HexString, ripemd160HexString);
+        }
+        return map;
+    }
+
+    /**
      * Generates the public keys for each given private key and stores both as hex {@link String}s.
      *
      * @param privateKeys Array of {@link BigInteger} containing private keys
@@ -358,6 +377,24 @@ public class TestHelper {
             byte[] secondSha256HashBytes = calculateSha256FromByteArray(firstSha256HashBytes);
             String secondSha256HashHexString = transformBytesToHexString(secondSha256HashBytes);
             map.put(firstSha256HashHexString, secondSha256HashHexString);
+        }
+        return map;
+    }
+
+    /**
+     * Generates the RIPEMD-160 hashes for each SHA-256 hash and stores both as hex {@link String}s.
+     *
+     * @param sha256Hashes Array of {@link Sha256Bytes} containing SHA-256 hashes
+     * @return {@link HashMap} containing the SHA-256 and the calculated RIPEMD-160 hash as hex {@link String}s
+     */
+    public static Map<String, String> createExpectedMapOfSha256HashesToRipemd160Hashes(Sha256Bytes[] sha256Hashes) {
+        Map<String, String> map = new HashMap<>();
+        for (Sha256Bytes sha256Bytes : sha256Hashes) {
+            byte[] sha256HashBytes = sha256Bytes.getFirstSha256Bytes();
+            String firstSha256HashHexString = transformBytesToHexString(sha256HashBytes);
+            byte[] ripemd160Bytes = calculateRipemd160FromByteArray(sha256HashBytes);
+            String ripemd160HexString = transformBytesToHexString(ripemd160Bytes);
+            map.put(firstSha256HashHexString, ripemd160HexString);
         }
         return map;
     }
