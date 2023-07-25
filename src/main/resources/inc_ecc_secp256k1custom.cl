@@ -547,7 +547,7 @@ __kernel void generateRipemd160ChunkKernel_grid(__global u32 *r, __global const 
     calculate_ripemd160_from_u32(sha256_hash, ripemd160_hash);
 
     // write the RIPEMD-160 hash into the result array
-    int r_offset_ripemd160_hash = r_offset_sha256_hash + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
+    int r_offset_ripemd160_hash = r_offset_sha256_hash + SHA256_HASH_U32_LEN;
     r[r_offset_ripemd160_hash + 0] = ripemd160_hash[4];
     r[r_offset_ripemd160_hash + 1] = ripemd160_hash[3];
     r[r_offset_ripemd160_hash + 2] = ripemd160_hash[2];
