@@ -473,4 +473,71 @@ public class OpenCLContextTest {
         assertThat(ripemd160HashResult, is(equalTo(expectedRipemd160Hash)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
+
+    @Test
+    public void test_generate256Ripemd160Hashes_specificSinglePrivateKey_chunkMode() {
+        // arrange
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
+        PublicKeyBytes[] publicKeyBytesResult = openCLGridResult.getPublicKeyBytes();
+        Sha256Bytes[] sha256BytesResult = openCLGridResult.getSha256Bytes();
+        Ripemd160Bytes[] ripemd160BytesResult = openCLGridResult.getRipemd160Bytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // prepare assert
+        BigInteger[] privateKeysChunk = TestHelper.calculatePrivateKeyChunkFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
+        Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(privateKeysChunk, publicKeyBytesResult);
+        Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
+
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createResultedMapOfPublicKeysAndTheirSha256Hashes(sha256BytesResult);
+        Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeysToSha256Hashes(publicKeyBytesResult);
+
+        Map<String, String> resultedSha256HashesRipemd160HashesMap = TestHelper.createResultedMapOfSha256HashesAndTheirRipemd160Hashes(ripemd160BytesResult);
+        Map<String, String> expectedSha256HashesRipemd160HashesMap = TestHelper.createExpectedMapOfSha256HashesToRipemd160Hashes(sha256BytesResult);
+
+        assertThatKeyMap(resultedPrivateKeysPublicKeysMap).isEqualTo(expectedPrivateKeysPublicKeysMap);
+        assertThatKeyMap(resultedPublicKeysSha256HashesMap).isEqualTo(expectedPublicKeysSha256HashesMap);
+        assertThatKeyMap(resultedSha256HashesRipemd160HashesMap).isEqualTo(expectedSha256HashesRipemd160HashesMap);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generate256Ripemd160Hashes_randomSinglePrivateKey_chunkMode() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        PublicKeyBytes[] publicKeyBytesResult = openCLGridResult.getPublicKeyBytes();
+        Sha256Bytes[] sha256BytesResult = openCLGridResult.getSha256Bytes();
+        Ripemd160Bytes[] ripemd160BytesResult = openCLGridResult.getRipemd160Bytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // prepare assert
+        BigInteger[] privateKeysChunk = TestHelper.calculatePrivateKeyChunkFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
+        Map<String, String> resultedPrivateKeysPublicKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(privateKeysChunk, publicKeyBytesResult);
+        Map<String, String> expectedPrivateKeysPublicKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
+
+        Map<String, String> resultedPublicKeysSha256HashesMap = TestHelper.createResultedMapOfPublicKeysAndTheirSha256Hashes(sha256BytesResult);
+        Map<String, String> expectedPublicKeysSha256HashesMap = TestHelper.createExpectedMapOfPublicKeysToSha256Hashes(publicKeyBytesResult);
+
+        Map<String, String> resultedSha256HashesRipemd160HashesMap = TestHelper.createResultedMapOfSha256HashesAndTheirRipemd160Hashes(ripemd160BytesResult);
+        Map<String, String> expectedSha256HashesRipemd160HashesMap = TestHelper.createExpectedMapOfSha256HashesToRipemd160Hashes(sha256BytesResult);
+
+        // assert
+        assertThatKeyMap(resultedPrivateKeysPublicKeysMap).isEqualTo(expectedPrivateKeysPublicKeysMap);
+        assertThatKeyMap(resultedPublicKeysSha256HashesMap).isEqualTo(expectedPublicKeysSha256HashesMap);
+        assertThatKeyMap(resultedSha256HashesRipemd160HashesMap).isEqualTo(expectedSha256HashesRipemd160HashesMap);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
 }
