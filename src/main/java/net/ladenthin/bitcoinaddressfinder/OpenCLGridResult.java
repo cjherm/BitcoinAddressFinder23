@@ -232,11 +232,13 @@ public class OpenCLGridResult {
                 Sha256Bytes.ONE_SHA256_NUM_BYTES);
 
         // copy RIPEMD-160 hash
-        byte[] ripemd160Hash = new byte[Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES];
-        System.arraycopy(hash1hash2yx, 0, ripemd160Hash, 0,
+        byte[] ripemd160HashLittleEndian = new byte[Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES];
+        System.arraycopy(hash1hash2yx, 0, ripemd160HashLittleEndian, 0,
                 Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES);
 
-        return new Ripemd160Bytes(sha256Hash, ripemd160Hash);
+        byte[] ripemd160HashBigEndian = swapEndiansInByteArray(ripemd160HashLittleEndian);
+
+        return new Ripemd160Bytes(sha256Hash, ripemd160HashBigEndian);
     }
 
     private byte[] swapEndiansInByteArray(byte[] preswappedArray) {
