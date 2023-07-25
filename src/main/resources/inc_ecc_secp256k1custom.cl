@@ -493,18 +493,15 @@ __kernel void generateRipemd160ChunkKernel_grid(__global u32 *r, __global const 
     // second dimension etc.)
     u32 global_id = get_global_id(0);
 
-    // new offset for private keys
-    int k_offset = PRIVATE_KEY_LENGTH * global_id;
-
     // get private key from private key grid
-    k_local[0] = k[0 + k_offset];
-    k_local[1] = k[1 + k_offset];
-    k_local[2] = k[2 + k_offset];
-    k_local[3] = k[3 + k_offset];
-    k_local[4] = k[4 + k_offset];
-    k_local[5] = k[5 + k_offset];
-    k_local[6] = k[6 + k_offset];
-    k_local[7] = k[7 + k_offset];
+    k_local[0] = k[0] | global_id;
+    k_local[1] = k[1];
+    k_local[2] = k[2];
+    k_local[3] = k[3];
+    k_local[4] = k[4];
+    k_local[5] = k[5];
+    k_local[6] = k[6];
+    k_local[7] = k[7];
 
     set_precomputed_basepoint_g(&g_xy_local);
 
