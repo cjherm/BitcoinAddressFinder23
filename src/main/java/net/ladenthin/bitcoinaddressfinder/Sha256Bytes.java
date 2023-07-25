@@ -13,6 +13,8 @@ public class Sha256Bytes {
     private final byte[] secondSha256Bytes;
 
     /**
+     * Constructor for storing a public key and two different SHA-256 hashes.
+     *
      * @param publicKeyUncompressed The uncompressed public key with parity to be hashed with SHA-256
      * @param firstSha256Bytes The SHA-256 hash of the uncompressed public key with parity
      * @param secondSha256Bytes The SHA-256 hash of previous SHA-256 hash
@@ -21,6 +23,18 @@ public class Sha256Bytes {
         this.publicKeyUncompressed = publicKeyUncompressed;
         this.firstSha256Bytes = firstSha256Bytes;
         this.secondSha256Bytes = secondSha256Bytes;
+    }
+
+    /**
+     * Constructor for storing a public key and one single SHA-256 hash.
+     *
+     * @param publicKeyUncompressed The uncompressed public key with parity to be hashed with SHA-256
+     * @param firstSha256Bytes The SHA-256 hash of the uncompressed public key with parity
+     */
+    public Sha256Bytes(byte[] publicKeyUncompressed, byte[] firstSha256Bytes) {
+        this.publicKeyUncompressed = publicKeyUncompressed;
+        this.firstSha256Bytes = firstSha256Bytes;
+        this.secondSha256Bytes = new byte[0];
     }
 
     /**
