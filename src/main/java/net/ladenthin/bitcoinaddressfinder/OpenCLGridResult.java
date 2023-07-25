@@ -238,4 +238,21 @@ public class OpenCLGridResult {
 
         return new Ripemd160Bytes(sha256Hash, ripemd160Hash);
     }
+
+    private byte[] swapEndiansInByteArray(byte[] preswappedArray) {
+        // TODO store in constant
+        int wordLenInBytes = 4;
+        int numWords = preswappedArray.length / wordLenInBytes;
+
+        byte[] swappedResult = new byte[wordLenInBytes * numWords];
+
+        for (int i = 0; i < preswappedArray.length; i += wordLenInBytes) {
+            swappedResult[i] = preswappedArray[i + (wordLenInBytes - 1)];
+            swappedResult[i + 1] = preswappedArray[i + (wordLenInBytes - 2)];
+            swappedResult[i + 2] = preswappedArray[i + (wordLenInBytes - 3)];
+            swappedResult[i + 3] = preswappedArray[i];
+        }
+
+        return swappedResult;
+    }
 }
