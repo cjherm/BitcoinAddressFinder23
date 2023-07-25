@@ -171,21 +171,40 @@ public class OpenCLGridResult {
     }
 
     private Sha256Bytes readBufferForSha256Bytes(int currentWorkItem, byte[] pubKeyUncompressed) {
-        int workItemOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * currentWorkItem;
-        byte[] hash1hash2yx = new byte[TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256];
+        int workItemResultBufferSize;
+        int firstSha256Offset;
+        if (kernelMode == OpenCLContext.GEN_SHA256_MODE) {
+            workItemResultBufferSize = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256;
+            firstSha256Offset = Sha256Bytes.ONE_SHA256_NUM_BYTES;
+        } else if (kernelMode == OpenCLContext.GEN_RIPEMD160_MODE) {
+            workItemResultBufferSize = TWO_COORDINATES_NUM_BYTES_SHA256_RIPEMD160;
+            firstSha256Offset =Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES;
+        } else {
+            // TODO handle that case
+            return null;
+        }
+
+        int workItemResultBufferOffset = workItemResultBufferSize * currentWorkItem;
+
+        byte[] retrievedWorkItemBuffer = new byte[workItemResultBufferSize];
         int index = 0;
-        for (int i = (TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 - 1); i >= 0; i--) {
-            hash1hash2yx[i] = result.get(workItemOffsetInByteBuffer + index);
+        for (int i = (workItemResultBufferSize - 1); i >= 0; i--) {
+            retrievedWorkItemBuffer[i] = result.get(workItemResultBufferOffset + index);
             index++;
         }
+
         // copy first SHA-256 hash
         byte[] firstSha256Hash = new byte[Sha256Bytes.ONE_SHA256_NUM_BYTES];
-        System.arraycopy(hash1hash2yx, Sha256Bytes.ONE_SHA256_NUM_BYTES, firstSha256Hash, 0,
+        System.arraycopy(retrievedWorkItemBuffer, firstSha256Offset, firstSha256Hash, 0,
                 Sha256Bytes.ONE_SHA256_NUM_BYTES);
 
+        // abort further retrieving when we do not have a second SHA-256 hash
+        if(kernelMode != OpenCLContext.GEN_SHA256_MODE) {
+            return new Sha256Bytes(pubKeyUncompressed, firstSha256Hash);
+        }
         // copy second SHA-256 hash
         byte[] secondSha256Hash = new byte[Sha256Bytes.ONE_SHA256_NUM_BYTES];
-        System.arraycopy(hash1hash2yx, 0, secondSha256Hash, 0,
+        System.arraycopy(retrievedWorkItemBuffer, 0, secondSha256Hash, 0,
                 Sha256Bytes.ONE_SHA256_NUM_BYTES);
 
         return new Sha256Bytes(pubKeyUncompressed, firstSha256Hash, secondSha256Hash);
