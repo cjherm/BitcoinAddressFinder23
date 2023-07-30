@@ -263,4 +263,14 @@ public class OpenCLGridResult {
 
         return swappedResult;
     }
+
+    /**
+     * This method will retrieve all resulting calculations from the {@link OpenCLGridResult} and store them in a {@link ResultBytes} array.
+     *
+     * @return array of {@link ResultBytes}
+     */
+    public ResultBytes[] getResultBytes() {
+        // TODO impl method
+        return null;
+    }
 }
