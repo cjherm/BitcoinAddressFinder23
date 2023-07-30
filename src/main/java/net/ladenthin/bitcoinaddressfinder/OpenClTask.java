@@ -94,6 +94,8 @@ public class OpenClTask {
             return Ripemd160Bytes.RESULT_LENGTH_IN_BYTES * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160 * cProducer.getWorkSize();
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE) {
+            return ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256 * cProducer.getWorkSize();
         } else {
             // TODO handle that case
             return -1;
