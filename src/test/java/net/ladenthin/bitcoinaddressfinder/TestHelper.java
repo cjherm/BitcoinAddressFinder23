@@ -406,6 +406,25 @@ public class TestHelper {
         return map;
     }
 
+    /**
+     * @param privateKeys as base for generating expected values
+     * @return Array containing {@link ResultBytes} with all expecting values
+     */
+    public static ResultBytes[] createExpectedResultBytesFromPrivateKeys(BigInteger[] privateKeys) {
+        int size = privateKeys.length;
+
+        ResultBytes[] expectedResultBytes = new ResultBytes[size];
+
+        for (int i = 0; i < size; i++) {
+            byte[] privateKey = TestHelper.transformBigIntegerToByteArray(privateKeys[i]);
+            byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(privateKeys[i]);
+            byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
+            byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
+            expectedResultBytes[i] = new ResultBytes(privateKey, expectedPublicKey, expectedFirstSha256, expectedRipemd160);
+        }
+        return expectedResultBytes;
+    }
+
     public static <K, V> ActualMap<K, V> assertThatKeyMap(Map<K, V> actualMap) {
         return new ActualMap<>(actualMap);
     }
