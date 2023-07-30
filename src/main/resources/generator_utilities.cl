@@ -25,6 +25,7 @@ __attribute__((always_inline)) void storeByteArrayToU32Array(const uchar *byteAr
 __attribute__((always_inline)) void create_public_key_from_coordinates(uchar *public_key_byte_array, const u32 *x_coordinate, const u32 *y_coordinate);
 __attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output, int *numOutputBytes);
 __attribute__((always_inline)) void calculate_sha256_from_public_key(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
+__attribute__((always_inline)) void calculate_sha256_from_version(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
 __attribute__((always_inline)) void calculate_sha256_from_sha256(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
 __attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *sha256_hash, u32 *ripemd160_hash);
 
@@ -96,6 +97,44 @@ __attribute__((always_inline)) void calculate_sha256_from_public_key(PRIVATE_AS 
 
     // prepare hash
     sha256_padding(digest_bytes, PUBLIC_KEY_BYTES_WITH_PARITY, padded_digest_bytes, &padded_digest_size);
+    storeByteArrayToU32Array(padded_digest_bytes, digest_u32, padded_digest_size);
+
+    // perform hash
+    sha256_ctx_t ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, digest_u32, padded_digest_size);
+
+    // store hash in output
+    sha256_hash[0] = ctx.h[0];
+    sha256_hash[1] = ctx.h[1];
+    sha256_hash[2] = ctx.h[2];
+    sha256_hash[3] = ctx.h[3];
+    sha256_hash[4] = ctx.h[4];
+    sha256_hash[5] = ctx.h[5];
+    sha256_hash[6] = ctx.h[6];
+    sha256_hash[7] = ctx.h[7];
+}
+
+ /*
+  * Calculates the SHA-256 hash from a given digest.
+  *
+  * INPUT uchar *digest_bytes:  Pointer to the digest as byte array to be hashed with maximal 32 bytes size
+  * OUTPUT u32 *sha256_hash:    Pointer to the resulting hash as an u32 array
+  */
+__attribute__((always_inline)) void calculate_sha256_from_version(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash) {
+
+    // digest to be hashed
+    u32 digest_u32[SHA256_HASH_BYTES_LEN];
+
+    // padded byte array for correct sha256 digest length
+    uchar padded_digest_bytes[SINGLE_SIZED_SHA256_INPUT_BYTES];
+
+    // size in bytes of the input to be hashed
+    int padded_digest_size;
+
+    // prepare hash
+    sha256_padding(digest_bytes, RIPEMD160_HASH_WITH_VERSION_BYTES, padded_digest_bytes, &padded_digest_size);
+
     storeByteArrayToU32Array(padded_digest_bytes, digest_u32, padded_digest_size);
 
     // perform hash
