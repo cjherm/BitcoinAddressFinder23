@@ -344,7 +344,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
 
     create_public_key_from_coordinates(public_key, x_local, y_local);
 
-    calculate_sha256_from_bytes(public_key, first_sha256_hash);
+    calculate_sha256_from_public_key(public_key, first_sha256_hash);
 
     // write the first SHA-256 hash into the result array
     int r_offset_first_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
@@ -357,7 +357,7 @@ __kernel void generateSha256ChunkKernel_grid(__global u32 *r, __global const u32
     r[r_offset_first_hash + 6] = first_sha256_hash[1];
     r[r_offset_first_hash + 7] = first_sha256_hash[0];
 
-    calculate_sha256_from_u32(first_sha256_hash, second_sha256_hash);
+    calculate_sha256_from_sha256(first_sha256_hash, second_sha256_hash);
 
     // write the second SHA-256 hash into the result array
     int r_offset_second_hash = r_offset_first_hash + SHA256_HASH_U32_LEN;
@@ -435,7 +435,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
 
     create_public_key_from_coordinates(public_key, x_local, y_local);
 
-    calculate_sha256_from_bytes(public_key, first_sha256_hash);
+    calculate_sha256_from_public_key(public_key, first_sha256_hash);
 
     // write the first SHA-256 hash into the result array
     int r_offset_first_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
@@ -448,7 +448,7 @@ __kernel void generateSha256Kernel_grid(__global u32 *r, __global const u32 *k) 
     r[r_offset_first_hash + 6] = first_sha256_hash[1];
     r[r_offset_first_hash + 7] = first_sha256_hash[0];
 
-    calculate_sha256_from_u32(first_sha256_hash, second_sha256_hash);
+    calculate_sha256_from_sha256(first_sha256_hash, second_sha256_hash);
 
     // write the second SHA-256 hash into the result array
     int r_offset_second_hash = r_offset_first_hash + SHA256_HASH_U32_LEN;
@@ -523,7 +523,7 @@ __kernel void generateRipemd160ChunkKernel_grid(__global u32 *r, __global const 
 
     create_public_key_from_coordinates(public_key, x_local, y_local);
 
-    calculate_sha256_from_bytes(public_key, sha256_hash);
+    calculate_sha256_from_public_key(public_key, sha256_hash);
 
     // write the SHA-256 hash into the result array
     int r_offset_sha256_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;
@@ -611,7 +611,7 @@ __kernel void generateRipemd160Kernel_grid(__global u32 *r, __global const u32 *
 
     create_public_key_from_coordinates(public_key, x_local, y_local);
 
-    calculate_sha256_from_bytes(public_key, sha256_hash);
+    calculate_sha256_from_public_key(public_key, sha256_hash);
 
     // write the SHA-256 hash into the result array
     int r_offset_sha256_hash = r_offset_y + PUBLIC_KEY_ONE_COORDINATE_LENGTH;

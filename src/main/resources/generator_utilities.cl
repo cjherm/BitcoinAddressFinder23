@@ -24,8 +24,8 @@ __attribute__((always_inline)) void storeU32ToByteArray(const u32 *u32Array, con
 __attribute__((always_inline)) void storeByteArrayToU32Array(const uchar *byteArray, u32 *u32Array, const uint arrayLength);
 __attribute__((always_inline)) void create_public_key_from_coordinates(uchar *public_key_byte_array, const u32 *x_coordinate, const u32 *y_coordinate);
 __attribute__((always_inline)) void sha256_padding(const uchar *input, const int numInputBytes, uchar *output, int *numOutputBytes);
-__attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
-__attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
+__attribute__((always_inline)) void calculate_sha256_from_public_key(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
+__attribute__((always_inline)) void calculate_sha256_from_sha256(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
 __attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *sha256_hash, u32 *ripemd160_hash);
 
  /*
@@ -83,7 +83,7 @@ __attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *unpadded_d
   * INPUT uchar *digest_bytes:  Pointer to the digest as byte array to be hashed
   * OUTPUT u32 *sha256_hash:     Pointer to the resulting hash as an u32 array
   */
-__attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash) {
+__attribute__((always_inline)) void calculate_sha256_from_public_key(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash) {
 
     // digest to be hashed
     u32 digest_u32[SHA256_HASH_BYTES_LEN];
@@ -120,7 +120,7 @@ __attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const
   * INPUT uchar *unpadded_digest_u32:   Pointer to the digest as u32 array to be hashed
   * OUTPUT u32 *sha256_hash:            Pointer to the resulting hash as an u32 array
   */
-__attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash){
+__attribute__((always_inline)) void calculate_sha256_from_sha256(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash){
 
     // unpadded digest as byte array (needed for bytewise padding)
     uchar unpadded_digest_bytes[SHA256_HASH_BYTES_LEN];

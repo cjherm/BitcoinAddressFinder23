@@ -179,7 +179,7 @@ __kernel void generate_until_ripemd160(__global uchar *r, __global const u32 *k)
 
 
     // hash the public key with SHA-256
-    calculate_sha256_from_bytes(public_key_bytes, sha256_hash);
+    calculate_sha256_from_public_key(public_key_bytes, sha256_hash);
 
     int r_offset_first_sha256 = r_offset_public_key + PUBLIC_KEY_BYTES_WITH_PARITY;
 
@@ -431,7 +431,7 @@ __kernel void generate_chunk_until_ripemd160(__global uchar *r, __global const u
 
 
     // hash the public key with SHA-256
-    calculate_sha256_from_bytes(public_key_bytes, sha256_hash);
+    calculate_sha256_from_public_key(public_key_bytes, sha256_hash);
 
     int r_offset_first_sha256 = r_offset_public_key + PUBLIC_KEY_BYTES_WITH_PARITY;
 
