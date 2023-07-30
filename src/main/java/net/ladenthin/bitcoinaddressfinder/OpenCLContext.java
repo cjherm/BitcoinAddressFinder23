@@ -89,6 +89,7 @@ public class OpenCLContext {
         resourceNames.add("copyfromhashcat/inc_hash_sha256.cl");
         resourceNames.add("copyfromhashcat/inc_hash_ripemd160.h");
         resourceNames.add("copyfromhashcat/inc_hash_ripemd160.cl");
+        resourceNames.add("generator_utilities.cl");
         resourceNames.add("inc_ecc_secp256k1custom.cl");
         return resourceNames;
     }
