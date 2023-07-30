@@ -91,6 +91,7 @@ public class OpenCLContext {
         resourceNames.add("copyfromhashcat/inc_hash_ripemd160.cl");
         resourceNames.add("generator_utilities.cl");
         resourceNames.add("inc_ecc_secp256k1custom.cl");
+        resourceNames.add("generate_btc_address.cl");
         return resourceNames;
     }
 
@@ -102,6 +103,7 @@ public class OpenCLContext {
     private final static String SHA256_NONCHUNK_KERNEL_NAME = "generateSha256Kernel_grid";
     private final static String RIPEMD160_CHUNK_KERNEL_NAME = "generateRipemd160ChunkKernel_grid";
     private final static String RIPEMD160_NONCHUNK_KERNEL_NAME = "generateRipemd160Kernel_grid";
+    private final static String BYTEWISE_RIPEMD160_NONCHUNK_KERNEL = "generate_until_ripemd160";
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
