@@ -687,7 +687,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilSecondSha256Hash_specificSinglePrivateKey_bytewiseMode() {
+    public void test_generateUntilSecondSha256Hash_specificSinglePrivateKey_bytewiseMode() {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
@@ -716,7 +716,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilSecondSha256Hash_randomSinglePrivateKey_bytewiseMode() {
+    public void test_generateUntilSecondSha256Hash_randomSinglePrivateKey_bytewiseMode() {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
