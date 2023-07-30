@@ -105,6 +105,7 @@ public class OpenCLContext {
     private final static String RIPEMD160_CHUNK_KERNEL_NAME = "generateRipemd160ChunkKernel_grid";
     private final static String RIPEMD160_NONCHUNK_KERNEL_NAME = "generateRipemd160Kernel_grid";
     private final static String BYTEWISE_RIPEMD160_NONCHUNK_KERNEL = "generate_until_ripemd160";
+    private final static String BYTEWISE_RIPEMD160_CHUNK_KERNEL = "generate_chunk_until_ripemd160";
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
@@ -230,8 +231,7 @@ public class OpenCLContext {
 
     private void setBytewiseRipemd160Kernel() {
         if (producerOpenCL.chunkMode) {
-            // TODO introduce chunk mode for BYTEWISE_RIPEMD160_NONCHUNK_KERNEL
-            kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_NONCHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_CHUNK_KERNEL, errorCode);
         } else {
             kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_NONCHUNK_KERNEL, errorCode);
         }
