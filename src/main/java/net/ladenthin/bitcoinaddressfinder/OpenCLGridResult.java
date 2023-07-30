@@ -270,7 +270,20 @@ public class OpenCLGridResult {
      * @return array of {@link ResultBytes}
      */
     public ResultBytes[] getResultBytes() {
-        // TODO impl method
-        return null;
+        ResultBytes[] resultBytes = new ResultBytes[workSize];
+        for (int i = 0; i < workSize; i++) {
+            resultBytes[i] = retrieveResultBytesFromWorkItem(i);
+        }
+        return resultBytes;
+    }
+
+    private ResultBytes retrieveResultBytesFromWorkItem(int workItemId) {
+        int workItemResultSize = ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160;
+        byte[] workItemResultBytes = new byte[workItemResultSize];
+        int workItemResultBufferOffset = workItemId * workItemResultSize;
+        for (int i = 0; i < workItemResultSize; i++) {
+            workItemResultBytes[i] = result.get(workItemResultBufferOffset + i);
+        }
+        return new ResultBytes(workItemResultBytes);
     }
 }
