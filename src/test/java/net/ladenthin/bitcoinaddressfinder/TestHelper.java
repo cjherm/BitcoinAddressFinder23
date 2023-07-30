@@ -465,4 +465,51 @@ public class TestHelper {
             }
         }
     }
+
+
+    public static ActualResultBytesArray assertThatResultBytesArray(ResultBytes[] actual) {
+        return new ActualResultBytesArray(actual);
+    }
+
+    /**
+     * Array storing actual {@link ResultBytes} for better test assertions. Compares size and if elements in both are equal. Does not consider identical order of elements.
+     */
+    public static class ActualResultBytesArray {
+
+        private final List<ResultBytes> actual;
+
+        public ActualResultBytesArray(ResultBytes[] actual) {
+            assertThat(actual, Matchers.notNullValue());
+            this.actual = Arrays.asList(actual);
+        }
+
+        public void isEqualTo(ResultBytes[] expected) {
+            assertThat(expected, Matchers.notNullValue());
+            assertThat("None identical length of both arrays!", actual.size(), is(equalTo(expected.length)));
+            int i = 0;
+            boolean elemExists;
+            for (ResultBytes expectedElem : expected) {
+                elemExists = false;
+                String reason = "Current expected ResultBytes: " + i + "/" + (expected.length - 1);
+                for (ResultBytes actualElem : actual) {
+                    if (Arrays.equals(expectedElem.getPrivateKeyBytes(), actualElem.getPrivateKeyBytes())) {
+                        elemExists = true;
+                        reason += "\n\t       expected private key = " + Arrays.toString(expectedElem.getPrivateKeyBytes());
+                        reason += "\n\t         actual private key = " + Arrays.toString(actualElem.getPrivateKeyBytes());
+                        reason += "\n\t        expected public key = " + Arrays.toString(expectedElem.getPublicKeyBytes());
+                        reason += "\n\t          actual public key = " + Arrays.toString(actualElem.getPublicKeyBytes());
+                        reason += "\n\texpected first SHA-256 hash = " + Arrays.toString(expectedElem.getFirstSha256BytesBytes());
+                        reason += "\n\t  actual first SHA-256 hash = " + Arrays.toString(actualElem.getFirstSha256BytesBytes());
+                        reason += "\n\t   expected RIPEMD-160 hash = " + Arrays.toString(expectedElem.getRipemd160BytesBytes());
+                        reason += "\n\t     actual RIPEMD-160 hash = " + Arrays.toString(actualElem.getRipemd160BytesBytes());
+                        assertThat(reason, actualElem, is(equalTo(expectedElem)));
+                        System.out.println(reason);
+                        break;
+                    }
+                }
+                assertThat("Actual ResultBytesArray does NOT contain expected ResultBytes with private key: " + Arrays.toString(expectedElem.getPrivateKeyBytes()), elemExists, is(true));
+                i++;
+            }
+        }
+    }
 }
