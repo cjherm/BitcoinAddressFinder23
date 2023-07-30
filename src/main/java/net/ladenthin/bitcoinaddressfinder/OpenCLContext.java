@@ -59,6 +59,7 @@ public class OpenCLContext {
     public static final int GEN_SHA256_MODE = 2;
     public static final int GEN_RIPEMD160_MODE = 3;
     public static final int GEN_BYTEWISE_RIPEMD160_MODE = 4;
+    public static final int GEN_BYTEWISE_SECOND_SHA256_MODE = 5;
     private int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
