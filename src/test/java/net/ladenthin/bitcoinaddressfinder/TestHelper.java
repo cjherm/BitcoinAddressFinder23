@@ -145,6 +145,13 @@ public class TestHelper {
         return chunk;
     }
 
+    public static byte[] calculateDigestWithVersionByteFromByteArray(byte[] byteArray) {
+        byte[] digestWithVersionByte = new byte[byteArray.length + 1];
+        digestWithVersionByte[0] = 0;
+        System.arraycopy(byteArray, 0, digestWithVersionByte, 1, byteArray.length);
+        return digestWithVersionByte;
+    }
+
     /*
      * Method written by OpenAI/ChatGPT.
      *
