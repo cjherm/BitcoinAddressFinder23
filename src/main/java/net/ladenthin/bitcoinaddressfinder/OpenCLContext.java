@@ -58,6 +58,7 @@ public class OpenCLContext {
     public static final int GEN_ADDRESSES_MODE = 1;
     public static final int GEN_SHA256_MODE = 2;
     public static final int GEN_RIPEMD160_MODE = 3;
+    public static final int GEN_BYTEWISE_RIPEMD160_MODE = 4;
     private int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
@@ -188,6 +189,8 @@ public class OpenCLContext {
             setSha256Kernel();
         } else if (producerOpenCL.kernelMode == GEN_RIPEMD160_MODE) {
             setRipemd150Kernel();
+        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_RIPEMD160_MODE) {
+            setBytewiseRipemd160Kernel();
         } else {
             // TODO Implement else-case
         }
@@ -222,6 +225,15 @@ public class OpenCLContext {
             kernel = clCreateKernel(program, RIPEMD160_CHUNK_KERNEL_NAME, errorCode);
         } else {
             kernel = clCreateKernel(program, RIPEMD160_NONCHUNK_KERNEL_NAME, errorCode);
+        }
+    }
+
+    private void setBytewiseRipemd160Kernel() {
+        if (producerOpenCL.chunkMode) {
+            // TODO introduce chunk mode for BYTEWISE_RIPEMD160_NONCHUNK_KERNEL
+            kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_NONCHUNK_KERNEL, errorCode);
+        } else {
+            kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_NONCHUNK_KERNEL, errorCode);
         }
     }
 
