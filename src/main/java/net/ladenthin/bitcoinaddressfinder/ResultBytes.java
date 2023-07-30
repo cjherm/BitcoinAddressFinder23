@@ -85,6 +85,16 @@ public class ResultBytes {
         return ripemd160Bytes;
     }
 
+    /**
+     * The SHA-256 hash of the previous RIPEMD-160 hash with version byte.
+     *
+     * @return second SHA-256 hash as byte array
+     */
+    public String getSecondSha256Bytes() {
+        // TODO impl method
+        return "";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
