@@ -27,8 +27,6 @@ __attribute__((always_inline)) void sha256_padding(const uchar *input, const int
 __attribute__((always_inline)) void calculate_sha256_from_bytes(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash);
 __attribute__((always_inline)) void calculate_sha256_from_u32(PRIVATE_AS const u32 *unpadded_digest_u32, u32 *sha256_hash);
 __attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *sha256_hash, u32 *ripemd160_hash);
-__attribute__((always_inline)) void storeRevertedU32ToByteArray(const u32 *src_u32, const int src_offset_u32, uchar *dest_bytes, const int dest_offset_bytes, const int len_u32);
-__attribute__((always_inline)) void copy_from_byte_array_to_byte_array(const uchar *src, const int src_offset, uchar *dest, const int dest_offset, const int len);
 
  /*
   * Calculates the RIPEMD-160 hash from a given digest.
@@ -243,24 +241,6 @@ __attribute__((always_inline)) void create_public_key_from_coordinates(uchar *pu
     public_key_byte_array[0] = PUBLIC_KEY_PARITY_BYTE;
 
     storeU32ToByteArray(public_key_u32_array, PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY, public_key_byte_array, 1);
-}
-
-
-__attribute__((always_inline)) void storeRevertedU32ToByteArray(const u32 *src_u32, const int src_offset_u32, uchar *dest_bytes, const int dest_offset_bytes, const int len_u32){
-    for (int i = src_offset_u32; i < len_u32; i++) {
-        uint value = src_u32[len_u32 - i - 1];
-        int write_index_bytes = i * 4 + dest_offset_bytes;
-        dest_bytes[write_index_bytes + 0] = (value >> 24) & 0xFF;
-        dest_bytes[write_index_bytes + 1] = (value >> 16) & 0xFF;
-        dest_bytes[write_index_bytes + 2] = (value >> 8) & 0xFF;
-        dest_bytes[write_index_bytes + 3] = value & 0xFF;
-    }
-}
-
-__attribute__((always_inline)) void copy_from_byte_array_to_byte_array(const uchar *src, const int src_offset, uchar *dest, const int dest_offset, const int len){
-    for (int i = src_offset; i < len; i++) {
-        dest[dest_offset + i] = src[src_offset + i];
-    }
 }
 
 /*
