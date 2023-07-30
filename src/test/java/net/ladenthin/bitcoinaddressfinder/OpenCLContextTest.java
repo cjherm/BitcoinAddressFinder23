@@ -598,4 +598,30 @@ public class OpenCLContextTest {
         assertThat(result.getRipemd160BytesBytes(), is(equalTo(expectedRipemd160)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
+
+    @Test
+    public void test_generateUntilRipemd160Hash_randomSinglePrivateKey_bytewiseMode() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
+        byte[] privateKey = TestHelper.transformBigIntegerToByteArray(randomSinglePrivateKey[0]);
+        byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(randomSinglePrivateKey[0]);
+        byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
+        byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        ResultBytes result = openCLGridResult.getResultBytes()[0];
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThat(result.getPrivateKeyBytes(), is(equalTo(privateKey)));
+        assertThat(result.getPublicKeyBytes(), is(equalTo(expectedPublicKey)));
+        assertThat(result.getFirstSha256BytesBytes(), is(equalTo(expectedFirstSha256)));
+        assertThat(result.getRipemd160BytesBytes(), is(equalTo(expectedRipemd160)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
 }
