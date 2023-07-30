@@ -425,6 +425,16 @@ public class TestHelper {
         return expectedResultBytes;
     }
 
+    /**
+     * @param singlePrivateKey as base for generating expected values
+     * @param chunkSize        size of chunk to be created
+     * @return Array containing {@link ResultBytes} with all expecting values
+     */
+    public static ResultBytes[] createExpectedResultBytesFromSinglePrivateKey(BigInteger singlePrivateKey, int chunkSize) {
+        BigInteger[] privateKeysChunk = calculatePrivateKeyChunkFromSinglePrivateKey(singlePrivateKey, chunkSize);
+        return createExpectedResultBytesFromPrivateKeys(privateKeysChunk);
+    }
+
     public static <K, V> ActualMap<K, V> assertThatKeyMap(Map<K, V> actualMap) {
         return new ActualMap<>(actualMap);
     }
