@@ -231,6 +231,13 @@ public class TestHelper {
         return bigInteger.toString(HEX_RADIX);
     }
 
+    public static byte[] transformBigIntegerToByteArray(BigInteger bigInteger) {
+        byte[] bigIntegerAsBytes = bigInteger.toByteArray();
+        byte[] resultBytes = new byte[bigIntegerAsBytes.length - 1];
+        System.arraycopy(bigIntegerAsBytes, 1, resultBytes, 0, (bigIntegerAsBytes.length - 1));
+        return resultBytes;
+    }
+
     /**
      * Transforms {@link PublicKeyBytes} into a hex {@link String}.
      *
