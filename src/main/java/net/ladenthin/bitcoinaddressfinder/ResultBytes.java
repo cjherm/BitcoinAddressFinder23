@@ -12,11 +12,13 @@ public class ResultBytes {
     public static final int NUM_BYTES_SHA256 = 32;
     public static final int NUM_BYTES_RIPEMD160 = 20;
     public static final int NUM_BYTES_TOTAL_UNTIL_RIPEMD160 = NUM_BYTES_PRIVATE_KEY + NUM_BYTES_PUBLIC_KEY + NUM_BYTES_SHA256 + NUM_BYTES_RIPEMD160;
+    public static final int NUM_BYTES_TOTAL_UNTIL_2ND_SHA256 = NUM_BYTES_TOTAL_UNTIL_RIPEMD160 + NUM_BYTES_SHA256;
 
     private final byte[] privateKeyBytes;
     private final byte[] publicKeyBytes;
     private final byte[] firstSha256Bytes;
     private final byte[] ripemd160Bytes;
+    private final byte[] secondSha256Bytes;
 
     /**
      * Constructor for storing all results in a data structure. It will retrieve all results from the given result buffer content.
@@ -32,6 +34,12 @@ public class ResultBytes {
         System.arraycopy(resultBytes, NUM_BYTES_PRIVATE_KEY + NUM_BYTES_PUBLIC_KEY, firstSha256Bytes, 0, NUM_BYTES_SHA256);
         ripemd160Bytes = new byte[NUM_BYTES_RIPEMD160];
         System.arraycopy(resultBytes, NUM_BYTES_PRIVATE_KEY + NUM_BYTES_PUBLIC_KEY + NUM_BYTES_SHA256, ripemd160Bytes, 0, NUM_BYTES_RIPEMD160);
+        if (resultBytes.length == NUM_BYTES_TOTAL_UNTIL_2ND_SHA256) {
+            secondSha256Bytes = new byte[NUM_BYTES_SHA256];
+            System.arraycopy(resultBytes, NUM_BYTES_TOTAL_UNTIL_RIPEMD160, secondSha256Bytes, 0, NUM_BYTES_SHA256);
+        } else {
+            secondSha256Bytes = new byte[NUM_BYTES_SHA256];
+        }
     }
 
     /**
@@ -47,6 +55,24 @@ public class ResultBytes {
         this.publicKeyBytes = publicKey;
         this.firstSha256Bytes = firstSha256;
         this.ripemd160Bytes = ripemd160;
+        this.secondSha256Bytes = new byte[NUM_BYTES_SHA256];
+    }
+
+    /**
+     * Constructor for storing all results in a data structure.
+     *
+     * @param privateKey   The private key as a byte array
+     * @param publicKey    The public key as a byte array
+     * @param firstSha256  The first SHA-256 hash as a byte array
+     * @param ripemd160    The RIPEMD-160 hash as a byte array
+     * @param secondSha256 The second SHA-256 hash as a byte array
+     */
+    public ResultBytes(byte[] privateKey, byte[] publicKey, byte[] firstSha256, byte[] ripemd160, byte[] secondSha256) {
+        this.privateKeyBytes = privateKey;
+        this.publicKeyBytes = publicKey;
+        this.firstSha256Bytes = firstSha256;
+        this.ripemd160Bytes = ripemd160;
+        this.secondSha256Bytes = secondSha256;
     }
 
     /**
@@ -90,9 +116,8 @@ public class ResultBytes {
      *
      * @return second SHA-256 hash as byte array
      */
-    public String getSecondSha256Bytes() {
-        // TODO impl method
-        return "";
+    public byte[] getSecondSha256Bytes() {
+        return secondSha256Bytes;
     }
 
     @Override
