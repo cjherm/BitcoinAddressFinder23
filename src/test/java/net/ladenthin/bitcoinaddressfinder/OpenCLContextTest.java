@@ -631,7 +631,7 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromPrivateKeys(random256PrivateKeys);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromPrivateKeys(random256PrivateKeys, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
@@ -651,7 +651,7 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
@@ -671,7 +671,7 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);

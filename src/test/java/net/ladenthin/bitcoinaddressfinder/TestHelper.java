@@ -417,7 +417,7 @@ public class TestHelper {
      * @param privateKeys as base for generating expected values
      * @return Array containing {@link ResultBytes} with all expecting values
      */
-    public static ResultBytes[] createExpectedResultBytesFromPrivateKeys(BigInteger[] privateKeys) {
+    public static ResultBytes[] createExpectedResultBytesFromPrivateKeys(BigInteger[] privateKeys, int kernelMode) {
         int size = privateKeys.length;
 
         ResultBytes[] expectedResultBytes = new ResultBytes[size];
@@ -427,7 +427,14 @@ public class TestHelper {
             byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(privateKeys[i]);
             byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
             byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
-            expectedResultBytes[i] = new ResultBytes(privateKey, expectedPublicKey, expectedFirstSha256, expectedRipemd160);
+            byte[] expectedSecondSha256Hash;
+            if (kernelMode == OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE) {
+                byte[] expectedRipemd160WithVersionByte = TestHelper.calculateDigestWithVersionByteFromByteArray(expectedRipemd160);
+                expectedSecondSha256Hash = TestHelper.calculateSha256FromByteArray(expectedRipemd160WithVersionByte);
+            } else {
+                expectedSecondSha256Hash = new byte[ResultBytes.NUM_BYTES_SHA256];
+            }
+            expectedResultBytes[i] = new ResultBytes(privateKey, expectedPublicKey, expectedFirstSha256, expectedRipemd160, expectedSecondSha256Hash);
         }
         return expectedResultBytes;
     }
@@ -437,9 +444,9 @@ public class TestHelper {
      * @param chunkSize        size of chunk to be created
      * @return Array containing {@link ResultBytes} with all expecting values
      */
-    public static ResultBytes[] createExpectedResultBytesFromSinglePrivateKey(BigInteger singlePrivateKey, int chunkSize) {
+    public static ResultBytes[] createExpectedResultBytesFromSinglePrivateKey(BigInteger singlePrivateKey, int chunkSize, int kernelMode) {
         BigInteger[] privateKeysChunk = calculatePrivateKeyChunkFromSinglePrivateKey(singlePrivateKey, chunkSize);
-        return createExpectedResultBytesFromPrivateKeys(privateKeysChunk);
+        return createExpectedResultBytesFromPrivateKeys(privateKeysChunk, kernelMode);
     }
 
     public static <K, V> ActualMap<K, V> assertThatKeyMap(Map<K, V> actualMap) {
