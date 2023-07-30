@@ -649,7 +649,7 @@ public class OpenCLContextTest {
     @Test
     public void test_generateChunkUntilRipemd160Hash_specificSinglePrivateKey_bytewiseMode() {
         // arrange
-        BigInteger[] specificSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
         ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
 
