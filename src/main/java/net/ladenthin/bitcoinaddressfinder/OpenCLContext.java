@@ -107,6 +107,7 @@ public class OpenCLContext {
     private final static String RIPEMD160_NONCHUNK_KERNEL_NAME = "generateRipemd160Kernel_grid";
     private final static String BYTEWISE_RIPEMD160_NONCHUNK_KERNEL = "generate_until_ripemd160";
     private final static String BYTEWISE_RIPEMD160_CHUNK_KERNEL = "generate_chunk_until_ripemd160";
+    private final static String BYTEWISE_2ND_SHA256_CHUNK_KERNEL = "generate_chunk_until_second_sha256";
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
@@ -193,6 +194,8 @@ public class OpenCLContext {
             setRipemd150Kernel();
         } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_RIPEMD160_MODE) {
             setBytewiseRipemd160Kernel();
+        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_SECOND_SHA256_MODE) {
+            setBytewiseSecondSha256Kernel();
         } else {
             // TODO Implement else-case
         }
@@ -235,6 +238,14 @@ public class OpenCLContext {
             kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_CHUNK_KERNEL, errorCode);
         } else {
             kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_NONCHUNK_KERNEL, errorCode);
+        }
+    }
+
+    private void setBytewiseSecondSha256Kernel() {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, BYTEWISE_2ND_SHA256_CHUNK_KERNEL, errorCode);
+        } else {
+            // TODO impl this case
         }
     }
 
