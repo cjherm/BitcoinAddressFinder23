@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.util.Map;
 
 import static net.ladenthin.bitcoinaddressfinder.TestHelper.assertThatKeyMap;
+import static net.ladenthin.bitcoinaddressfinder.TestHelper.assertThatResultBytesArray;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -622,6 +623,26 @@ public class OpenCLContextTest {
         assertThat(result.getPublicKeyBytes(), is(equalTo(expectedPublicKey)));
         assertThat(result.getFirstSha256BytesBytes(), is(equalTo(expectedFirstSha256)));
         assertThat(result.getRipemd160BytesBytes(), is(equalTo(expectedRipemd160)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generateUntilRipemd160Hash_random256PrivateKey_bytewiseMode() {
+        // arrange
+        BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromPrivateKeys(random256PrivateKeys);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
+        ResultBytes[] result = openCLGridResult.getResultBytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatResultBytesArray(result).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 }
