@@ -278,7 +278,12 @@ public class OpenCLGridResult {
     }
 
     private ResultBytes retrieveResultBytesFromWorkItem(int workItemId) {
-        int workItemResultSize = ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160;
+        int workItemResultSize;
+        if (kernelMode == OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE) {
+            workItemResultSize = ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256;
+        } else {
+            workItemResultSize = ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160;
+        }
         byte[] workItemResultBytes = new byte[workItemResultSize];
         int workItemResultBufferOffset = workItemId * workItemResultSize;
         for (int i = 0; i < workItemResultSize; i++) {
