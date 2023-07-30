@@ -695,8 +695,8 @@ public class OpenCLContextTest {
         byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(specificSinglePrivateKey[0]);
         byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
         byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
-        byte[] expectedDigestWithVersionByte = TestHelper.calculateDigestWithVersionByteFromByteArray(expectedRipemd160);
-        byte[] expectedSecondSha256 = TestHelper.calculateSha256FromByteArray(expectedDigestWithVersionByte);
+        byte[] expectedRipemd160WithVersionByte = TestHelper.calculateDigestWithVersionByteFromByteArray(expectedRipemd160);
+        byte[] expectedSecondSha256 = TestHelper.calculateSha256FromByteArray(expectedRipemd160WithVersionByte);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
