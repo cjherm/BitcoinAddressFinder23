@@ -763,4 +763,24 @@ public class OpenCLContextTest {
         assertThatResultBytesArray(result).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
+
+    @Test
+    public void test_generateChunkUntilSha256Hash_randomSinglePrivateKey_bytewiseMode() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        ResultBytes[] result = openCLGridResult.getResultBytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
 }
