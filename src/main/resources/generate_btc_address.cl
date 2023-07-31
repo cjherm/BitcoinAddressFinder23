@@ -550,7 +550,7 @@ __kernel void generate_chunk_until_second_sha256(__global uchar *r, __global con
 
 
     // calculating offset to write results in byte buffer
-    int r_offset_bytes_private_key = (PRIVATE_KEY_BYTES + PUBLIC_KEY_BYTES_WITH_PARITY + SHA256_HASH_BYTES_LEN + RIPEMD160_HASH_BYTES) * work_item_id;
+    int r_offset_bytes_private_key = (PRIVATE_KEY_BYTES + PUBLIC_KEY_BYTES_WITH_PARITY + SHA256_HASH_BYTES_LEN + RIPEMD160_HASH_BYTES + SHA256_HASH_BYTES_LEN) * work_item_id;
 
     // write bytes of u32 array storing private key into result buffer
     r[r_offset_bytes_private_key + 0] = (k_local_u32[7] >> 24) & 0xFF;
