@@ -743,4 +743,44 @@ public class OpenCLContextTest {
         assertThat(result.getSecondSha256Bytes(), is(equalTo(expectedSecondSha256)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
+
+    @Test
+    public void test_generateChunkUntilSha256Hash_specificSinglePrivateKey_bytewiseMode() {
+        // arrange
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
+        ResultBytes[] result = openCLGridResult.getResultBytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generateChunkUntilSha256Hash_randomSinglePrivateKey_bytewiseMode() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        ResultBytes[] result = openCLGridResult.getResultBytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
 }
