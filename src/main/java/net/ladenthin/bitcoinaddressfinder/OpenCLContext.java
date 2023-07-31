@@ -108,6 +108,8 @@ public class OpenCLContext {
     private final static String BYTEWISE_RIPEMD160_NONCHUNK_KERNEL = "generate_until_ripemd160";
     private final static String BYTEWISE_RIPEMD160_CHUNK_KERNEL = "generate_chunk_until_ripemd160";
     private final static String BYTEWISE_2ND_SHA256_CHUNK_KERNEL = "generate_chunk_until_second_sha256";
+    private final static String BYTEWISE_2ND_SHA256_NONCHUNK_KERNEL = "generate_until_second_sha256";
+
     private final static boolean EXCEPTIONS_ENABLED = true;
     
     private final CProducerOpenCL producerOpenCL;
@@ -245,7 +247,7 @@ public class OpenCLContext {
         if (producerOpenCL.chunkMode) {
             kernel = clCreateKernel(program, BYTEWISE_2ND_SHA256_CHUNK_KERNEL, errorCode);
         } else {
-            // TODO impl this case
+            kernel = clCreateKernel(program, BYTEWISE_2ND_SHA256_NONCHUNK_KERNEL, errorCode);
         }
     }
 
