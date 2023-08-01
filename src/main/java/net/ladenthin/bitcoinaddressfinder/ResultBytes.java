@@ -11,7 +11,10 @@ public class ResultBytes {
     public static final int NUM_BYTES_PUBLIC_KEY = 65;
     public static final int NUM_BYTES_SHA256 = 32;
     public static final int NUM_BYTES_RIPEMD160 = 20;
-    public static final int NUM_BYTES_TOTAL_UNTIL_RIPEMD160 = NUM_BYTES_PRIVATE_KEY + NUM_BYTES_PUBLIC_KEY + NUM_BYTES_SHA256 + NUM_BYTES_RIPEMD160;
+
+    public static final int NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY = NUM_BYTES_PRIVATE_KEY + NUM_BYTES_PUBLIC_KEY;
+    public static final int NUM_BYTES_TOTAL_UNTIL_1ST_SHA256 = NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY + NUM_BYTES_SHA256;
+    public static final int NUM_BYTES_TOTAL_UNTIL_RIPEMD160 = NUM_BYTES_TOTAL_UNTIL_1ST_SHA256 + NUM_BYTES_RIPEMD160;
     public static final int NUM_BYTES_TOTAL_UNTIL_2ND_SHA256 = NUM_BYTES_TOTAL_UNTIL_RIPEMD160 + NUM_BYTES_SHA256;
 
     private final byte[] privateKeyBytes;
@@ -45,27 +48,11 @@ public class ResultBytes {
     /**
      * Constructor for storing all results in a data structure.
      *
-     * @param privateKey  The private key as a byte array
-     * @param publicKey   The public key as a byte array
-     * @param firstSha256 The first SHA-256 hash as a byte array
-     * @param ripemd160   The RIPEMD-160 hash as a byte array
-     */
-    public ResultBytes(byte[] privateKey, byte[] publicKey, byte[] firstSha256, byte[] ripemd160) {
-        this.privateKeyBytes = privateKey;
-        this.publicKeyBytes = publicKey;
-        this.firstSha256Bytes = firstSha256;
-        this.ripemd160Bytes = ripemd160;
-        this.secondSha256Bytes = new byte[NUM_BYTES_SHA256];
-    }
-
-    /**
-     * Constructor for storing all results in a data structure.
-     *
-     * @param privateKey   The private key as a byte array
-     * @param publicKey    The public key as a byte array
-     * @param firstSha256  The first SHA-256 hash as a byte array
-     * @param ripemd160    The RIPEMD-160 hash as a byte array
-     * @param secondSha256 The second SHA-256 hash as a byte array
+     * @param privateKey       The private key as a byte array
+     * @param publicKey        The public key as a byte array
+     * @param firstSha256      The first SHA-256 hash as a byte array
+     * @param ripemd160        The RIPEMD-160 hash as a byte array
+     * @param secondSha256     The second SHA-256 hash as a byte array
      */
     public ResultBytes(byte[] privateKey, byte[] publicKey, byte[] firstSha256, byte[] ripemd160, byte[] secondSha256) {
         this.privateKeyBytes = privateKey;
@@ -125,7 +112,7 @@ public class ResultBytes {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ResultBytes that = (ResultBytes) o;
-        return Arrays.equals(privateKeyBytes, that.privateKeyBytes) && Arrays.equals(publicKeyBytes, that.publicKeyBytes) && Arrays.equals(firstSha256Bytes, that.firstSha256Bytes) && Arrays.equals(ripemd160Bytes, that.ripemd160Bytes);
+        return Arrays.equals(privateKeyBytes, that.privateKeyBytes) && Arrays.equals(publicKeyBytes, that.publicKeyBytes) && Arrays.equals(firstSha256Bytes, that.firstSha256Bytes) && Arrays.equals(ripemd160Bytes, that.ripemd160Bytes) && Arrays.equals(secondSha256Bytes, that.secondSha256Bytes);
     }
 
     @Override
@@ -134,6 +121,7 @@ public class ResultBytes {
         result = 31 * result + Arrays.hashCode(publicKeyBytes);
         result = 31 * result + Arrays.hashCode(firstSha256Bytes);
         result = 31 * result + Arrays.hashCode(ripemd160Bytes);
+        result = 31 * result + Arrays.hashCode(secondSha256Bytes);
         return result;
     }
 }
