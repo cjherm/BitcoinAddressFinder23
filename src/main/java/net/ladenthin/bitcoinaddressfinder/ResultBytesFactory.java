@@ -44,6 +44,7 @@ public class ResultBytesFactory {
         byte[] firstSha256Bytes = new byte[ResultBytes.NUM_BYTES_SHA256];
         byte[] ripemd160Bytes = new byte[ResultBytes.NUM_BYTES_RIPEMD160];
         byte[] secondSha256Bytes = new byte[ResultBytes.NUM_BYTES_SHA256];
+        byte[] thirdSha256Bytes = new byte[ResultBytes.NUM_BYTES_SHA256];
 
         System.arraycopy(workItemResultBytes, 0, privateKeyBytes, 0, ResultBytes.NUM_BYTES_PRIVATE_KEY);
         System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_PRIVATE_KEY, publicKeyBytes, 0, ResultBytes.NUM_BYTES_PUBLIC_KEY);
@@ -54,7 +55,11 @@ public class ResultBytesFactory {
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160, secondSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
         }
 
-        return new ResultBytes(privateKeyBytes, publicKeyBytes, firstSha256Bytes, ripemd160Bytes, secondSha256Bytes);
+        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_3RD_SHA256_MODE) {
+            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256, thirdSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
+        }
+
+        return new ResultBytes(privateKeyBytes, publicKeyBytes, firstSha256Bytes, ripemd160Bytes, secondSha256Bytes, thirdSha256Bytes);
     }
 
     private boolean parametersAreInvalid() {
@@ -67,6 +72,10 @@ public class ResultBytesFactory {
         }
 
         if (kernelMode == OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256) {
+            return false;
+        }
+
+        if (kernelMode == OpenCLContext.GEN_BYTEWISE_3RD_SHA256_MODE && workItemResultBytes.length == ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256) {
             return false;
         }
 
