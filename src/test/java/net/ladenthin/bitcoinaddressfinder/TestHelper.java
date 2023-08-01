@@ -414,8 +414,11 @@ public class TestHelper {
     }
 
     /**
-     * @param privateKeys as base for generating expected values
-     * @return Array containing {@link ResultBytes} with all expecting values
+     * Will generate all expecting results for each given private key and by considering the <code>kernelMode</code>
+     *
+     * @param privateKeys As base for generating all expected values for each {@link ResultBytes}.
+     * @param kernelMode  To set all not expecting byte arrays to <code>{0, 0, 0,...}</code>.
+     * @return Array containing {@link ResultBytes} with all expecting values.
      */
     public static ResultBytes[] createExpectedResultBytesFromPrivateKeys(BigInteger[] privateKeys, int kernelMode) {
         int size = privateKeys.length;
@@ -423,18 +426,31 @@ public class TestHelper {
         ResultBytes[] expectedResultBytes = new ResultBytes[size];
 
         for (int i = 0; i < size; i++) {
-            byte[] privateKey = TestHelper.transformBigIntegerToByteArray(privateKeys[i]);
-            byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(privateKeys[i]);
-            byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
-            byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
-            byte[] expectedSecondSha256Hash;
-            if (kernelMode == OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE) {
-                byte[] expectedRipemd160WithVersionByte = TestHelper.calculateDigestWithVersionByteFromByteArray(expectedRipemd160);
-                expectedSecondSha256Hash = TestHelper.calculateSha256FromByteArray(expectedRipemd160WithVersionByte);
-            } else {
-                expectedSecondSha256Hash = new byte[ResultBytes.NUM_BYTES_SHA256];
-            }
-            expectedResultBytes[i] = new ResultBytes(privateKey, expectedPublicKey, expectedFirstSha256, expectedRipemd160, expectedSecondSha256Hash);
+            byte[] expectedResultBuffer = new byte[ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256];
+
+            byte[] privateKey = transformBigIntegerToByteArray(privateKeys[i]);
+            System.arraycopy(privateKey, 0, expectedResultBuffer, 0, ResultBytes.NUM_BYTES_PRIVATE_KEY);
+
+            byte[] expectedPublicKey = calculatePublicKeyAsBytesFromPrivateKey(privateKeys[i]);
+            System.arraycopy(expectedPublicKey, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_PRIVATE_KEY, ResultBytes.NUM_BYTES_PUBLIC_KEY);
+
+            byte[] expectedFirstSha256 = calculateSha256FromByteArray(expectedPublicKey);
+            System.arraycopy(expectedFirstSha256, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY, ResultBytes.NUM_BYTES_SHA256);
+
+            byte[] expectedRipemd160 = calculateRipemd160FromByteArray(expectedFirstSha256);
+            System.arraycopy(expectedRipemd160, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256, ResultBytes.NUM_BYTES_RIPEMD160);
+
+            byte[] expectedRipemd160WithVersionByte = calculateDigestWithVersionByteFromByteArray(expectedRipemd160);
+            byte[] expectedSecondSha256 = calculateSha256FromByteArray(expectedRipemd160WithVersionByte);
+            System.arraycopy(expectedSecondSha256, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160, ResultBytes.NUM_BYTES_SHA256);
+
+            byte[] expectedThirdSha256Hash = calculateSha256FromByteArray(expectedSecondSha256);
+            System.arraycopy(expectedThirdSha256Hash, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256, ResultBytes.NUM_BYTES_SHA256);
+
+            ResultBytesFactory factory = new ResultBytesFactory();
+            factory.setResultBufferBytes(expectedResultBuffer);
+            factory.setKernelMode(kernelMode);
+            expectedResultBytes[i] = factory.createResultBytes();
         }
         return expectedResultBytes;
     }
