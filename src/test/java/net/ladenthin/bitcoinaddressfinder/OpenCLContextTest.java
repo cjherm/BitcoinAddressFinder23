@@ -803,4 +803,35 @@ public class OpenCLContextTest {
         assertThatResultBytesArray(result).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
+
+    @Test
+    public void test_generateUntilThirdSha256Hash_specificSinglePrivateKey_bytewiseMode() {
+        // arrange
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_3RD_SHA256_MODE);
+        byte[] privateKey = TestHelper.transformHexStringToBytes(PRIVATE_KEY_HEX_STRING);
+        byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(specificSinglePrivateKey[0]);
+        byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
+        byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
+        byte[] expectedRipemd160WithVersionByte = TestHelper.calculateDigestWithVersionByteFromByteArray(expectedRipemd160);
+        byte[] expectedSecondSha256 = TestHelper.calculateSha256FromByteArray(expectedRipemd160WithVersionByte);
+        byte[] expectedThirdSha256 = TestHelper.calculateSha256FromByteArray(expectedSecondSha256);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
+        ResultBytes result = openCLGridResult.getResultBytes()[0];
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThat(result.getPrivateKeyBytes(), is(equalTo(privateKey)));
+        assertThat(result.getPublicKeyBytes(), is(equalTo(expectedPublicKey)));
+        assertThat(result.getFirstSha256BytesBytes(), is(equalTo(expectedFirstSha256)));
+        assertThat(result.getRipemd160BytesBytes(), is(equalTo(expectedRipemd160)));
+        assertThat(result.getSecondSha256Bytes(), is(equalTo(expectedSecondSha256)));
+        assertThat(result.getThirdSha256Bytes(), is(equalTo(expectedThirdSha256)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
 }
