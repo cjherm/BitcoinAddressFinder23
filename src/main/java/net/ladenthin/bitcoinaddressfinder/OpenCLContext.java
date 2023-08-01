@@ -59,7 +59,7 @@ public class OpenCLContext {
     public static final int GEN_SHA256_MODE = 2;
     public static final int GEN_RIPEMD160_MODE = 3;
     public static final int GEN_BYTEWISE_RIPEMD160_MODE = 4;
-    public static final int GEN_BYTEWISE_SECOND_SHA256_MODE = 5;
+    public static final int GEN_BYTEWISE_2ND_SHA256_MODE = 5;
     private int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
@@ -74,7 +74,7 @@ public class OpenCLContext {
         String[] openClPrograms = resourceNamesContentWithReplacements.toArray(new String[0]);
         return openClPrograms;
     }
-    
+
     private List<String> getResourceNames() {
         List<String> resourceNames = new ArrayList<>();
         resourceNames.add("inc_defines.h");
@@ -196,7 +196,7 @@ public class OpenCLContext {
             setRipemd150Kernel();
         } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_RIPEMD160_MODE) {
             setBytewiseRipemd160Kernel();
-        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_SECOND_SHA256_MODE) {
+        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_2ND_SHA256_MODE) {
             setBytewiseSecondSha256Kernel();
         } else {
             // TODO Implement else-case

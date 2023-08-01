@@ -178,7 +178,7 @@ public class OpenCLGridResult {
             firstSha256Offset = Sha256Bytes.ONE_SHA256_NUM_BYTES;
         } else if (kernelMode == OpenCLContext.GEN_RIPEMD160_MODE) {
             workItemResultBufferSize = TWO_COORDINATES_NUM_BYTES_SHA256_RIPEMD160;
-            firstSha256Offset =Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES;
+            firstSha256Offset = Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES;
         } else {
             // TODO handle that case
             return null;
@@ -199,7 +199,7 @@ public class OpenCLGridResult {
                 Sha256Bytes.ONE_SHA256_NUM_BYTES);
 
         // abort further retrieving when we do not have a second SHA-256 hash
-        if(kernelMode != OpenCLContext.GEN_SHA256_MODE) {
+        if (kernelMode != OpenCLContext.GEN_SHA256_MODE) {
             return new Sha256Bytes(pubKeyUncompressed, firstSha256Hash);
         }
         // copy second SHA-256 hash
@@ -279,7 +279,7 @@ public class OpenCLGridResult {
 
     private ResultBytes retrieveResultBytesFromWorkItem(int workItemId) {
         int workItemResultSize;
-        if (kernelMode == OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE) {
+        if (kernelMode == OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE) {
             workItemResultSize = ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256;
         } else {
             workItemResultSize = ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160;

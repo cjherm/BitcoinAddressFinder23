@@ -428,7 +428,7 @@ public class TestHelper {
             byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
             byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
             byte[] expectedSecondSha256Hash;
-            if (kernelMode == OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE) {
+            if (kernelMode == OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE) {
                 byte[] expectedRipemd160WithVersionByte = TestHelper.calculateDigestWithVersionByteFromByteArray(expectedRipemd160);
                 expectedSecondSha256Hash = TestHelper.calculateSha256FromByteArray(expectedRipemd160WithVersionByte);
             } else {
@@ -518,14 +518,14 @@ public class TestHelper {
                 for (ResultBytes actualElem : actual) {
                     if (Arrays.equals(expectedElem.getPrivateKeyBytes(), actualElem.getPrivateKeyBytes())) {
                         elemExists = true;
-                        reason += "\n\t       expected private key = " + Arrays.toString(expectedElem.getPrivateKeyBytes());
-                        reason += "\n\t         actual private key = " + Arrays.toString(actualElem.getPrivateKeyBytes());
-                        reason += "\n\t        expected public key = " + Arrays.toString(expectedElem.getPublicKeyBytes());
-                        reason += "\n\t          actual public key = " + Arrays.toString(actualElem.getPublicKeyBytes());
-                        reason += "\n\texpected first SHA-256 hash = " + Arrays.toString(expectedElem.getFirstSha256BytesBytes());
-                        reason += "\n\t  actual first SHA-256 hash = " + Arrays.toString(actualElem.getFirstSha256BytesBytes());
-                        reason += "\n\t   expected RIPEMD-160 hash = " + Arrays.toString(expectedElem.getRipemd160BytesBytes());
-                        reason += "\n\t     actual RIPEMD-160 hash = " + Arrays.toString(actualElem.getRipemd160BytesBytes());
+                        reason += "\n\t        expected private key = " + Arrays.toString(expectedElem.getPrivateKeyBytes());
+                        reason += "\n\t          actual private key = " + Arrays.toString(actualElem.getPrivateKeyBytes());
+                        reason += "\n\t         expected public key = " + Arrays.toString(expectedElem.getPublicKeyBytes());
+                        reason += "\n\t           actual public key = " + Arrays.toString(actualElem.getPublicKeyBytes());
+                        reason += "\n\t expected first SHA-256 hash = " + Arrays.toString(expectedElem.getFirstSha256BytesBytes());
+                        reason += "\n\t   actual first SHA-256 hash = " + Arrays.toString(actualElem.getFirstSha256BytesBytes());
+                        reason += "\n\t    expected RIPEMD-160 hash = " + Arrays.toString(expectedElem.getRipemd160BytesBytes());
+                        reason += "\n\t      actual RIPEMD-160 hash = " + Arrays.toString(actualElem.getRipemd160BytesBytes());
                         assertThat(reason, actualElem, is(equalTo(expectedElem)));
                         System.out.println(reason);
                         break;

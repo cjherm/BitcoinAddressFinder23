@@ -690,7 +690,7 @@ public class OpenCLContextTest {
     public void test_generateUntilSecondSha256Hash_specificSinglePrivateKey_bytewiseMode() {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
         byte[] privateKey = TestHelper.transformHexStringToBytes(PRIVATE_KEY_HEX_STRING);
         byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(specificSinglePrivateKey[0]);
         byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
@@ -719,7 +719,7 @@ public class OpenCLContextTest {
     public void test_generateUntilSecondSha256Hash_randomSinglePrivateKey_bytewiseMode() {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
         byte[] privateKey = TestHelper.transformBigIntegerToByteArray(randomSinglePrivateKey[0]);
         byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(randomSinglePrivateKey[0]);
         byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
@@ -748,8 +748,8 @@ public class OpenCLContextTest {
     public void test_generateChunkUntilSha256Hash_specificSinglePrivateKey_bytewiseMode() {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
@@ -768,8 +768,8 @@ public class OpenCLContextTest {
     public void test_generateChunkUntilSha256Hash_randomSinglePrivateKey_bytewiseMode() {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
@@ -788,8 +788,8 @@ public class OpenCLContextTest {
     public void test_generate256UntilSha256Hash_random256PrivateKeys_bytewiseMode() {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
-        OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromPrivateKeys(random256PrivateKeys, OpenCLContext.GEN_BYTEWISE_SECOND_SHA256_MODE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromPrivateKeys(random256PrivateKeys, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
