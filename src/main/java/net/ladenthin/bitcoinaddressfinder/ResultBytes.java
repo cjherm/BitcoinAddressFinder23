@@ -33,24 +33,6 @@ public class ResultBytes {
      * @param firstSha256      The first SHA-256 hash as a byte array
      * @param ripemd160        The RIPEMD-160 hash as a byte array
      * @param secondSha256     The second SHA-256 hash as a byte array
-     */
-    public ResultBytes(byte[] privateKey, byte[] publicKey, byte[] firstSha256, byte[] ripemd160, byte[] secondSha256) {
-        this.privateKeyBytes = privateKey;
-        this.publicKeyBytes = publicKey;
-        this.firstSha256Bytes = firstSha256;
-        this.ripemd160Bytes = ripemd160;
-        this.secondSha256Bytes = secondSha256;
-        this.thirdSha256Bytes = new byte[NUM_BYTES_SHA256];
-    }
-
-    /**
-     * Constructor for storing all results in a data structure.
-     *
-     * @param privateKey       The private key as a byte array
-     * @param publicKey        The public key as a byte array
-     * @param firstSha256      The first SHA-256 hash as a byte array
-     * @param ripemd160        The RIPEMD-160 hash as a byte array
-     * @param secondSha256     The second SHA-256 hash as a byte array
      * @param thirdSha256Bytes The third SHA-256 hash as a byte array
      */
     public ResultBytes(byte[] privateKey, byte[] publicKey, byte[] firstSha256, byte[] ripemd160, byte[] secondSha256, byte[] thirdSha256Bytes) {
