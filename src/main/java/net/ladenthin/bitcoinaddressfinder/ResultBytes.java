@@ -24,28 +24,6 @@ public class ResultBytes {
     private final byte[] secondSha256Bytes;
 
     /**
-     * Constructor for storing all results in a data structure. It will retrieve all results from the given result buffer content.
-     *
-     * @param resultBytes The complete result buffer as a byte array
-     */
-    public ResultBytes(byte[] resultBytes) {
-        privateKeyBytes = new byte[NUM_BYTES_PRIVATE_KEY];
-        System.arraycopy(resultBytes, 0, privateKeyBytes, 0, NUM_BYTES_PRIVATE_KEY);
-        publicKeyBytes = new byte[NUM_BYTES_PUBLIC_KEY];
-        System.arraycopy(resultBytes, NUM_BYTES_PRIVATE_KEY, publicKeyBytes, 0, NUM_BYTES_PUBLIC_KEY);
-        firstSha256Bytes = new byte[NUM_BYTES_SHA256];
-        System.arraycopy(resultBytes, NUM_BYTES_PRIVATE_KEY + NUM_BYTES_PUBLIC_KEY, firstSha256Bytes, 0, NUM_BYTES_SHA256);
-        ripemd160Bytes = new byte[NUM_BYTES_RIPEMD160];
-        System.arraycopy(resultBytes, NUM_BYTES_PRIVATE_KEY + NUM_BYTES_PUBLIC_KEY + NUM_BYTES_SHA256, ripemd160Bytes, 0, NUM_BYTES_RIPEMD160);
-        if (resultBytes.length == NUM_BYTES_TOTAL_UNTIL_2ND_SHA256) {
-            secondSha256Bytes = new byte[NUM_BYTES_SHA256];
-            System.arraycopy(resultBytes, NUM_BYTES_TOTAL_UNTIL_RIPEMD160, secondSha256Bytes, 0, NUM_BYTES_SHA256);
-        } else {
-            secondSha256Bytes = new byte[NUM_BYTES_SHA256];
-        }
-    }
-
-    /**
      * Constructor for storing all results in a data structure.
      *
      * @param privateKey       The private key as a byte array
