@@ -544,6 +544,8 @@ public class TestHelper {
                         reason += "\n\t      actual RIPEMD-160 hash = " + Arrays.toString(actualElem.getRipemd160BytesBytes());
                         reason += "\n\texpected second SHA-256 hash = " + Arrays.toString(expectedElem.getSecondSha256Bytes());
                         reason += "\n\t  actual second SHA-256 hash = " + Arrays.toString(actualElem.getSecondSha256Bytes());
+                        reason += "\n\t expected third SHA-256 hash = " + Arrays.toString(expectedElem.getThirdSha256Bytes());
+                        reason += "\n\t   actual third SHA-256 hash = " + Arrays.toString(actualElem.getThirdSha256Bytes());
                         assertThat(reason, actualElem, is(equalTo(expectedElem)));
                         System.out.println(reason);
                         break;
