@@ -114,6 +114,7 @@ public class OpenCLContext {
     private final static String BYTEWISE_3RD_SHA256_CHUNK_KERNEL = "generate_chunk_until_third_sha256";
     private final static String BYTEWISE_3RD_SHA256_NONCHUNK_KERNEL = "generate_until_third_sha256";
     private final static String BYTEWISE_ADDRESS_CHUNK_KERNEL = "generate_chunk_until_address";
+    private final static String BYTEWISE_ADDRESS_NONCHUNK_KERNEL = "generate_until_address";
 
     private final static boolean EXCEPTIONS_ENABLED = true;
     
@@ -272,7 +273,7 @@ public class OpenCLContext {
         if (producerOpenCL.chunkMode) {
             kernel = clCreateKernel(program, BYTEWISE_ADDRESS_CHUNK_KERNEL, errorCode);
         } else {
-            // TODO impl method
+            kernel = clCreateKernel(program, BYTEWISE_ADDRESS_NONCHUNK_KERNEL, errorCode);
         }
     }
 
