@@ -452,7 +452,7 @@ public class TestHelper {
         ResultBytes[] expectedResultBytes = new ResultBytes[size];
 
         for (int i = 0; i < size; i++) {
-            byte[] expectedResultBuffer = new byte[ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256];
+            byte[] expectedResultBuffer = new byte[ResultBytes.NUM_BYTES_TOTAL_UNTIL_ADDRESS];
 
             byte[] privateKey = transformPrivateKeyFromBigIntegerToByteArray(privateKeys[i]);
             System.arraycopy(privateKey, 0, expectedResultBuffer, 0, ResultBytes.NUM_BYTES_PRIVATE_KEY);
@@ -472,6 +472,9 @@ public class TestHelper {
 
             byte[] expectedThirdSha256Hash = calculateSha256FromByteArray(expectedSecondSha256);
             System.arraycopy(expectedThirdSha256Hash, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256, ResultBytes.NUM_BYTES_SHA256);
+
+            byte[] expectedAddress = calculateAddressFromRipemd160(expectedRipemd160);
+            System.arraycopy(expectedAddress, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256, ResultBytes.NUM_BYTES_ADDRESS);
 
             ResultBytesFactory factory = new ResultBytesFactory();
             factory.setResultBufferBytes(expectedResultBuffer);
