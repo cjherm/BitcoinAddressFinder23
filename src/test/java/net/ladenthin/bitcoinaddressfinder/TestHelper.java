@@ -586,6 +586,10 @@ public class TestHelper {
                         reason += "\n\t  actual second SHA-256 hash = " + Arrays.toString(actualElem.getSecondSha256Bytes());
                         reason += "\n\t expected third SHA-256 hash = " + Arrays.toString(expectedElem.getThirdSha256Bytes());
                         reason += "\n\t   actual third SHA-256 hash = " + Arrays.toString(actualElem.getThirdSha256Bytes());
+                        reason += "\n\t            expected address = " + Arrays.toString(expectedElem.getAddressBytes());
+                        reason += "\n\t              actual address = " + Arrays.toString(actualElem.getAddressBytes());
+                        reason += "\n\t   expected address (BASE58) = " + transformAddressBytesToBase58String(expectedElem.getAddressBytes());
+                        reason += "\n\t     actual address (BASE58) = " + transformAddressBytesToBase58String(actualElem.getAddressBytes());
                         assertThat(reason, actualElem, is(equalTo(expectedElem)));
                         System.out.println(reason);
                         break;
