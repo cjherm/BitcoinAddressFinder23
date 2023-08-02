@@ -3,6 +3,7 @@ package net.ladenthin.bitcoinaddressfinder;
 import com.google.common.hash.Hashing;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
 import org.apache.commons.codec.binary.Hex;
+import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.ECKey;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.hamcrest.Matchers;
@@ -289,6 +290,16 @@ public class TestHelper {
      */
     public static String transformBytesToHexString(byte[] bytes) {
         return Hex.encodeHexString(bytes);
+    }
+
+    /**
+     * Transforms a given array of bytes into a {@link String} encoded with Base58.
+     *
+     * @param addressBytes To be transformed into a Base58 {@link String}
+     * @return The Base58 encoded representation of the given bytes
+     */
+    public static String transformAddressBytesToBase58String(byte[] addressBytes) {
+        return Base58.encode(addressBytes);
     }
 
     /**
