@@ -605,7 +605,7 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE);
-        byte[] privateKey = TestHelper.transformBigIntegerToByteArray(randomSinglePrivateKey[0]);
+        byte[] privateKey = TestHelper.transformPrivateKeyFromBigIntegerToByteArray(randomSinglePrivateKey[0]);
         byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(randomSinglePrivateKey[0]);
         byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
         byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
@@ -720,7 +720,7 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE);
-        byte[] privateKey = TestHelper.transformBigIntegerToByteArray(randomSinglePrivateKey[0]);
+        byte[] privateKey = TestHelper.transformPrivateKeyFromBigIntegerToByteArray(randomSinglePrivateKey[0]);
         byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(randomSinglePrivateKey[0]);
         byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
         byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
@@ -840,7 +840,7 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_BYTEWISE_3RD_SHA256_MODE);
-        byte[] privateKey = TestHelper.transformBigIntegerToByteArray(randomSinglePrivateKey[0]);
+        byte[] privateKey = TestHelper.transformPrivateKeyFromBigIntegerToByteArray(randomSinglePrivateKey[0]);
         byte[] expectedPublicKey = TestHelper.calculatePublicKeyAsBytesFromPrivateKey(randomSinglePrivateKey[0]);
         byte[] expectedFirstSha256 = TestHelper.calculateSha256FromByteArray(expectedPublicKey);
         byte[] expectedRipemd160 = TestHelper.calculateRipemd160FromByteArray(expectedFirstSha256);
