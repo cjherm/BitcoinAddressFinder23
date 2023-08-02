@@ -432,7 +432,7 @@ public class TestHelper {
         for (int i = 0; i < size; i++) {
             byte[] expectedResultBuffer = new byte[ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256];
 
-            byte[] privateKey = transformBigIntegerToByteArray(privateKeys[i]);
+            byte[] privateKey = transformPrivateKeyFromBigIntegerToByteArray(privateKeys[i]);
             System.arraycopy(privateKey, 0, expectedResultBuffer, 0, ResultBytes.NUM_BYTES_PRIVATE_KEY);
 
             byte[] expectedPublicKey = calculatePublicKeyAsBytesFromPrivateKey(privateKeys[i]);
