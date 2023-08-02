@@ -152,6 +152,28 @@ public class TestHelper {
         return digestWithVersionByte;
     }
 
+    /**
+     * Calculates an address from a given RIPEMD-160 hash.
+     *
+     * @param ripemd160 To calculate the address from
+     * @return The address as a byte array or <code>null</code> if the length of the RIPEMD-160 is not equal 20 bytes
+     */
+    public static byte[] calculateAddressFromRipemd160(byte[] ripemd160) {
+        if (ripemd160.length != ResultBytes.NUM_BYTES_RIPEMD160) {
+            return null;
+        }
+        byte[] address = new byte[ResultBytes.NUM_BYTES_ADDRESS];
+        byte[] ripemd160WithVersionByte = calculateDigestWithVersionByteFromByteArray(ripemd160);
+        System.arraycopy(ripemd160WithVersionByte, 0, address, 0, ripemd160WithVersionByte.length);
+        byte[] secondSha256Hash = calculateSha256FromByteArray(ripemd160WithVersionByte);
+        byte[] thirdSha256Hash = calculateSha256FromByteArray(secondSha256Hash);
+        address[21] = thirdSha256Hash[0];
+        address[22] = thirdSha256Hash[1];
+        address[23] = thirdSha256Hash[2];
+        address[24] = thirdSha256Hash[3];
+        return address;
+    }
+
     /*
      * Method written by OpenAI/ChatGPT.
      *
