@@ -238,10 +238,14 @@ public class TestHelper {
         return bigInteger.toString(HEX_RADIX);
     }
 
-    public static byte[] transformBigIntegerToByteArray(BigInteger bigInteger) {
+    public static byte[] transformPrivateKeyFromBigIntegerToByteArray(BigInteger bigInteger) {
         byte[] bigIntegerAsBytes = bigInteger.toByteArray();
-        byte[] resultBytes = new byte[bigIntegerAsBytes.length - 1];
-        System.arraycopy(bigIntegerAsBytes, 1, resultBytes, 0, (bigIntegerAsBytes.length - 1));
+        int srcOffset = 0;
+        if ((bigIntegerAsBytes.length > ResultBytes.NUM_BYTES_PRIVATE_KEY) && (bigIntegerAsBytes[0] == 0)) {
+            srcOffset = bigIntegerAsBytes.length - ResultBytes.NUM_BYTES_PRIVATE_KEY;
+        }
+        byte[] resultBytes = new byte[bigIntegerAsBytes.length - srcOffset];
+        System.arraycopy(bigIntegerAsBytes, srcOffset, resultBytes, 0, (bigIntegerAsBytes.length - srcOffset));
         return resultBytes;
     }
 
