@@ -61,6 +61,7 @@ public class OpenCLContext {
     public static final int GEN_BYTEWISE_RIPEMD160_MODE = 4;
     public static final int GEN_BYTEWISE_2ND_SHA256_MODE = 5;
     public static final int GEN_BYTEWISE_3RD_SHA256_MODE = 6;
+    public static final int GEN_BYTEWISE_ADDRESS_MODE = 7;
     private int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
@@ -112,6 +113,7 @@ public class OpenCLContext {
     private final static String BYTEWISE_2ND_SHA256_NONCHUNK_KERNEL = "generate_until_second_sha256";
     private final static String BYTEWISE_3RD_SHA256_CHUNK_KERNEL = "generate_chunk_until_third_sha256";
     private final static String BYTEWISE_3RD_SHA256_NONCHUNK_KERNEL = "generate_until_third_sha256";
+    private final static String BYTEWISE_ADDRESS_CHUNK_KERNEL = "generate_chunk_until_address";
 
     private final static boolean EXCEPTIONS_ENABLED = true;
     
@@ -203,6 +205,8 @@ public class OpenCLContext {
             setBytewiseSecondSha256Kernel();
         } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_3RD_SHA256_MODE) {
             setBytewiseThirdSha256Kernel();
+        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_ADDRESS_MODE) {
+            setBytewiseAddressKernel();
         } else {
             // TODO Implement else-case
         }
@@ -261,6 +265,14 @@ public class OpenCLContext {
             kernel = clCreateKernel(program, BYTEWISE_3RD_SHA256_CHUNK_KERNEL, errorCode);
         } else {
             kernel = clCreateKernel(program, BYTEWISE_3RD_SHA256_NONCHUNK_KERNEL, errorCode);
+        }
+    }
+
+    private void setBytewiseAddressKernel() {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, BYTEWISE_ADDRESS_CHUNK_KERNEL, errorCode);
+        } else {
+            // TODO impl method
         }
     }
 
