@@ -26,6 +26,7 @@ public class ResultBytes {
     private final byte[] ripemd160Bytes;
     private final byte[] secondSha256Bytes;
     private final byte[] thirdSha256Bytes;
+    private final byte[] addressBytes;
 
     /**
      * Constructor for storing all results in a data structure.
@@ -36,14 +37,16 @@ public class ResultBytes {
      * @param ripemd160        The RIPEMD-160 hash as a byte array
      * @param secondSha256     The second SHA-256 hash as a byte array
      * @param thirdSha256Bytes The third SHA-256 hash as a byte array
+     * @param addressBytes     The address as a byte array
      */
-    public ResultBytes(byte[] privateKey, byte[] publicKey, byte[] firstSha256, byte[] ripemd160, byte[] secondSha256, byte[] thirdSha256Bytes) {
+    public ResultBytes(byte[] privateKey, byte[] publicKey, byte[] firstSha256, byte[] ripemd160, byte[] secondSha256, byte[] thirdSha256Bytes, byte[] addressBytes) {
         this.privateKeyBytes = privateKey;
         this.publicKeyBytes = publicKey;
         this.firstSha256Bytes = firstSha256;
         this.ripemd160Bytes = ripemd160;
         this.secondSha256Bytes = secondSha256;
         this.thirdSha256Bytes = thirdSha256Bytes;
+        this.addressBytes = addressBytes;
     }
 
     /**
@@ -100,12 +103,21 @@ public class ResultBytes {
         return thirdSha256Bytes;
     }
 
+    /**
+     * The SHA-256 hash of the previous SHA-256 hash.
+     *
+     * @return third SHA-256 hash as byte array
+     */
+    public byte[] getAddressBytes() {
+        return addressBytes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ResultBytes that = (ResultBytes) o;
-        return Arrays.equals(privateKeyBytes, that.privateKeyBytes) && Arrays.equals(publicKeyBytes, that.publicKeyBytes) && Arrays.equals(firstSha256Bytes, that.firstSha256Bytes) && Arrays.equals(ripemd160Bytes, that.ripemd160Bytes) && Arrays.equals(secondSha256Bytes, that.secondSha256Bytes) && Arrays.equals(thirdSha256Bytes, that.thirdSha256Bytes);
+        return Arrays.equals(privateKeyBytes, that.privateKeyBytes) && Arrays.equals(publicKeyBytes, that.publicKeyBytes) && Arrays.equals(firstSha256Bytes, that.firstSha256Bytes) && Arrays.equals(ripemd160Bytes, that.ripemd160Bytes) && Arrays.equals(secondSha256Bytes, that.secondSha256Bytes) && Arrays.equals(thirdSha256Bytes, that.thirdSha256Bytes) && Arrays.equals(addressBytes, that.addressBytes);
     }
 
     @Override
@@ -116,6 +128,7 @@ public class ResultBytes {
         result = 31 * result + Arrays.hashCode(ripemd160Bytes);
         result = 31 * result + Arrays.hashCode(secondSha256Bytes);
         result = 31 * result + Arrays.hashCode(thirdSha256Bytes);
+        result = 31 * result + Arrays.hashCode(addressBytes);
         return result;
     }
 }

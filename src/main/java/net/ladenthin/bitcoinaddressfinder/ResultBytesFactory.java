@@ -64,7 +64,7 @@ public class ResultBytesFactory {
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256, addressBytes, 0, ResultBytes.NUM_BYTES_ADDRESS);
         }
 
-        return new ResultBytes(privateKeyBytes, publicKeyBytes, firstSha256Bytes, ripemd160Bytes, secondSha256Bytes, thirdSha256Bytes);
+        return new ResultBytes(privateKeyBytes, publicKeyBytes, firstSha256Bytes, ripemd160Bytes, secondSha256Bytes, thirdSha256Bytes, addressBytes);
     }
 
     private boolean parametersAreInvalid() {
