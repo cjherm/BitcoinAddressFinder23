@@ -522,6 +522,19 @@ public class TestHelper {
     }
 
     /**
+     * Calculates the address from a given private key.
+     *
+     * @param privateKey To derive the address from.
+     * @return address Derived from the given private key.
+     */
+    public static byte[] calculateAddressFromPrivateKey(BigInteger privateKey) {
+        byte[] publicKey = calculatePublicKeyAsBytesFromPrivateKey(privateKey);
+        byte[] firstSha256 = calculateSha256FromByteArray(publicKey);
+        byte[] ripemd160 = calculateRipemd160FromByteArray(firstSha256);
+        return calculateAddressFromRipemd160(ripemd160);
+    }
+
+    /**
      * Map storing actual values for better test assertions. Compares size and if both are equal.
      *
      * @param <K> the key type
