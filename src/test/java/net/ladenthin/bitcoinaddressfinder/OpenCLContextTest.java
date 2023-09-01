@@ -21,7 +21,7 @@ public class OpenCLContextTest {
 
     private static final boolean CHUNK_MODE = true;
     private static final boolean NON_CHUNK_MODE = false;
-    private static final String PRIVATE_KEY_HEX_STRING = "C297E4944F46F3B9F04CF4B3984F49BD4EE40DEC33991066FA15CDB227933400";
+    private static final String PRIVATE_KEY_HEX_STRING = "c297e4944f46f3b9f04cf4b3984f49bd4ee40dec33991066fa15cdb227933400";
     private static final String PUBLIC_KEY_HEX_STRING = "04ccc8a095355a8479d9ef89eb6e435fb7fd9b2120dba38f71bf51a51f2fe66d6f64e30ee36de0a5691ad6d8036919ce8dc3ffb073510b8535675e103c045c6f44";
     private static final String SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING = "7ae93296d94ad53c2fb50a0f65e41437335e30fa6cef67b9e4aa2886feba5d40";
     private static final String DOUBLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING = "e2f1cadac9b0458532cc50eee4787bf30809d827bbf0170ef0c6e2a8459199b7";
