@@ -47,10 +47,18 @@ public class ResultBytesFactory {
         byte[] thirdSha256Bytes = new byte[ResultBytes.NUM_BYTES_SHA256];
         byte[] addressBytes = new byte[ResultBytes.NUM_BYTES_ADDRESS];
 
-        System.arraycopy(workItemResultBytes, 0, privateKeyBytes, 0, ResultBytes.NUM_BYTES_PRIVATE_KEY);
-        System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_PRIVATE_KEY, publicKeyBytes, 0, ResultBytes.NUM_BYTES_PUBLIC_KEY);
-        System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY, firstSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
-        System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256, ripemd160Bytes, 0, ResultBytes.NUM_BYTES_RIPEMD160);
+        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_PUBLIC_KEY_MODE) {
+            System.arraycopy(workItemResultBytes, 0, privateKeyBytes, 0, ResultBytes.NUM_BYTES_PRIVATE_KEY);
+            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_PRIVATE_KEY, publicKeyBytes, 0, ResultBytes.NUM_BYTES_PUBLIC_KEY);
+        }
+
+        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_1ST_SHA256_MODE) {
+            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY, firstSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
+        }
+
+        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE) {
+            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256, ripemd160Bytes, 0, ResultBytes.NUM_BYTES_RIPEMD160);
+        }
 
         if (kernelMode >= OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE) {
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160, secondSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
@@ -70,6 +78,14 @@ public class ResultBytesFactory {
     private boolean parametersAreInvalid() {
         if (workItemResultBytes == null) {
             return true;
+        }
+
+        if (kernelMode == OpenCLContext.GEN_BYTEWISE_PUBLIC_KEY_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY) {
+            return false;
+        }
+
+        if (kernelMode == OpenCLContext.GEN_BYTEWISE_1ST_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256) {
+            return false;
         }
 
         if (kernelMode == OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160) {
