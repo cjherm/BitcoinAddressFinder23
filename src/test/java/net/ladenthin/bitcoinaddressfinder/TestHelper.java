@@ -36,9 +36,21 @@ public class TestHelper {
      * @return {@link OpenCLContext}
      */
     public static OpenCLContext createOpenCLContext(boolean chunkMode, int kernelMode) {
+        return createOpenCLContext(chunkMode, kernelMode, GRID_NUM_BITS);
+    }
+
+    /**
+     * Creates and initializes an {@link OpenCLContext} for testing.
+     *
+     * @param chunkMode   If the {@link OpenCLContext} should use the <code>chunkMode</code> for private keys
+     * @param kernelMode  With what <code>kernelMode</code> the {@link OpenCLContext} should run
+     * @param gridNumBits Determines the number of left shifted bits to calculate the <code>chunkSize</code>
+     * @return {@link OpenCLContext}
+     */
+    public static OpenCLContext createOpenCLContext(boolean chunkMode, int kernelMode, int gridNumBits) {
         new OpenCLPlatformAssume().assumeOpenCLLibraryLoadableAndOneOpenCL2_0OrGreaterDeviceAvailable();
         CProducerOpenCL producerOpenCL = new CProducerOpenCL();
-        producerOpenCL.gridNumBits = GRID_NUM_BITS;
+        producerOpenCL.gridNumBits = gridNumBits;
         producerOpenCL.chunkMode = chunkMode;
         producerOpenCL.kernelMode = kernelMode;
         OpenCLContext openCLContext = new OpenCLContext(producerOpenCL);
