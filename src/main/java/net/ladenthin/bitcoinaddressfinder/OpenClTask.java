@@ -92,6 +92,8 @@ public class OpenClTask {
             return AddressBytes.PUB_KEY_WITHOUT_PARITY_WITH_DOUBLE_SHA256_BYTE_LEN * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_RIPEMD160_MODE) {
             return Ripemd160Bytes.RESULT_LENGTH_IN_BYTES * cProducer.getWorkSize();
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_PUBLIC_KEY_MODE) {
+            return ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160 * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE) {
