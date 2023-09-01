@@ -206,6 +206,10 @@ public class OpenCLContext {
             setSha256Kernel();
         } else if (producerOpenCL.kernelMode == GEN_RIPEMD160_MODE) {
             setRipemd150Kernel();
+        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_PUBLIC_KEY_MODE) {
+            setBytewisePublicKeyKernel();
+        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_1ST_SHA256_MODE) {
+            setBytewiseFirstSha256Kernel();
         } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_RIPEMD160_MODE) {
             setBytewiseRipemd160Kernel();
         } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_2ND_SHA256_MODE) {
@@ -248,6 +252,22 @@ public class OpenCLContext {
             kernel = clCreateKernel(program, RIPEMD160_CHUNK_KERNEL_NAME, errorCode);
         } else {
             kernel = clCreateKernel(program, RIPEMD160_NONCHUNK_KERNEL_NAME, errorCode);
+        }
+    }
+
+    private void setBytewisePublicKeyKernel() {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, BYTEWISE_PUBLIC_KEY_CHUNK_KERNEL, errorCode);
+        } else {
+            kernel = clCreateKernel(program, BYTEWISE_PUBLIC_KEY_NONCHUNK_KERNEL, errorCode);
+        }
+    }
+
+    private void setBytewiseFirstSha256Kernel() {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, BYTEWISE_1ST_SHA256_CHUNK_KERNEL, errorCode);
+        } else {
+            kernel = clCreateKernel(program, BYTEWISE_1ST_SHA256_NONCHUNK_KERNEL, errorCode);
         }
     }
 
