@@ -277,6 +277,11 @@ public class OpenCLGridResult {
         return resultBytes;
     }
 
+    public AddressBytes[] getAddressBytes() {
+        // TODO impl method
+        return null;
+    }
+
     private ResultBytes retrieveResultBytesFromWorkItem(int workItemId) {
         int workItemResultSize = result.capacity() / workSize;
         byte[] workItemResultBytes = new byte[workItemResultSize];
