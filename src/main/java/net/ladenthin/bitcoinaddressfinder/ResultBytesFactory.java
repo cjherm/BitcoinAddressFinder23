@@ -75,6 +75,7 @@ public class ResultBytesFactory {
         return new ResultBytes(privateKeyBytes, publicKeyBytes, firstSha256Bytes, ripemd160Bytes, secondSha256Bytes, thirdSha256Bytes, addressBytes);
     }
 
+    @SuppressWarnings("RedundantIfStatement")
     private boolean parametersAreInvalid() {
         if (workItemResultBytes == null) {
             return true;
