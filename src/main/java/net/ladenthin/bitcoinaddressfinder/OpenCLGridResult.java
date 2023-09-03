@@ -22,8 +22,6 @@ import java.nio.ByteBuffer;
 
 public class OpenCLGridResult {
 
-    public static final int TWO_COORDINATES_NUM_BYTES_SINGLE_SHA256 = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES + ResultBytes.NUM_BYTES_SHA256;
-
     private final ByteBufferUtility byteBufferUtility = new ByteBufferUtility(true);
     private final BigInteger[] secretKeys;
     private final int workSize;
