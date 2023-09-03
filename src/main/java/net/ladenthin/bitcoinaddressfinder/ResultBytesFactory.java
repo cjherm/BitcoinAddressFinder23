@@ -47,28 +47,28 @@ public class ResultBytesFactory {
         byte[] thirdSha256Bytes = new byte[ResultBytes.NUM_BYTES_SHA256];
         byte[] addressBytes = new byte[ResultBytes.NUM_BYTES_ADDRESS];
 
-        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_PUBLIC_KEY_MODE) {
+        if (kernelMode >= OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE) {
             System.arraycopy(workItemResultBytes, 0, privateKeyBytes, 0, ResultBytes.NUM_BYTES_PRIVATE_KEY);
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_PRIVATE_KEY, publicKeyBytes, 0, ResultBytes.NUM_BYTES_PUBLIC_KEY);
         }
 
-        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_1ST_SHA256_MODE) {
+        if (kernelMode >= OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE) {
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY, firstSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
         }
 
-        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE) {
+        if (kernelMode >= OpenCLContext.GEN_UNTIL_RIPEMD160_MODE) {
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256, ripemd160Bytes, 0, ResultBytes.NUM_BYTES_RIPEMD160);
         }
 
-        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE) {
+        if (kernelMode >= OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE) {
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160, secondSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
         }
 
-        if (kernelMode >= OpenCLContext.GEN_BYTEWISE_3RD_SHA256_MODE) {
+        if (kernelMode >= OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE) {
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256, thirdSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
         }
 
-        if (kernelMode == OpenCLContext.GEN_BYTEWISE_ADDRESS_MODE) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_ADDRESS_MODE) {
             System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256, addressBytes, 0, ResultBytes.NUM_BYTES_ADDRESS);
         }
 
@@ -81,27 +81,27 @@ public class ResultBytesFactory {
             return true;
         }
 
-        if (kernelMode == OpenCLContext.GEN_BYTEWISE_PUBLIC_KEY_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY) {
+        if (kernelMode == OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_BYTEWISE_1ST_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_RIPEMD160_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_BYTEWISE_3RD_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_BYTEWISE_ADDRESS_MODE && workItemResultBytes.length == ResultBytes.NUM_BYTES_TOTAL_UNTIL_ADDRESS) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_ADDRESS_MODE && workItemResultBytes.length == ResultBytes.NUM_BYTES_TOTAL_UNTIL_ADDRESS) {
             return false;
         }
 

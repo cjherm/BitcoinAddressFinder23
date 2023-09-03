@@ -53,15 +53,19 @@ import org.slf4j.LoggerFactory;
 
 public class OpenCLContext {
 
+    // kernel modes that do not write all intermediate results into the result buffer:
+    public static final int GEN_XY_COORDINATES_ONLY_MODE = 0;
+    public static final int GEN_PUBLIC_KEY_ONLY_MODE = 1;
+    public static final int GEN_ADDRESSES_ONLY_MODE = 2;
+
+    // kernel modes that write all intermediate results into the result buffer:
+    public static final int GEN_UNTIL_1ST_SHA256_MODE = 3;
+    public static final int GEN_UNTIL_RIPEMD160_MODE = 4;
+    public static final int GEN_UNTIL_2ND_SHA256_MODE = 5;
+    public static final int GEN_UNTIL_3RD_SHA256_MODE = 6;
+    public static final int GEN_UNTIL_ADDRESS_MODE = 7;
+
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
-    public static final int GEN_PUBLIC_KEYS_MODE = 0;
-    public static final int GEN_ADDRESSES_ONLY_MODE = 1;
-    public static final int GEN_BYTEWISE_PUBLIC_KEY_MODE = 4;
-    public static final int GEN_BYTEWISE_1ST_SHA256_MODE = 5;
-    public static final int GEN_BYTEWISE_RIPEMD160_MODE = 6;
-    public static final int GEN_BYTEWISE_2ND_SHA256_MODE = 7;
-    public static final int GEN_BYTEWISE_3RD_SHA256_MODE = 8;
-    public static final int GEN_BYTEWISE_ADDRESS_MODE = 9;
     private final int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
@@ -199,21 +203,21 @@ public class OpenCLContext {
     }
 
     private void setKernel() throws UnknownKernelModeException {
-        if (producerOpenCL.kernelMode == GEN_PUBLIC_KEYS_MODE) {
+        if (producerOpenCL.kernelMode == GEN_XY_COORDINATES_ONLY_MODE) {
             setPublicKeyGeneratorKernel();
         } else if (producerOpenCL.kernelMode == GEN_ADDRESSES_ONLY_MODE) {
             setAddressGeneratorKernel();
-        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_PUBLIC_KEY_MODE) {
+        } else if (producerOpenCL.kernelMode == GEN_PUBLIC_KEY_ONLY_MODE) {
             setBytewisePublicKeyKernel();
-        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_1ST_SHA256_MODE) {
+        } else if (producerOpenCL.kernelMode == GEN_UNTIL_1ST_SHA256_MODE) {
             setBytewiseFirstSha256Kernel();
-        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_RIPEMD160_MODE) {
+        } else if (producerOpenCL.kernelMode == GEN_UNTIL_RIPEMD160_MODE) {
             setBytewiseRipemd160Kernel();
-        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_2ND_SHA256_MODE) {
+        } else if (producerOpenCL.kernelMode == GEN_UNTIL_2ND_SHA256_MODE) {
             setBytewiseSecondSha256Kernel();
-        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_3RD_SHA256_MODE) {
+        } else if (producerOpenCL.kernelMode == GEN_UNTIL_3RD_SHA256_MODE) {
             setBytewiseThirdSha256Kernel();
-        } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_ADDRESS_MODE) {
+        } else if (producerOpenCL.kernelMode == GEN_UNTIL_ADDRESS_MODE) {
             setBytewiseAddressKernel();
         } else {
             throw new UnknownKernelModeException(producerOpenCL.kernelMode);

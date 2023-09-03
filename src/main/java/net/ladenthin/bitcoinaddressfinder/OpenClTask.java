@@ -86,21 +86,21 @@ public class OpenClTask {
     }
 
     public int getDstSizeInBytes() {
-        if (cProducer.kernelMode == OpenCLContext.GEN_PUBLIC_KEYS_MODE) {
+        if (cProducer.kernelMode == OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE) {
             return PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE) {
             return AddressBytes.NUM_BYTES_TOTAL * cProducer.getWorkSize();
-        } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_PUBLIC_KEY_MODE) {
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY * cProducer.getWorkSize();
-        } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_1ST_SHA256_MODE) {
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256 * cProducer.getWorkSize();
-        } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_RIPEMD160_MODE) {
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_UNTIL_RIPEMD160_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160 * cProducer.getWorkSize();
-        } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_2ND_SHA256_MODE) {
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256 * cProducer.getWorkSize();
-        } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_3RD_SHA256_MODE) {
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256 * cProducer.getWorkSize();
-        } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_ADDRESS_MODE) {
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_UNTIL_ADDRESS_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_ADDRESS * cProducer.getWorkSize();
         }
         return 0;

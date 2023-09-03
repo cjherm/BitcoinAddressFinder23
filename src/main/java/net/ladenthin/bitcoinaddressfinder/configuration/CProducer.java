@@ -29,7 +29,7 @@ public class CProducer {
     /**
      * Defines which calculation should be done in the OpenCL kernel:
      * <br><br>
-     * {@link OpenCLContext#GEN_PUBLIC_KEYS_MODE}<br>
+     * {@link OpenCLContext#GEN_XY_COORDINATES_ONLY_MODE}<br>
      * For the generation of PublicKeys from given PrivateKeys
      * <br><br>
      * {@link OpenCLContext#GEN_ADDRESSES_MODE}<br>
@@ -37,7 +37,7 @@ public class CProducer {
      * <br><br>
      */
     // TODO set default value to ensure compability with older impl for now
-    public int kernelMode = OpenCLContext.GEN_PUBLIC_KEYS_MODE;
+    public int kernelMode = OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE;
     /**
      * Lazy initialization. The configuration is changed on demand.
      */
