@@ -22,6 +22,7 @@ import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
 
 public class CProducerOpenCL extends CProducer {
 
+    // TODO for change from GPU to CPU, make changes here
     public int platformIndex = 0;
     public long deviceType = CL_DEVICE_TYPE_ALL;
     public int deviceIndex = 0;
