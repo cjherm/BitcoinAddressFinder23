@@ -104,10 +104,8 @@ public class OpenClTask {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256 * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_ADDRESS_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_ADDRESS * cProducer.getWorkSize();
-        } else {
-            // TODO handle that case
-            return -1;
         }
+        return 0;
     }
 
     public void setSrcPrivateKeys(BigInteger[] privateKeys) {
