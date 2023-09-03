@@ -278,20 +278,36 @@ public class OpenCLGridResult {
     }
 
     public AddressBytes[] getAddressBytes() {
-        // TODO impl method
-        return null;
+        AddressBytes[] addressBytes = new AddressBytes[workSize];
+        for (int i = 0; i < workSize; i++) {
+            addressBytes[i] = retrieveAddressBytesFromWorkItem(i);
+        }
+        return addressBytes;
     }
 
     private ResultBytes retrieveResultBytesFromWorkItem(int workItemId) {
+        byte[] workItemResultBytes = retrieveWorkItemResultBytesFromResultBuffer(workItemId);
+        ResultBytesFactory factory = new ResultBytesFactory();
+        factory.setResultBufferBytes(workItemResultBytes);
+        factory.setKernelMode(kernelMode);
+        return factory.createResultBytes();
+    }
+
+    private AddressBytes retrieveAddressBytesFromWorkItem(int workItemId) {
+        byte[] workItemResultBytes = retrieveWorkItemResultBytesFromResultBuffer(workItemId);
+        AddressBytesFactory factory = new AddressBytesFactory();
+        factory.setResultBufferBytes(workItemResultBytes);
+        factory.setKernelMode(kernelMode);
+        return factory.createAddressBytes();
+    }
+
+    private byte[] retrieveWorkItemResultBytesFromResultBuffer(int workItemId) {
         int workItemResultSize = result.capacity() / workSize;
         byte[] workItemResultBytes = new byte[workItemResultSize];
         int workItemResultBufferOffset = workItemId * workItemResultSize;
         for (int i = 0; i < workItemResultSize; i++) {
             workItemResultBytes[i] = result.get(workItemResultBufferOffset + i);
         }
-        ResultBytesFactory factory = new ResultBytesFactory();
-        factory.setResultBufferBytes(workItemResultBytes);
-        factory.setKernelMode(kernelMode);
-        return factory.createResultBytes();
+        return workItemResultBytes;
     }
 }
