@@ -103,16 +103,7 @@ public class OpenCLGridResult {
         // Same way as in OpenCL kernel:
         // int r_offset = PUBLIC_KEY_LENGTH_X_Y_WITHOUT_PARITY * global_id;
         int keyOffsetInByteBuffer;
-        if (kernelMode == OpenCLContext.GEN_PUBLIC_KEYS_MODE) {
-            keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * keyNumber;
-        } else if (kernelMode == OpenCLContext.GEN_SHA256_MODE) {
-            keyOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_DOUBLE_SHA256 * keyNumber;
-        } else if (kernelMode == OpenCLContext.GEN_RIPEMD160_MODE) {
-            keyOffsetInByteBuffer = TWO_COORDINATES_NUM_BYTES_SHA256_RIPEMD160 * keyNumber;
-        } else {
-            // TODO handle else case
-            return null;
-        }
+        keyOffsetInByteBuffer = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * keyNumber;
 
         // read ByteBuffer
         byte[] yx = new byte[PublicKeyBytes.TWO_COORDINATES_NUM_BYTES];
