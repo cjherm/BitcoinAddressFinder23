@@ -6,8 +6,7 @@ import org.junit.Test;
 import java.math.BigInteger;
 import java.util.Map;
 
-import static net.ladenthin.bitcoinaddressfinder.TestHelper.assertThatKeyMap;
-import static net.ladenthin.bitcoinaddressfinder.TestHelper.assertThatResultBytesArray;
+import static net.ladenthin.bitcoinaddressfinder.TestHelper.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -1311,6 +1310,46 @@ public class OpenCLContextTest {
         String addressResultAsBase58String = TestHelper.transformAddressBytesToBase58String(result.getAddress());
         assertThat(privateKeyResultAsHexString, is(equalTo(expectedPrivateKey)));
         assertThat(addressResultAsBase58String, is(equalTo(expectedAddress)));
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generateChunkAddressBytes_randomSinglePrivateKeys() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
+        AddressBytes[] expectedAddressBytes = TestHelper.createExpectedAddressBytesChunkFromPrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        AddressBytes[] resultedAddressBytes = openCLGridResult.getAddressBytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatAddressBytesArray(resultedAddressBytes).isEqualTo(expectedAddressBytes);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generateChunkAddressBytes_specificSinglePrivateKey() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
+        AddressBytes[] expectedAddressBytes = TestHelper.createExpectedAddressBytesChunkFromPrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        AddressBytes[] resultedAddressBytes = openCLGridResult.getAddressBytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatAddressBytesArray(resultedAddressBytes).isEqualTo(expectedAddressBytes);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 }
