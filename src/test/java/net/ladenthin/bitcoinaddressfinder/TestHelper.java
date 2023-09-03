@@ -22,29 +22,16 @@ import static org.hamcrest.Matchers.is;
  */
 public class TestHelper {
 
-    public static final int GRID_NUM_BITS = 8;
     public static final int PRIVATE_KEY_MAX_BIT_LENGTH = 256;
     public static final int HEX_RADIX = 16;
     public static final int BINARY_RADIX = 2;
-
-    /**
-     * Creates and initializes an {@link OpenCLContext} for testing. Will set the value of
-     * the field <code>int gridNumBits</code> in {@link ProducerOpenCL} to {@link TestHelper#GRID_NUM_BITS}.
-     *
-     * @param chunkMode  If the {@link OpenCLContext} should use the <code>chunkMode</code> for private keys
-     * @param kernelMode With what <code>kernelMode</code> the {@link OpenCLContext} should run
-     * @return {@link OpenCLContext}
-     */
-    public static OpenCLContext createOpenCLContext(boolean chunkMode, int kernelMode) {
-        return createOpenCLContext(chunkMode, kernelMode, GRID_NUM_BITS);
-    }
 
     /**
      * Creates and initializes an {@link OpenCLContext} for testing.
      *
      * @param chunkMode   If the {@link OpenCLContext} should use the <code>chunkMode</code> for private keys
      * @param kernelMode  With what <code>kernelMode</code> the {@link OpenCLContext} should run
-     * @param gridNumBits Determines the number of left shifted bits to calculate the <code>chunkSize</code>
+     * @param gridNumBits Determines the number of bits to be shifted left to calculate the <code>workSize</code>
      * @return {@link OpenCLContext}
      */
     public static OpenCLContext createOpenCLContext(boolean chunkMode, int kernelMode, int gridNumBits) {
@@ -238,6 +225,7 @@ public class TestHelper {
      * Method written by OpenAI/ChatGPT.
      * Prompt: "I need a java method to turn a hexString to a byte array".
      */
+
     /**
      * Transforms a hex in a {@link String} into a byte array.
      *
