@@ -1267,7 +1267,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateSingleAddressBytes_specificSinglePrivateKeys() {
+    public void test_generateSingleAddressBytes_specificSinglePrivateKey() {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_NONE);
@@ -1289,7 +1289,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateSingleAddressBytes_randomSinglePrivateKeys() {
+    public void test_generateSingleAddressBytes_randomSinglePrivateKey() {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_NONE);
@@ -1314,7 +1314,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkAddressBytes_randomSinglePrivateKeys() {
+    public void test_generateChunkAddressBytes_specificSinglePrivateKey() {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -1334,7 +1334,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkAddressBytes_specificSinglePrivateKey() {
+    public void test_generateChunkAddressBytes_randomSinglePrivateKey() {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
