@@ -104,8 +104,8 @@ public class OpenCLContext {
     }
 
     // names of kernel methods that only write the x,y-coordinates into the result buffer:
-    private static final String ONLY_PUBLIC_KEY_CHUNK_KERNEL = "generateKeyChunkKernel_grid";
-    private static final String ONLY_PUBLIC_KEY_NONCHUNK_KERNEL = "generateKeysKernel_grid";
+    private static final String ONLY_XY_COORDINATES_CHUNK_KERNEL = "generateKeyChunkKernel_grid";
+    private static final String ONLY_XY_COORDINATES_NONCHUNK_KERNEL = "generateKeysKernel_grid";
 
     // names of kernel methods that only write the private key and the public key into the result buffer:
     private static final String UNTIL_PUBLIC_KEY_CHUNK_KERNEL = "generate_chunk_until_publickey";
@@ -226,9 +226,9 @@ public class OpenCLContext {
 
     private void setPublicKeyGeneratorKernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, ONLY_PUBLIC_KEY_CHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, ONLY_XY_COORDINATES_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, ONLY_PUBLIC_KEY_NONCHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, ONLY_XY_COORDINATES_NONCHUNK_KERNEL, errorCode);
         }
     }
 
