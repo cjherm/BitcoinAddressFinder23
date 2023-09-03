@@ -89,7 +89,7 @@ public class OpenClTask {
         if (cProducer.kernelMode == OpenCLContext.GEN_PUBLIC_KEYS_MODE) {
             return PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE) {
-            return AddressBytes.TOTAL_NUM_BYTES * cProducer.getWorkSize();
+            return AddressBytes.NUM_BYTES_TOTAL * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_PUBLIC_KEY_MODE) {
             return ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_BYTEWISE_1ST_SHA256_MODE) {

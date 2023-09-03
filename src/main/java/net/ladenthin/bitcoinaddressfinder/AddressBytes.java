@@ -7,9 +7,10 @@ import java.util.Arrays;
  */
 public class AddressBytes {
 
-    public static final int PRIVATE_KEY_NUM_BYTES = 32;
-    public static final int ADDRESS_NUM_BYTES = 25;
-    public static final int TOTAL_NUM_BYTES = PRIVATE_KEY_NUM_BYTES + ADDRESS_NUM_BYTES;
+    public static final int NUM_BYTES_PRIVATE_KEY = 32;
+    public static final int NUM_BYTES_ADDRESS = 25;
+
+    public static final int NUM_BYTES_TOTAL = NUM_BYTES_PRIVATE_KEY + NUM_BYTES_ADDRESS;
 
     private final byte[] privateKey;
     private final byte[] address;

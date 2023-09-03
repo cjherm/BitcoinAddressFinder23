@@ -39,11 +39,11 @@ public class AddressBytesFactory {
         if (parametersAreInvalid()) {
             return null;
         }
-        byte[] privateKeyBytes = new byte[AddressBytes.PRIVATE_KEY_NUM_BYTES];
-        byte[] addressBytes = new byte[AddressBytes.ADDRESS_NUM_BYTES];
+        byte[] privateKeyBytes = new byte[AddressBytes.NUM_BYTES_PRIVATE_KEY];
+        byte[] addressBytes = new byte[AddressBytes.NUM_BYTES_ADDRESS];
 
-        System.arraycopy(workItemResultBytes, 0, privateKeyBytes, 0, AddressBytes.PRIVATE_KEY_NUM_BYTES);
-        System.arraycopy(workItemResultBytes, AddressBytes.PRIVATE_KEY_NUM_BYTES, addressBytes, 0, AddressBytes.ADDRESS_NUM_BYTES);
+        System.arraycopy(workItemResultBytes, 0, privateKeyBytes, 0, AddressBytes.NUM_BYTES_PRIVATE_KEY);
+        System.arraycopy(workItemResultBytes, AddressBytes.NUM_BYTES_PRIVATE_KEY, addressBytes, 0, AddressBytes.NUM_BYTES_ADDRESS);
 
         return new AddressBytes(privateKeyBytes, addressBytes);
     }
@@ -54,7 +54,7 @@ public class AddressBytesFactory {
             return true;
         }
 
-        if (kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE && workItemResultBytes.length == AddressBytes.TOTAL_NUM_BYTES) {
+        if (kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE && workItemResultBytes.length == AddressBytes.NUM_BYTES_TOTAL) {
             return false;
         }
 
