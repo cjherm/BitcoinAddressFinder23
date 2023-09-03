@@ -1352,4 +1352,24 @@ public class OpenCLContextTest {
         assertThatAddressBytesArray(resultedAddressBytes).isEqualTo(expectedAddressBytes);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
+
+    @Test
+    public void test_generate256AddressBytes_random256PrivateKeys() {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
+        AddressBytes[] expectedAddressBytes = TestHelper.createExpectedAddressBytesFromPrivateKeys(randomSinglePrivateKey);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        AddressBytes[] resultedAddressBytes = openCLGridResult.getAddressBytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatAddressBytesArray(resultedAddressBytes).isEqualTo(expectedAddressBytes);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
 }
