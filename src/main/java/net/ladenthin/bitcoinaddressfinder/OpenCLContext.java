@@ -99,22 +99,27 @@ public class OpenCLContext {
         return resourceNames;
     }
 
-    private final static String PBK_NONCHUNK_KERNEL_NAME = "generateKeysKernel_grid";
-    private final static String PBK_CHUNK_KERNEL_NAME = "generateKeyChunkKernel_grid";
-    private static final String ADR_CHUNK_KERNEL_NAME = "generate_address_chunk";
-    private static final String ADR_NONCHUNK_KERNEL_NAME = "generate_address";
-    private static final String BYTEWISE_PUBLIC_KEY_CHUNK_KERNEL = "generate_chunk_until_publickey";
-    private static final String BYTEWISE_PUBLIC_KEY_NONCHUNK_KERNEL = "generate_until_publickey";
-    private static final String BYTEWISE_1ST_SHA256_CHUNK_KERNEL = "generate_chunk_until_first_sha256";
-    private static final String BYTEWISE_1ST_SHA256_NONCHUNK_KERNEL = "generate_until_first_sha256";
-    private final static String BYTEWISE_RIPEMD160_NONCHUNK_KERNEL = "generate_until_ripemd160";
-    private final static String BYTEWISE_RIPEMD160_CHUNK_KERNEL = "generate_chunk_until_ripemd160";
-    private final static String BYTEWISE_2ND_SHA256_CHUNK_KERNEL = "generate_chunk_until_second_sha256";
-    private final static String BYTEWISE_2ND_SHA256_NONCHUNK_KERNEL = "generate_until_second_sha256";
-    private final static String BYTEWISE_3RD_SHA256_CHUNK_KERNEL = "generate_chunk_until_third_sha256";
-    private final static String BYTEWISE_3RD_SHA256_NONCHUNK_KERNEL = "generate_until_third_sha256";
-    private final static String BYTEWISE_ADDRESS_CHUNK_KERNEL = "generate_chunk_until_address";
-    private final static String BYTEWISE_ADDRESS_NONCHUNK_KERNEL = "generate_until_address";
+    // kernel methods that only write the public key dword-wise into the result buffer:
+    private static final String ONLY_PUBLIC_KEY_CHUNK_KERNEL = "generateKeyChunkKernel_grid";
+    private static final String ONLY_PUBLIC_KEY_NONCHUNK_KERNEL = "generateKeysKernel_grid";
+
+    // kernel methods that only write the private key and the address bytewise into the result buffer:
+    private static final String ONLY_ADDRESS_CHUNK_KERNEL = "generate_address_chunk";
+    private static final String ONLY_ADDRESS_NONCHUNK_KERNEL = "generate_address";
+
+    // kernel methods that write all intermediate results bytewise into the result buffer:
+    private static final String UNTIL_PUBLIC_KEY_CHUNK_KERNEL = "generate_chunk_until_publickey";
+    private static final String UNTIL_PUBLIC_KEY_NONCHUNK_KERNEL = "generate_until_publickey";
+    private static final String UNTIL_1ST_SHA256_CHUNK_KERNEL = "generate_chunk_until_first_sha256";
+    private static final String UNTIL_1ST_SHA256_NONCHUNK_KERNEL = "generate_until_first_sha256";
+    private static final String UNTIL_RIPEMD160_CHUNK_KERNEL = "generate_chunk_until_ripemd160";
+    private static final String UNTIL_RIPEMD160_NONCHUNK_KERNEL = "generate_until_ripemd160";
+    private static final String UNTIL_2ND_SHA256_CHUNK_KERNEL = "generate_chunk_until_second_sha256";
+    private static final String UNTIL_2ND_SHA256_NONCHUNK_KERNEL = "generate_until_second_sha256";
+    private static final String UNTIL_3RD_SHA256_CHUNK_KERNEL = "generate_chunk_until_third_sha256";
+    private static final String UNTIL_3RD_SHA256_NONCHUNK_KERNEL = "generate_until_third_sha256";
+    private static final String UNTIL_ADDRESS_CHUNK_KERNEL = "generate_chunk_until_address";
+    private static final String UNTIL_ADDRESS_NONCHUNK_KERNEL = "generate_until_address";
 
     private final static boolean EXCEPTIONS_ENABLED = true;
     
@@ -215,65 +220,65 @@ public class OpenCLContext {
 
     private void setPublicKeyGeneratorKernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, PBK_CHUNK_KERNEL_NAME, errorCode);
+            kernel = clCreateKernel(program, ONLY_PUBLIC_KEY_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, PBK_NONCHUNK_KERNEL_NAME, errorCode);
+            kernel = clCreateKernel(program, ONLY_PUBLIC_KEY_NONCHUNK_KERNEL, errorCode);
         }
     }
 
     private void setAddressGeneratorKernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, ADR_CHUNK_KERNEL_NAME, errorCode);
+            kernel = clCreateKernel(program, ONLY_ADDRESS_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, ADR_NONCHUNK_KERNEL_NAME, errorCode);
+            kernel = clCreateKernel(program, ONLY_ADDRESS_NONCHUNK_KERNEL, errorCode);
         }
     }
 
     private void setBytewisePublicKeyKernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, BYTEWISE_PUBLIC_KEY_CHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_PUBLIC_KEY_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, BYTEWISE_PUBLIC_KEY_NONCHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_PUBLIC_KEY_NONCHUNK_KERNEL, errorCode);
         }
     }
 
     private void setBytewiseFirstSha256Kernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, BYTEWISE_1ST_SHA256_CHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_1ST_SHA256_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, BYTEWISE_1ST_SHA256_NONCHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_1ST_SHA256_NONCHUNK_KERNEL, errorCode);
         }
     }
 
     private void setBytewiseRipemd160Kernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_CHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_RIPEMD160_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, BYTEWISE_RIPEMD160_NONCHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_RIPEMD160_NONCHUNK_KERNEL, errorCode);
         }
     }
 
     private void setBytewiseSecondSha256Kernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, BYTEWISE_2ND_SHA256_CHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_2ND_SHA256_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, BYTEWISE_2ND_SHA256_NONCHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_2ND_SHA256_NONCHUNK_KERNEL, errorCode);
         }
     }
 
     private void setBytewiseThirdSha256Kernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, BYTEWISE_3RD_SHA256_CHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_3RD_SHA256_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, BYTEWISE_3RD_SHA256_NONCHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_3RD_SHA256_NONCHUNK_KERNEL, errorCode);
         }
     }
 
     private void setBytewiseAddressKernel() {
         if (producerOpenCL.chunkMode) {
-            kernel = clCreateKernel(program, BYTEWISE_ADDRESS_CHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_ADDRESS_CHUNK_KERNEL, errorCode);
         } else {
-            kernel = clCreateKernel(program, BYTEWISE_ADDRESS_NONCHUNK_KERNEL, errorCode);
+            kernel = clCreateKernel(program, UNTIL_ADDRESS_NONCHUNK_KERNEL, errorCode);
         }
     }
 
