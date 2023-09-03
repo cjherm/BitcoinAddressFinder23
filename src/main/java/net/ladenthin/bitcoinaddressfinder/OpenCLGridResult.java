@@ -29,25 +29,12 @@ public class OpenCLGridResult {
     private final int kernelMode;
     private ByteBuffer result;
 
-    OpenCLGridResult(BigInteger[] secretKeys, int workSize, ByteBuffer result, boolean chunkMode, int kernelMode)
-            throws InvalidWorkSizeException {
-        checkPrivateKeysAndWorkSize(secretKeys, workSize, chunkMode);
+    OpenCLGridResult(BigInteger[] secretKeys, int workSize, ByteBuffer result, boolean chunkMode, int kernelMode) {
         this.secretKeys = secretKeys;
         this.workSize = workSize;
         this.result = result;
         this.chunkMode = chunkMode;
         this.kernelMode = kernelMode;
-    }
-
-    private void checkPrivateKeysAndWorkSize(BigInteger[] secretKeys, int workSize, boolean chunkMode)
-            throws InvalidWorkSizeException {
-        if (!chunkMode && (secretKeys.length != workSize)) {
-            throw new InvalidWorkSizeException(
-                    "When CHUNKMODE is DEACTIVATED, the number of the secretKeys (=" + secretKeys.length + ") must be EQUAL to the workSize (=" + workSize + ")!");
-        } else if (chunkMode && secretKeys.length > 1) {
-            // TODO use a logger
-            System.out.println("Too many secret keys (=" + secretKeys.length + ") when CHUNKMODE is ACTIVATED! Will use first secret key ONLY!");
-        }
     }
 
     public ByteBuffer getResult() {

@@ -312,16 +312,8 @@ public class OpenCLContext {
     public OpenCLGridResult createResult(BigInteger[] privateKeys) {
         openClTask.setSrcPrivateKeys(privateKeys);
         ByteBuffer dstByteBuffer = openClTask.executeKernel(kernel, commandQueue);
-
-        OpenCLGridResult openCLGridResult = null;
-        try {
-            openCLGridResult = new OpenCLGridResult(privateKeys, producerOpenCL.getWorkSize(), dstByteBuffer,
-                    producerOpenCL.chunkMode, producerOpenCL.kernelMode);
-        } catch (InvalidWorkSizeException e) {
-            // TODO Handle a thrown InvalidWorkSizeException
-            e.printStackTrace();
-        }
-        return openCLGridResult;
+        return new OpenCLGridResult(privateKeys, producerOpenCL.getWorkSize(), dstByteBuffer,
+                producerOpenCL.chunkMode, producerOpenCL.kernelMode);
     }
 
     private static List<String> getResourceNamesContent(List<String> resourceNames) throws IOException {
