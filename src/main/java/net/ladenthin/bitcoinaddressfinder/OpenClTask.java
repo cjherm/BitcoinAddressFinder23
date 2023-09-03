@@ -88,6 +88,8 @@ public class OpenClTask {
     public int getDstSizeInBytes() {
         if (cProducer.kernelMode == OpenCLContext.GEN_PUBLIC_KEYS_MODE) {
             return PublicKeyBytes.TWO_COORDINATES_NUM_BYTES * cProducer.getWorkSize();
+        } else if (cProducer.kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE) {
+            return AddressBytes.TOTAL_NUM_BYTES * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_SHA256_MODE) {
             return AddressBytes.PUB_KEY_WITHOUT_PARITY_WITH_DOUBLE_SHA256_BYTE_LEN * cProducer.getWorkSize();
         } else if (cProducer.kernelMode == OpenCLContext.GEN_RIPEMD160_MODE) {
