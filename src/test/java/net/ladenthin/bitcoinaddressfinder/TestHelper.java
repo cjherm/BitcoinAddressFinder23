@@ -496,6 +496,24 @@ public class TestHelper {
     }
 
     /**
+     * Will generate all expecting addresses for each given private key.
+     *
+     * @param privateKeys As base for generating all expected addresses for each {@link AddressBytes}.
+     * @return Array containing {@link AddressBytes} with all expecting addresses.
+     */
+    public static AddressBytes[] createExpectedAddressBytesFromPrivateKeys(BigInteger[] privateKeys) {
+        AddressBytes[] expectedAddressBytes = new AddressBytes[privateKeys.length];
+        for (int i = 0; i < privateKeys.length; i++) {
+            expectedAddressBytes[i] = createExpectedAddressBytesFromPrivateKey(privateKeys[i]);
+        }
+        return expectedAddressBytes;
+    }
+
+    private static AddressBytes createExpectedAddressBytesFromPrivateKey(BigInteger privateKey) {
+        return new AddressBytes(transformPrivateKeyFromBigIntegerToByteArray(privateKey), calculateAddressFromPrivateKey(privateKey));
+    }
+
+    /**
      * @param singlePrivateKey as base for generating expected values
      * @param chunkSize        size of chunk to be created
      * @return Array containing {@link ResultBytes} with all expecting values
@@ -503,6 +521,18 @@ public class TestHelper {
     public static ResultBytes[] createExpectedResultBytesFromSinglePrivateKey(BigInteger singlePrivateKey, int chunkSize, int kernelMode) {
         BigInteger[] privateKeysChunk = calculatePrivateKeyChunkFromSinglePrivateKey(singlePrivateKey, chunkSize);
         return createExpectedResultBytesFromPrivateKeys(privateKeysChunk, kernelMode);
+    }
+
+    /**
+     * Will generate all expecting addresses for each given private key simulating the chunk mode.
+     *
+     * @param singlePrivateKey as base for generating expected values
+     * @param chunkSize        size of chunk to be created
+     * @return Array containing {@link AddressBytes} with all expecting values
+     */
+    public static AddressBytes[] createExpectedAddressBytesChunkFromPrivateKey(BigInteger singlePrivateKey, int chunkSize) {
+        BigInteger[] privateKeysChunk = calculatePrivateKeyChunkFromSinglePrivateKey(singlePrivateKey, chunkSize);
+        return createExpectedAddressBytesFromPrivateKeys(privateKeysChunk);
     }
 
     public static <K, V> ActualMap<K, V> assertThatKeyMap(Map<K, V> actualMap) {
@@ -559,9 +589,12 @@ public class TestHelper {
         }
     }
 
-
     public static ActualResultBytesArray assertThatResultBytesArray(ResultBytes[] actual) {
         return new ActualResultBytesArray(actual);
+    }
+
+    public static ActualAddressBytesArray assertThatAddressBytesArray(AddressBytes[] actual) {
+        return new ActualAddressBytesArray(actual);
     }
 
     /**
@@ -609,6 +642,44 @@ public class TestHelper {
                     }
                 }
                 assertThat("Actual ResultBytesArray does NOT contain expected ResultBytes with private key: " + Arrays.toString(expectedElem.getPrivateKeyBytes()), elemExists, is(true));
+                i++;
+            }
+        }
+    }
+
+    /**
+     * Array storing actual {@link AddressBytes} for better test assertions. Compares size and if elements in both are equal. Does not consider identical order of elements.
+     */
+    public static class ActualAddressBytesArray {
+
+        private final List<AddressBytes> actual;
+
+        public ActualAddressBytesArray(AddressBytes[] actual) {
+            assertThat(actual, Matchers.notNullValue());
+            this.actual = Arrays.asList(actual);
+        }
+
+        public void isEqualTo(AddressBytes[] expected) {
+            assertThat(expected, Matchers.notNullValue());
+            assertThat("None identical length of both arrays!", actual.size(), is(equalTo(expected.length)));
+            int i = 0;
+            boolean elemExists;
+            for (AddressBytes expectedElem : expected) {
+                elemExists = false;
+                String reason = "Current expected ResultBytes: " + i + "/" + (expected.length - 1);
+                for (AddressBytes actualElem : actual) {
+                    if (Arrays.equals(expectedElem.getPrivateKey(), actualElem.getPrivateKey())) {
+                        elemExists = true;
+                        reason += "\n\t        expected private key = " + Arrays.toString(expectedElem.getPrivateKey());
+                        reason += "\n\t          actual private key = " + Arrays.toString(actualElem.getPrivateKey());
+                        reason += "\n\t   expected address (BASE58) = " + transformAddressBytesToBase58String(expectedElem.getAddress());
+                        reason += "\n\t     actual address (BASE58) = " + transformAddressBytesToBase58String(actualElem.getAddress());
+                        assertThat(reason, actualElem, is(equalTo(expectedElem)));
+                        System.out.println(reason);
+                        break;
+                    }
+                }
+                assertThat("Actual AddressBytesArray does NOT contain expected AddressBytes with private key: " + Arrays.toString(expectedElem.getPrivateKey()), elemExists, is(true));
                 i++;
             }
         }
