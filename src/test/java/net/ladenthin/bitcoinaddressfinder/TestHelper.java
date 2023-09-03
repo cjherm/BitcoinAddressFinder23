@@ -125,7 +125,7 @@ public class TestHelper {
     /**
      * Hashes a given byte array with RIPEMD-160.
      *
-     * @param digest To be hashed
+     * @param input To be hashed
      * @return Hashed byte array with the size of 20 bytes
      */
     public static byte[] calculateRipemd160FromByteArray(byte[] input) {
