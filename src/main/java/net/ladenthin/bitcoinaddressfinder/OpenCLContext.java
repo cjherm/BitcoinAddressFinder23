@@ -99,17 +99,19 @@ public class OpenCLContext {
         return resourceNames;
     }
 
-    // kernel methods that only write the public key dword-wise into the result buffer:
+    // names of kernel methods that only write the x,y-coordinates into the result buffer:
     private static final String ONLY_PUBLIC_KEY_CHUNK_KERNEL = "generateKeyChunkKernel_grid";
     private static final String ONLY_PUBLIC_KEY_NONCHUNK_KERNEL = "generateKeysKernel_grid";
 
-    // kernel methods that only write the private key and the address bytewise into the result buffer:
+    // names of kernel methods that only write the private key and the public key into the result buffer:
+    private static final String UNTIL_PUBLIC_KEY_CHUNK_KERNEL = "generate_chunk_until_publickey";
+    private static final String UNTIL_PUBLIC_KEY_NONCHUNK_KERNEL = "generate_until_publickey";
+
+    // names of kernel methods that only write the private key and the address into the result buffer:
     private static final String ONLY_ADDRESS_CHUNK_KERNEL = "generate_address_chunk";
     private static final String ONLY_ADDRESS_NONCHUNK_KERNEL = "generate_address";
 
-    // kernel methods that write all intermediate results bytewise into the result buffer:
-    private static final String UNTIL_PUBLIC_KEY_CHUNK_KERNEL = "generate_chunk_until_publickey";
-    private static final String UNTIL_PUBLIC_KEY_NONCHUNK_KERNEL = "generate_until_publickey";
+    // names of kernel methods that write all intermediate results into the result buffer:
     private static final String UNTIL_1ST_SHA256_CHUNK_KERNEL = "generate_chunk_until_first_sha256";
     private static final String UNTIL_1ST_SHA256_NONCHUNK_KERNEL = "generate_until_first_sha256";
     private static final String UNTIL_RIPEMD160_CHUNK_KERNEL = "generate_chunk_until_ripemd160";
