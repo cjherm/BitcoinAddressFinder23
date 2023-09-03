@@ -103,7 +103,7 @@ public class OpenCLContext {
 
     private final static String PBK_NONCHUNK_KERNEL_NAME = "generateKeysKernel_grid";
     private final static String PBK_CHUNK_KERNEL_NAME = "generateKeyChunkKernel_grid";
-    private static final String ADR_CHUNK_KERNEL_NAME = ""; // TODO define kernel name
+    private static final String ADR_CHUNK_KERNEL_NAME = "generate_address_chunk";
     private static final String ADR_NONCHUNK_KERNEL_NAME = ""; // TODO define kernel name
     private final static String SHA256_CHUNK_KERNEL_NAME = "generateSha256ChunkKernel_grid";
     private final static String SHA256_NONCHUNK_KERNEL_NAME = "generateSha256Kernel_grid";
