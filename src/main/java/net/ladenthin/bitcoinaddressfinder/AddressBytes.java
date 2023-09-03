@@ -1,5 +1,7 @@
 package net.ladenthin.bitcoinaddressfinder;
 
+import java.util.Arrays;
+
 /**
  * Data structure to store a private key and the address derived from it.
  */
@@ -43,5 +45,20 @@ public class AddressBytes {
      */
     public byte[] getAddress() {
         return address;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AddressBytes that = (AddressBytes) o;
+        return Arrays.equals(privateKey, that.privateKey) && Arrays.equals(address, that.address);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(privateKey);
+        result = 31 * result + Arrays.hashCode(address);
+        return result;
     }
 }
