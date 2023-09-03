@@ -298,16 +298,16 @@ public class OpenCLContext {
     }
 
     /**
-     * This method executes the OpenCL kernel to generate publicKeys or addresses, depending on the parameter
-     * {@link CProducerOpenCL#kernelMode}.
+     * This method executes the OpenCL kernel to generate publicKeys, SHA-256 hashes, RIPEMD-160 hashes or addresses,
+     * depending on the parameter {@link CProducerOpenCL#kernelMode}.
      * <br><br>
      * The parameter {@link CProducerOpenCL#chunkMode} will determine if the given array has to be fully filled
-     * with privateKeys or will only need a single one a the first element in the array.
+     * with privateKeys or will only need a single one as the first element in the array.
      *
      * @param privateKeys In case of <strong>chunkMode = true</strong> this method only needs
      *                    one privateKey, but in case of <strong>chunkMode = false</strong>
      *                    it needs exactly as many private keys as the work size.
-     * @return publicKeys or addresses as {@link OpenCLGridResult}
+     * @return {@link OpenCLGridResult} containing the set type of result.
      */
     public OpenCLGridResult createResult(BigInteger[] privateKeys) {
         openClTask.setSrcPrivateKeys(privateKeys);
