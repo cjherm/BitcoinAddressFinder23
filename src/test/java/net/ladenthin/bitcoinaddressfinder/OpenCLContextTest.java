@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Tests the publicKey and address calculation of an OpenClContext without considering the performance.
+ * Tests the calculation of an OpenClContext without considering the performance.
  */
 public class OpenCLContextTest {
 
@@ -24,8 +24,6 @@ public class OpenCLContextTest {
     private static final int SHIFT_8_BITS_FOR_256_CHUNK_SIZE = 8;
     private static final String PRIVATE_KEY_HEX_STRING = "c297e4944f46f3b9f04cf4b3984f49bd4ee40dec33991066fa15cdb227933400";
     private static final String PUBLIC_KEY_HEX_STRING = "04ccc8a095355a8479d9ef89eb6e435fb7fd9b2120dba38f71bf51a51f2fe66d6f64e30ee36de0a5691ad6d8036919ce8dc3ffb073510b8535675e103c045c6f44";
-    private static final String SINGLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING = "7ae93296d94ad53c2fb50a0f65e41437335e30fa6cef67b9e4aa2886feba5d40";
-    private static final String DOUBLE_SHA256_FROM_PUBLIC_KEY_HEX_STRING = "e2f1cadac9b0458532cc50eee4787bf30809d827bbf0170ef0c6e2a8459199b7";
     private static final String ADDRESS_BASE58_STRING = "1GQAxeEwvNMT4G3QjKBRRjBxC6x4Pb9iQz";
     private static final String ERROR_CODE_SUCCESS = CL.stringFor_errorCode(CL.CL_SUCCESS);
 
