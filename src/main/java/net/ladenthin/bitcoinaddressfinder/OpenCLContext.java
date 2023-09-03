@@ -55,7 +55,7 @@ public class OpenCLContext {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final int GEN_PUBLIC_KEYS_MODE = 0;
-    public static final int GEN_ADDRESSES_MODE = 1;
+    public static final int GEN_ADDRESSES_ONLY_MODE = 1;
     public static final int GEN_SHA256_MODE = 2;
     public static final int GEN_RIPEMD160_MODE = 3;
     public static final int GEN_BYTEWISE_PUBLIC_KEY_MODE = 4;
@@ -200,7 +200,7 @@ public class OpenCLContext {
     private void setKernel() throws UnknownKernelModeException {
         if (producerOpenCL.kernelMode == GEN_PUBLIC_KEYS_MODE) {
             setPublicKeyGeneratorKernel();
-        } else if (producerOpenCL.kernelMode == GEN_ADDRESSES_MODE) {
+        } else if (producerOpenCL.kernelMode == GEN_ADDRESSES_ONLY_MODE) {
             setAddressGeneratorKernel();
         } else if (producerOpenCL.kernelMode == GEN_SHA256_MODE) {
             setSha256Kernel();
