@@ -7,10 +7,6 @@ import java.util.Arrays;
  */
 public class AddressBytes {
 
-    public static final AddressBytes INVALID_ADDRESS = null;
-    public static final int SINGLE_SHA256_BYTE_LEN = 32;
-    public static final int DOUBLE_SHA256_BYTE_LEN = 2 * SINGLE_SHA256_BYTE_LEN;
-    public static final int PUB_KEY_WITHOUT_PARITY_WITH_DOUBLE_SHA256_BYTE_LEN = PublicKeyBytes.TWO_COORDINATES_NUM_BYTES + DOUBLE_SHA256_BYTE_LEN;
     public static final int PRIVATE_KEY_NUM_BYTES = 32;
     public static final int ADDRESS_NUM_BYTES = 25;
     public static final int TOTAL_NUM_BYTES = PRIVATE_KEY_NUM_BYTES + ADDRESS_NUM_BYTES;
