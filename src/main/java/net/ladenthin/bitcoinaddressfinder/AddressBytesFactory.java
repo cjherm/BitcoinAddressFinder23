@@ -48,6 +48,7 @@ public class AddressBytesFactory {
         return new AddressBytes(privateKeyBytes, addressBytes);
     }
 
+    @SuppressWarnings("RedundantIfStatement")
     private boolean parametersAreInvalid() {
         if (workItemResultBytes == null) {
             return true;
