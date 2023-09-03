@@ -62,7 +62,7 @@ public class OpenCLContext {
     public static final int GEN_BYTEWISE_2ND_SHA256_MODE = 7;
     public static final int GEN_BYTEWISE_3RD_SHA256_MODE = 8;
     public static final int GEN_BYTEWISE_ADDRESS_MODE = 9;
-    private int[] errorCode = new int[1];
+    private final int[] errorCode = new int[1];
 
     public String[] getOpenCLPrograms() throws IOException {
         List<String> resourceNamesContent = getResourceNamesContent(getResourceNames());
