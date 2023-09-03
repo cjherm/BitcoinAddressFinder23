@@ -399,7 +399,7 @@ public class ProbeAddressesOpenCLTest {
     @Test
     @OpenCLTest
     @UseDataProvider(value = CommonDataProvider.DATA_PROVIDER_BIT_SIZES_LOWER_THAN_25, location = CommonDataProvider.class)
-    public void createKeys_bitsLowerThan25_use32BitNevertheless(int bitSize) throws IOException {
+    public void createKeys_bitsLowerThan25_use32BitNevertheless(int bitSize) throws IOException, UnknownKernelModeException {
         new OpenCLPlatformAssume().assumeOpenCLLibraryLoadableAndOneOpenCL2_0OrGreaterDeviceAvailable();
         ByteBufferUtility byteBufferUtility = new ByteBufferUtility(false);
         KeyUtility keyUtility = new KeyUtility(MainNetParams.get(), byteBufferUtility);
@@ -422,7 +422,7 @@ public class ProbeAddressesOpenCLTest {
     
     @Test
     @OpenCLTest
-    public void createKeys_bitsLowerThanGridSize_useMoreNevertheless() throws IOException {
+    public void createKeys_bitsLowerThanGridSize_useMoreNevertheless() throws IOException, UnknownKernelModeException {
         new OpenCLPlatformAssume().assumeOpenCLLibraryLoadableAndOneOpenCL2_0OrGreaterDeviceAvailable();
         ByteBufferUtility byteBufferUtility = new ByteBufferUtility(false);
         KeyUtility keyUtility = new KeyUtility(MainNetParams.get(), byteBufferUtility);
@@ -446,7 +446,7 @@ public class ProbeAddressesOpenCLTest {
     
     @Test
     @OpenCLTest
-    public void setSrcPrivateKeyChunk_aBigIntegerHaveLeadingZeros_Copy32BytesOnlyAndNoExceptionThrown() throws IOException {
+    public void setSrcPrivateKeyChunk_aBigIntegerHaveLeadingZeros_Copy32BytesOnlyAndNoExceptionThrown() throws IOException, UnknownKernelModeException {
         new OpenCLPlatformAssume().assumeOpenCLLibraryLoadableAndOneOpenCL2_0OrGreaterDeviceAvailable();
         
         // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -472,7 +472,7 @@ public class ProbeAddressesOpenCLTest {
     
     @Test
     @OpenCLTest
-    public void hashcatOpenClGrid() throws IOException {
+    public void hashcatOpenClGrid() throws IOException, UnknownKernelModeException {
         new OpenCLPlatformAssume().assumeOpenCLLibraryLoadableAndOneOpenCL2_0OrGreaterDeviceAvailable();
         
         final boolean souts = false;

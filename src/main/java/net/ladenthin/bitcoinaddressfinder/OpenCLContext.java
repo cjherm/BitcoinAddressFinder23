@@ -143,7 +143,7 @@ public class OpenCLContext {
      *
      * @throws IOException When an error occurs while reading a resource.
      */
-    public void init() throws IOException {
+    public void init() throws IOException, UnknownKernelModeException {
         
         // #################### general ####################
         
@@ -197,7 +197,7 @@ public class OpenCLContext {
         openClTask = new OpenClTask(context, producerOpenCL);
     }
 
-    private void setKernel() {
+    private void setKernel() throws UnknownKernelModeException {
         if (producerOpenCL.kernelMode == GEN_PUBLIC_KEYS_MODE) {
             setPublicKeyGeneratorKernel();
         } else if (producerOpenCL.kernelMode == GEN_ADDRESSES_MODE) {
@@ -219,7 +219,7 @@ public class OpenCLContext {
         } else if (producerOpenCL.kernelMode == GEN_BYTEWISE_ADDRESS_MODE) {
             setBytewiseAddressKernel();
         } else {
-            // TODO Implement else-case
+            throw new UnknownKernelModeException(producerOpenCL.kernelMode);
         }
     }
 

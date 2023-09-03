@@ -45,7 +45,7 @@ public class ProducerOpenCL extends AbstractProducer {
         openCLContext = new OpenCLContext(producerOpenCL);
         try {
             openCLContext.init();
-        } catch (IOException e) {
+        } catch (IOException | UnknownKernelModeException e) {
             throw new RuntimeException(e);
         }
     }
