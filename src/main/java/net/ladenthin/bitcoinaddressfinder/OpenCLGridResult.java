@@ -202,60 +202,6 @@ public class OpenCLGridResult {
     }
 
     /**
-     * This method will retrieve the SHA-256 hash from the public key and the RIPEMD-160 hash of that SHA-256 hash
-     * from the {@link OpenCLGridResult} and store them in a {@link Ripemd160Bytes} array.
-     *
-     * @return array of {@link Ripemd160Bytes}
-     */
-    public Ripemd160Bytes[] getRipemd160Bytes() {
-        Ripemd160Bytes[] ripemd160Bytes = new Ripemd160Bytes[workSize];
-        for (int currentWorkItem = 0; currentWorkItem < workSize; currentWorkItem++) {
-            ripemd160Bytes[currentWorkItem] = readBufferForRipemd160Bytes(currentWorkItem);
-        }
-        return ripemd160Bytes;
-    }
-
-    private Ripemd160Bytes readBufferForRipemd160Bytes(int currentWorkItem) {
-        int workItemOffsetInByteBuffer = Ripemd160Bytes.RESULT_LENGTH_IN_BYTES * currentWorkItem;
-        byte[] hash1hash2yx = new byte[Ripemd160Bytes.RESULT_LENGTH_IN_BYTES];
-        int index = 0;
-        for (int i = (Ripemd160Bytes.RESULT_LENGTH_IN_BYTES - 1); i >= 0; i--) {
-            hash1hash2yx[i] = result.get(workItemOffsetInByteBuffer + index);
-            index++;
-        }
-        // copy SHA-256 hash
-        byte[] sha256Hash = new byte[Sha256Bytes.ONE_SHA256_NUM_BYTES];
-        System.arraycopy(hash1hash2yx, Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES, sha256Hash, 0,
-                Sha256Bytes.ONE_SHA256_NUM_BYTES);
-
-        // copy RIPEMD-160 hash
-        byte[] ripemd160HashLittleEndian = new byte[Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES];
-        System.arraycopy(hash1hash2yx, 0, ripemd160HashLittleEndian, 0,
-                Ripemd160Bytes.RIPEMD160_LENGTH_IN_BYTES);
-
-        byte[] ripemd160HashBigEndian = swapEndiansInByteArray(ripemd160HashLittleEndian);
-
-        return new Ripemd160Bytes(sha256Hash, ripemd160HashBigEndian);
-    }
-
-    private byte[] swapEndiansInByteArray(byte[] preswappedArray) {
-        // TODO store in constant
-        int wordLenInBytes = 4;
-        int numWords = preswappedArray.length / wordLenInBytes;
-
-        byte[] swappedResult = new byte[wordLenInBytes * numWords];
-
-        for (int i = 0; i < preswappedArray.length; i += wordLenInBytes) {
-            swappedResult[i] = preswappedArray[i + (wordLenInBytes - 1)];
-            swappedResult[i + 1] = preswappedArray[i + (wordLenInBytes - 2)];
-            swappedResult[i + 2] = preswappedArray[i + (wordLenInBytes - 3)];
-            swappedResult[i + 3] = preswappedArray[i];
-        }
-
-        return swappedResult;
-    }
-
-    /**
      * This method will retrieve all resulting calculations from the {@link OpenCLGridResult} and store them in a {@link ResultBytes} array.
      *
      * @return array of {@link ResultBytes}
