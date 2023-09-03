@@ -56,8 +56,6 @@ public class OpenCLContext {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final int GEN_PUBLIC_KEYS_MODE = 0;
     public static final int GEN_ADDRESSES_ONLY_MODE = 1;
-    public static final int GEN_SHA256_MODE = 2;
-    public static final int GEN_RIPEMD160_MODE = 3;
     public static final int GEN_BYTEWISE_PUBLIC_KEY_MODE = 4;
     public static final int GEN_BYTEWISE_1ST_SHA256_MODE = 5;
     public static final int GEN_BYTEWISE_RIPEMD160_MODE = 6;
