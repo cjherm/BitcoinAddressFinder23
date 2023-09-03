@@ -105,10 +105,6 @@ public class OpenCLContext {
     private final static String PBK_CHUNK_KERNEL_NAME = "generateKeyChunkKernel_grid";
     private static final String ADR_CHUNK_KERNEL_NAME = "generate_address_chunk";
     private static final String ADR_NONCHUNK_KERNEL_NAME = "generate_address";
-    private final static String SHA256_CHUNK_KERNEL_NAME = "generateSha256ChunkKernel_grid";
-    private final static String SHA256_NONCHUNK_KERNEL_NAME = "generateSha256Kernel_grid";
-    private final static String RIPEMD160_CHUNK_KERNEL_NAME = "generateRipemd160ChunkKernel_grid";
-    private final static String RIPEMD160_NONCHUNK_KERNEL_NAME = "generateRipemd160Kernel_grid";
     private static final String BYTEWISE_PUBLIC_KEY_CHUNK_KERNEL = "generate_chunk_until_publickey";
     private static final String BYTEWISE_PUBLIC_KEY_NONCHUNK_KERNEL = "generate_until_publickey";
     private static final String BYTEWISE_1ST_SHA256_CHUNK_KERNEL = "generate_chunk_until_first_sha256";
