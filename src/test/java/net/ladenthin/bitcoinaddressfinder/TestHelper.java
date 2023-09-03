@@ -364,6 +364,7 @@ public class TestHelper {
             System.arraycopy(expectedThirdSha256Hash, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256, ResultBytes.NUM_BYTES_SHA256);
 
             byte[] expectedAddress = calculateAddressFromRipemd160(expectedRipemd160);
+            assert expectedAddress != null;
             System.arraycopy(expectedAddress, 0, expectedResultBuffer, ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256, ResultBytes.NUM_BYTES_ADDRESS);
 
             ResultBytesFactory factory = new ResultBytesFactory();
