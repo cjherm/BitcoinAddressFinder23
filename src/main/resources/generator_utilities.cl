@@ -87,7 +87,7 @@ __attribute__((always_inline)) void calculate_ripemd160_from_u32(u32 *unpadded_d
 __attribute__((always_inline)) void calculate_sha256_from_public_key(PRIVATE_AS const uchar *digest_bytes, u32 *sha256_hash) {
 
     // digest to be hashed
-    u32 digest_u32[SHA256_HASH_BYTES_LEN];
+    u32 padded_digest_u32[SHA256_HASH_BYTES_LEN];
 
     // padded byte array for correct sha256 digest length
     uchar padded_digest_bytes[DOUBLE_SIZED_SHA256_INPUT_BYTES];
@@ -97,12 +97,12 @@ __attribute__((always_inline)) void calculate_sha256_from_public_key(PRIVATE_AS 
 
     // prepare hash
     sha256_padding(digest_bytes, PUBLIC_KEY_BYTES_WITH_PARITY, padded_digest_bytes, &padded_digest_size);
-    storeByteArrayToU32Array(padded_digest_bytes, digest_u32, padded_digest_size);
+    storeByteArrayToU32Array(padded_digest_bytes, padded_digest_u32, padded_digest_size);
 
     // perform hash
     sha256_ctx_t ctx;
     sha256_init(&ctx);
-    sha256_update(&ctx, digest_u32, padded_digest_size);
+    sha256_update(&ctx, padded_digest_u32, padded_digest_size);
 
     // store hash in output
     sha256_hash[0] = ctx.h[0];
