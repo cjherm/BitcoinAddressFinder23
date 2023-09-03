@@ -308,8 +308,9 @@ public class OpenCLContext {
      *                    one privateKey, but in case of <strong>chunkMode = false</strong>
      *                    it needs exactly as many private keys as the work size.
      * @return {@link OpenCLGridResult} containing the set type of result.
+     * @throws InvalidWorkSizeException when the number of given privateKeys is not equal the work size.
      */
-    public OpenCLGridResult createResult(BigInteger[] privateKeys) {
+    public OpenCLGridResult createResult(BigInteger[] privateKeys) throws InvalidWorkSizeException {
         openClTask.setSrcPrivateKeys(privateKeys);
         ByteBuffer dstByteBuffer = openClTask.executeKernel(kernel, commandQueue);
         return new OpenCLGridResult(privateKeys, producerOpenCL.getWorkSize(), dstByteBuffer,

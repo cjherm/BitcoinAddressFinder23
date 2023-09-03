@@ -106,7 +106,16 @@ public class OpenClTask {
         return 0;
     }
 
-    public void setSrcPrivateKeys(BigInteger[] privateKeys) {
+    public void setSrcPrivateKeys(BigInteger[] privateKeys) throws InvalidWorkSizeException {
+
+        int workSize = cProducer.getWorkSize();
+
+        if (!cProducer.chunkMode && (privateKeys.length != workSize)) {
+            throw new InvalidWorkSizeException("The number of private keys (actual = " + privateKeys.length + ") must be exactly the same as the work size: " + workSize + " when the chunk mode is deactivated!");
+        } else if (cProducer.chunkMode && (privateKeys.length < 1)) {
+            throw new InvalidWorkSizeException("At least 1 private key is necessary! (actual = " + privateKeys.length + ")");
+        }
+
         byte[] privateKeyChunkAsByteArray = KeyUtility.bigIntegersToBytes(privateKeys);
 
         // put key in reverse order because the ByteBuffer put writes in reverse order, a flip has no effect
