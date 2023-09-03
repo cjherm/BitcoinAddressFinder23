@@ -104,9 +104,9 @@ public class ResultBytes {
     }
 
     /**
-     * The SHA-256 hash of the previous SHA-256 hash.
+     * The address.
      *
-     * @return third SHA-256 hash as byte array
+     * @return address as byte array
      */
     public byte[] getAddressBytes() {
         return addressBytes;
