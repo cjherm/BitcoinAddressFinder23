@@ -28,7 +28,7 @@ public class OpenCLContextTest {
     private static final String ERROR_CODE_SUCCESS = CL.stringFor_errorCode(CL.CL_SUCCESS);
 
     @Test
-    public void test_generateSinglePublicKey_specificSinglePrivateKey() throws InvalidWorkSizeException {
+    public void test_generateSinglePublicKeyBytes_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE, SHIFT_NONE);
@@ -47,7 +47,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateSinglePublicKey_randomSinglePrivateKey() throws InvalidWorkSizeException {
+    public void test_generateSinglePublicKeyBytes_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         //arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE, SHIFT_NONE);
@@ -68,7 +68,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256PublicKeys_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
+    public void test_generate256PublicKeyBytes_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         //arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -90,7 +90,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256PublicKeys_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
+    public void test_generate256PublicKeyBytes_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         //arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -112,7 +112,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256PublicKeys_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
+    public void test_generate256PublicKeyBytes_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         //arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -133,7 +133,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilPublicKey_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilPublicKey_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE, SHIFT_NONE);
@@ -155,7 +155,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilPublicKey_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilPublicKey_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE, SHIFT_NONE);
@@ -177,7 +177,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilPublicKey_random256PrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilPublicKey_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -197,7 +197,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilPublicKey_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilPublicKey_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -217,7 +217,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilPublicKey_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilPublicKey_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -237,7 +237,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilFirstSha256Hash_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilFirstSha_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE, SHIFT_NONE);
@@ -261,7 +261,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilFirstSha256Hash_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilFirstSha_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE, SHIFT_NONE);
@@ -285,7 +285,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilFirstSha256Hash_random256PrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilFirstSha_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -305,7 +305,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilFirstSha256Hash_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilFirstSha_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -325,7 +325,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilFirstSha256Hash_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilFirstSha_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -345,7 +345,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilRipemd160Hash_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilRipemd_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_RIPEMD160_MODE, SHIFT_NONE);
@@ -371,7 +371,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilRipemd160Hash_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilRipemd_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_RIPEMD160_MODE, SHIFT_NONE);
@@ -397,7 +397,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilRipemd160Hash_random256PrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilRipemd_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_UNTIL_RIPEMD160_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -417,7 +417,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilRipemd160Hash_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilRipemd_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_RIPEMD160_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -437,7 +437,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilRipemd160Hash_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilRipemd_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_RIPEMD160_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -457,7 +457,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilSecondSha256Hash_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilSecondSha_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE, SHIFT_NONE);
@@ -486,7 +486,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilSecondSha256Hash_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilSecondSha_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE, SHIFT_NONE);
@@ -515,7 +515,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilSecondSha256Hash_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilSecondSha_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -535,7 +535,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilSecondSha256Hash_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilSecondSha_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -555,7 +555,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256UntilSecondSha256Hashes_random256PrivateKeys_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilSecondSha_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -575,7 +575,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilThirdSha256Hash_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilThirdSha_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE, SHIFT_NONE);
@@ -606,7 +606,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateUntilThirdSha256Hash_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilThirdSha_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE, SHIFT_NONE);
@@ -637,7 +637,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilThirdSha256Hash_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilThirdSha__specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -657,7 +657,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkUntilThirdSha256Hash_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilThirdSha__randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -677,7 +677,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256UntilThirdSha256Hashes_random256PrivateKeys_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilThirdSha_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -697,7 +697,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateSingleAddress_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilAddress_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE, SHIFT_NONE);
@@ -730,7 +730,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateSingleAddress_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generateSingleResultBytes_untilAddress_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE, SHIFT_NONE);
@@ -763,7 +763,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateAddressChunk_specificSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilAddress_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -783,7 +783,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateAddressChunk_randomSinglePrivateKey_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilAddress_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -803,7 +803,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256Addresses_random256PrivateKeys_bytewiseMode() throws InvalidWorkSizeException {
+    public void test_generate256ResultBytes_untilAddress_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -823,7 +823,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateSingleAddressBytes_specificSinglePrivateKey() throws InvalidWorkSizeException {
+    public void test_generateSingleAddressBytes_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_NONE);
@@ -845,7 +845,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateSingleAddressBytes_randomSinglePrivateKey() throws InvalidWorkSizeException {
+    public void test_generateSingleAddressBytes_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_NONE);
@@ -870,7 +870,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkAddressBytes_specificSinglePrivateKey() throws InvalidWorkSizeException {
+    public void test_generate256AddressBytes_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -890,7 +890,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generateChunkAddressBytes_randomSinglePrivateKey() throws InvalidWorkSizeException {
+    public void test_generate256AddressBytes_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
@@ -910,7 +910,7 @@ public class OpenCLContextTest {
     }
 
     @Test
-    public void test_generate256AddressBytes_random256PrivateKeys() throws InvalidWorkSizeException {
+    public void test_generate256AddressBytes_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
