@@ -35,13 +35,13 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
+        PublicKeyBytes[] resultedPublicKeyBytes = openCLGridResult.getPublicKeyBytes();
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        String resultPublicKeyAsHexString = TestHelper.transformPublicKeyBytesToHexString(publicKeysResult[0]);
+        String resultPublicKeyAsHexString = TestHelper.transformPublicKeyBytesToHexString(resultedPublicKeyBytes[0]);
         assertThat(resultPublicKeyAsHexString, is(equalTo(PUBLIC_KEY_HEX_STRING)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
@@ -54,14 +54,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
-        PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
+        PublicKeyBytes[] resultedPublicKeyBytes = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        String resultPublicKeyAsHexString = TestHelper.transformPublicKeyBytesToHexString(publicKeysResult[0]);
+        String resultPublicKeyAsHexString = TestHelper.transformPublicKeyBytesToHexString(resultedPublicKeyBytes[0]);
         String expectedPublicKeyAsHexString = TestHelper.calculatePublicKeyAsHexStringFromPrivateKey(randomSinglePrivateKey[0]);
         assertThat(resultPublicKeyAsHexString, is(equalTo(expectedPublicKeyAsHexString)));
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
@@ -75,7 +75,7 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
+        PublicKeyBytes[] resultedPublicKeyBytes = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
         openCLContext.release();
@@ -83,8 +83,8 @@ public class OpenCLContextTest {
 
         // assert
         BigInteger[] privateKeysChunk = TestHelper.calculatePrivateKeyChunkFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
-        Map<String, String> resultKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(privateKeysChunk, publicKeysResult);
-        Map<String, String> expectedKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(privateKeysChunk, publicKeysResult);
+        Map<String, String> resultKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(privateKeysChunk, resultedPublicKeyBytes);
+        Map<String, String> expectedKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(privateKeysChunk, resultedPublicKeyBytes);
         assertThatKeyMap(resultKeysMap).isEqualTo(expectedKeysMap);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
@@ -97,7 +97,7 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
-        PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
+        PublicKeyBytes[] resultedPublicKeyBytes = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
         openCLContext.release();
@@ -105,7 +105,7 @@ public class OpenCLContextTest {
 
         // assert
         BigInteger[] privateKeysChunk = TestHelper.calculatePrivateKeyChunkFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
-        Map<String, String> resultKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(privateKeysChunk, publicKeysResult);
+        Map<String, String> resultKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(privateKeysChunk, resultedPublicKeyBytes);
         Map<String, String> expectedKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(privateKeysChunk);
         assertThatKeyMap(resultKeysMap).isEqualTo(expectedKeysMap);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
@@ -119,14 +119,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
-        PublicKeyBytes[] publicKeysResult = openCLGridResult.getPublicKeyBytes();
+        PublicKeyBytes[] resultedPublicKeyBytes = openCLGridResult.getPublicKeyBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        Map<String, String> resultKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(random256PrivateKeys, publicKeysResult);
+        Map<String, String> resultKeysMap = TestHelper.createResultedMapOfPrivateKeysAndTheirPublicKeys(random256PrivateKeys, resultedPublicKeyBytes);
         Map<String, String> expectedKeysMap = TestHelper.createExpectedMapOfPrivateKeysToPublicKeys(random256PrivateKeys);
         assertThatKeyMap(resultKeysMap).isEqualTo(expectedKeysMap);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
@@ -181,14 +181,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -201,34 +201,34 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
     @Test
     public void test_generate256ResultBytes_untilPublicKey_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
-        BigInteger[] specificSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -281,14 +281,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -301,34 +301,34 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
     @Test
     public void test_generate256ResultBytes_untilFirstSha_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
-        BigInteger[] specificSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -381,14 +381,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -401,34 +401,34 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
     @Test
     public void test_generate256ResultBytes_untilRipemd_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
-        BigInteger[] specificSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_RIPEMD160_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_UNTIL_RIPEMD160_MODE);
+        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_UNTIL_RIPEMD160_MODE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -481,14 +481,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -501,14 +501,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -521,14 +521,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -581,14 +581,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -601,14 +601,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -621,14 +621,14 @@ public class OpenCLContextTest {
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expected);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -677,18 +677,18 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE);
+        ResultBytes[] expectedResultBytes = TestHelper.createExpectedResultBytesFromSinglePrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expectedResultBytes);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -697,18 +697,18 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE);
+        ResultBytes[] expectedResultBytes = TestHelper.createExpectedResultBytesFromSinglePrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expectedResultBytes);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -717,18 +717,18 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_UNTIL_ADDRESS_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
-        ResultBytes[] expected = TestHelper.createExpectedResultBytesFromPrivateKeys(random256PrivateKeys, OpenCLContext.GEN_UNTIL_ADDRESS_MODE);
+        ResultBytes[] expectedResultBytes = TestHelper.createExpectedResultBytesFromPrivateKeys(random256PrivateKeys, OpenCLContext.GEN_UNTIL_ADDRESS_MODE);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
-        ResultBytes[] result = openCLGridResult.getResultBytes();
+        ResultBytes[] resultedResultBytes = openCLGridResult.getResultBytes();
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        assertThatResultBytesArray(result).isEqualTo(expected);
+        assertThatResultBytesArray(resultedResultBytes).isEqualTo(expectedResultBytes);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -775,12 +775,12 @@ public class OpenCLContextTest {
     @Test
     public void test_generate256AddressBytes_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
         // arrange
-        BigInteger[] randomSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
-        AddressBytes[] expectedAddressBytes = TestHelper.createExpectedAddressBytesChunkFromPrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
+        AddressBytes[] expectedAddressBytes = TestHelper.createExpectedAddressBytesChunkFromPrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
         AddressBytes[] resultedAddressBytes = openCLGridResult.getAddressBytes();
 
         // cleanup
@@ -815,12 +815,12 @@ public class OpenCLContextTest {
     @Test
     public void test_generate256AddressBytes_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
         // arrange
-        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
+        BigInteger[] random256PrivateKeys = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
-        AddressBytes[] expectedAddressBytes = TestHelper.createExpectedAddressBytesFromPrivateKeys(randomSinglePrivateKey);
+        AddressBytes[] expectedAddressBytes = TestHelper.createExpectedAddressBytesFromPrivateKeys(random256PrivateKeys);
 
         // act
-        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(random256PrivateKeys);
         AddressBytes[] resultedAddressBytes = openCLGridResult.getAddressBytes();
 
         // cleanup
