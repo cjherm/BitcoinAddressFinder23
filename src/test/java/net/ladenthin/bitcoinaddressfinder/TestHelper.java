@@ -221,13 +221,11 @@ public class TestHelper {
         return bigIntegerArray;
     }
 
-    /*
-     * Method written by OpenAI/ChatGPT.
-     * Prompt: "I need a java method to turn a hexString to a byte array".
-     */
-
     /**
      * Transforms a hex in a {@link String} into a byte array.
+     * <p>
+     * Method written by OpenAI/ChatGPT.
+     * Prompt: "I need a java method to turn a hexString to a byte array".
      *
      * @param hexString To be transformed into a byte array
      * @return The byte array of the given hex {@link String}
