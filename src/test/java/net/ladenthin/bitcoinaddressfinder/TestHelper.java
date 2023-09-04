@@ -467,8 +467,16 @@ public class TestHelper {
         }
     }
 
+    public static ActualResultBytesArray assertThatResultBytes(ResultBytes actual) {
+        return new ActualResultBytesArray(new ResultBytes[]{actual});
+    }
+
     public static ActualResultBytesArray assertThatResultBytesArray(ResultBytes[] actual) {
         return new ActualResultBytesArray(actual);
+    }
+
+    public static ActualAddressBytesArray assertThatAddressBytes(AddressBytes actual) {
+        return new ActualAddressBytesArray(new AddressBytes[]{actual});
     }
 
     public static ActualAddressBytesArray assertThatAddressBytesArray(AddressBytes[] actual) {
@@ -485,6 +493,10 @@ public class TestHelper {
         public ActualResultBytesArray(ResultBytes[] actual) {
             assertThat(actual, Matchers.notNullValue());
             this.actual = Arrays.asList(actual);
+        }
+
+        public void isEqualTo(ResultBytes expected) {
+            isEqualTo(new ResultBytes[]{expected});
         }
 
         public void isEqualTo(ResultBytes[] expected) {
@@ -535,6 +547,10 @@ public class TestHelper {
         public ActualAddressBytesArray(AddressBytes[] actual) {
             assertThat(actual, Matchers.notNullValue());
             this.actual = Arrays.asList(actual);
+        }
+
+        public void isEqualTo(AddressBytes expected) {
+            isEqualTo(new AddressBytes[]{expected});
         }
 
         public void isEqualTo(AddressBytes[] expected) {
