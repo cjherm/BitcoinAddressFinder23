@@ -737,20 +737,18 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_NONE);
+        AddressBytes expectedAddressBytes = TestHelper.createExpectedAddressBytesFromPrivateKey(specificSinglePrivateKey[0]);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
-        AddressBytes result = openCLGridResult.getAddressBytes()[0];
+        AddressBytes resultedAddressBytes = openCLGridResult.getAddressBytes()[0];
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        String privateKeyResultAsHexString = TestHelper.transformBytesToHexString(result.getPrivateKey());
-        String addressResultAsBase58String = TestHelper.transformAddressBytesToBase58String(result.getAddress());
-        assertThat(privateKeyResultAsHexString, is(equalTo(PRIVATE_KEY_HEX_STRING)));
-        assertThat(addressResultAsBase58String, is(equalTo(ADDRESS_BASE58_STRING)));
+        assertThatAddressBytes(resultedAddressBytes).isEqualTo(expectedAddressBytes);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
@@ -759,23 +757,18 @@ public class OpenCLContextTest {
         // arrange
         BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
         OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_ADDRESSES_ONLY_MODE, SHIFT_NONE);
-        String expectedPrivateKey = TestHelper.transformBigIntegerToHexString(randomSinglePrivateKey[0]);
-        byte[] expectedAddressByteArray = TestHelper.calculateAddressFromPrivateKey(randomSinglePrivateKey[0]);
-        String expectedAddress = TestHelper.transformAddressBytesToBase58String(expectedAddressByteArray);
+        AddressBytes expectedAddressBytes = TestHelper.createExpectedAddressBytesFromPrivateKey(randomSinglePrivateKey[0]);
 
         // act
         OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
-        AddressBytes result = openCLGridResult.getAddressBytes()[0];
+        AddressBytes resultedAddressBytes = openCLGridResult.getAddressBytes()[0];
 
         // cleanup
         openCLContext.release();
         openCLGridResult.freeResult();
 
         // assert
-        String privateKeyResultAsHexString = TestHelper.transformBytesToHexString(result.getPrivateKey());
-        String addressResultAsBase58String = TestHelper.transformAddressBytesToBase58String(result.getAddress());
-        assertThat(privateKeyResultAsHexString, is(equalTo(expectedPrivateKey)));
-        assertThat(addressResultAsBase58String, is(equalTo(expectedAddress)));
+        assertThatAddressBytes(resultedAddressBytes).isEqualTo(expectedAddressBytes);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
 
