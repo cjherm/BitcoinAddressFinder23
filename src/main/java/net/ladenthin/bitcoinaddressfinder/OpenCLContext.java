@@ -55,8 +55,8 @@ public class OpenCLContext {
 
     // kernel modes that do not write all intermediate results into the result buffer:
     public static final int GEN_XY_COORDINATES_ONLY_MODE = 0;
-    public static final int GEN_PUBLIC_KEY_ONLY_MODE = 1;
-    public static final int GEN_ADDRESSES_ONLY_MODE = 2;
+    public static final int GEN_ADDRESSES_ONLY_MODE = 1;
+    public static final int GEN_PUBLIC_KEY_ONLY_MODE = 2;
 
     // kernel modes that write all intermediate results into the result buffer:
     public static final int GEN_UNTIL_1ST_SHA256_MODE = 3;
