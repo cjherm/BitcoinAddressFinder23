@@ -126,6 +126,10 @@ public class OpenCLGridResult {
         return addressBytes;
     }
 
+    public Ripemd160Bytes[] getRipemd160Bytes() {
+        // TODO to be implemented...
+    }
+
     private ResultBytes retrieveResultBytesFromWorkItem(int workItemId) {
         byte[] workItemResultBytes = retrieveWorkItemResultBytesFromResultBuffer(workItemId);
         ResultBytesFactory factory = new ResultBytesFactory();
