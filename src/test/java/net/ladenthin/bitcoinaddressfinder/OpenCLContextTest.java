@@ -829,4 +829,104 @@ public class OpenCLContextTest {
         assertThatAddressBytesArray(resultedAddressBytes).isEqualTo(expectedAddressBytes);
         assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
     }
+
+    @Test
+    public void test_generateSingleRipemd160Bytes_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
+        // arrange
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_ONLY_MODE, SHIFT_NONE);
+        Ripemd160Bytes expectedRipemd160Bytes = TestHelper.createExpectedRipemd160BytesFromPrivateKey(specificSinglePrivateKey[0]);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
+        Ripemd160Bytes resultedRipemd160Bytes = openCLGridResult.getRipemd160Bytes()[0];
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatRipemd160Bytes(resultedRipemd160Bytes).isEqualTo(expectedRipemd160Bytes);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generateSingleRipemd160Bytes_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_ONLY_MODE, SHIFT_NONE);
+        Ripemd160Bytes expectedRipemd160Bytes = TestHelper.createExpectedRipemd160BytesFromPrivateKey(randomSinglePrivateKey[0]);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        Ripemd160Bytes resultedRipemd160Bytes = openCLGridResult.getRipemd160Bytes()[0];
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatRipemd160Bytes(resultedRipemd160Bytes).isEqualTo(expectedRipemd160Bytes);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generate256Ripemd160Bytes_specificSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
+        // arrange
+        BigInteger[] specificSinglePrivateKey = TestHelper.transformHexStringToBigIntegerArray(PRIVATE_KEY_HEX_STRING);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
+        Ripemd160Bytes[] expectedRipemd160Bytes = TestHelper.createExpectedRipemd160BytesChunkFromPrivateKey(specificSinglePrivateKey[0], CHUNK_SIZE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(specificSinglePrivateKey);
+        Ripemd160Bytes[] resultedRipemd160Bytes = openCLGridResult.getRipemd160Bytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatRipemd160Bytes(resultedRipemd160Bytes).isEqualTo(expectedRipemd160Bytes);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generate256Ripemd160Bytes_randomSinglePrivateKey_chunkMode() throws InvalidWorkSizeException {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(1);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
+        Ripemd160Bytes[] expectedRipemd160Bytes = TestHelper.createExpectedRipemd160BytesChunkFromPrivateKey(randomSinglePrivateKey[0], CHUNK_SIZE);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        Ripemd160Bytes[] resultedRipemd160Bytes = openCLGridResult.getRipemd160Bytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatRipemd160Bytes(resultedRipemd160Bytes).isEqualTo(expectedRipemd160Bytes);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
+
+    @Test
+    public void test_generate256Ripemd160Bytes_random256PrivateKeys_nonChunkMode() throws InvalidWorkSizeException {
+        // arrange
+        BigInteger[] randomSinglePrivateKey = TestHelper.generateRandomPrivateKeys(CHUNK_SIZE);
+        OpenCLContext openCLContext = TestHelper.createOpenCLContext(NON_CHUNK_MODE, OpenCLContext.GEN_RIPEMD160_ONLY_MODE, SHIFT_8_BITS_FOR_256_CHUNK_SIZE);
+        Ripemd160Bytes[] expectedRipemd160Bytes = TestHelper.createExpectedRipemd160BytesFromPrivateKeys(randomSinglePrivateKey);
+
+        // act
+        OpenCLGridResult openCLGridResult = openCLContext.createResult(randomSinglePrivateKey);
+        Ripemd160Bytes[] resultedRipemd160Bytes = openCLGridResult.getRipemd160Bytes();
+
+        // cleanup
+        openCLContext.release();
+        openCLGridResult.freeResult();
+
+        // assert
+        assertThatRipemd160Bytes(resultedRipemd160Bytes).isEqualTo(expectedRipemd160Bytes);
+        assertThat(openCLContext.getErrorCodeString(), is(equalTo(ERROR_CODE_SUCCESS)));
+    }
 }
