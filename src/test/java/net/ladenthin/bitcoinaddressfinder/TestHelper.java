@@ -403,6 +403,33 @@ public class TestHelper {
     }
 
     /**
+     * Will generate all expecting RIPEMD-160 hashes for each given private key.
+     *
+     * @param privateKeys As base for generating all expected addresses for each {@link Ripemd160Bytes}.
+     * @return Array containing {@link Ripemd160Bytes} with all expecting values.
+     */
+    public static Ripemd160Bytes[] createExpectedRipemd160BytesFromPrivateKeys(BigInteger[] privateKeys) {
+        Ripemd160Bytes[] expectedRipemd160Bytes = new Ripemd160Bytes[privateKeys.length];
+        for (int i = 0; i < privateKeys.length; i++) {
+            expectedRipemd160Bytes[i] = createExpectedRipemd160BytesFromPrivateKey(privateKeys[i]);
+        }
+        return expectedRipemd160Bytes;
+    }
+
+    /**
+     * Will generate the expecting RIPEMD-160 hashes for the given private key.
+     *
+     * @param privateKey As base for generating the expected hashes.
+     * @return Array containing {@link Ripemd160Bytes} with the expecting values.
+     */
+    public static Ripemd160Bytes createExpectedRipemd160BytesFromPrivateKey(BigInteger privateKey) {
+        byte[] publicKey = calculatePublicKeyAsBytesFromPrivateKey(privateKey);
+        byte[] firstSha256 = calculateSha256FromByteArray(publicKey);
+        byte[] ripemd160 = calculateRipemd160FromByteArray(firstSha256);
+        return new Ripemd160Bytes(transformPrivateKeyFromBigIntegerToByteArray(privateKey), ripemd160);
+    }
+
+    /**
      * Will generate the expecting address for the given private key.
      *
      * @param privateKey As base for generating the expected address.
@@ -420,6 +447,18 @@ public class TestHelper {
     public static ResultBytes[] createExpectedResultBytesFromSinglePrivateKey(BigInteger singlePrivateKey, int chunkSize, int kernelMode) {
         BigInteger[] privateKeysChunk = calculatePrivateKeyChunkFromSinglePrivateKey(singlePrivateKey, chunkSize);
         return createExpectedResultBytesFromPrivateKeys(privateKeysChunk, kernelMode);
+    }
+
+    /**
+     * Will generate all expecting RIPEMD-160 hashes for each given private key simulating the chunk mode.
+     *
+     * @param singlePrivateKey as base for generating expected values
+     * @param chunkSize        size of chunk to be created
+     * @return Array containing {@link Ripemd160Bytes} with all expecting values
+     */
+    public static Ripemd160Bytes[] createExpectedRipemd160BytesChunkFromPrivateKey(BigInteger singlePrivateKey, int chunkSize) {
+        BigInteger[] privateKeysChunk = calculatePrivateKeyChunkFromSinglePrivateKey(singlePrivateKey, chunkSize);
+        return createExpectedRipemd160BytesFromPrivateKeys(privateKeysChunk);
     }
 
     /**
@@ -504,6 +543,14 @@ public class TestHelper {
         return new ActualAddressBytesArray(actual);
     }
 
+    public static ActualRipemd160BytesArray assertThatRipemd160Bytes(Ripemd160Bytes actual) {
+        return new ActualRipemd160BytesArray(new Ripemd160Bytes[]{actual});
+    }
+
+    public static ActualRipemd160BytesArray assertThatRipemd160Bytes(Ripemd160Bytes[] actual) {
+        return new ActualRipemd160BytesArray(actual);
+    }
+
     /**
      * Array storing actual {@link ResultBytes} for better test assertions. Compares size and if elements in both are equal. Does not consider identical order of elements.
      */
@@ -527,7 +574,7 @@ public class TestHelper {
             boolean elemExists;
             for (ResultBytes expectedElem : expected) {
                 elemExists = false;
-                String reason = "Current expected ResultBytes: " + i + "/" + (expected.length - 1);
+                String reason = "Current expected ResultBytes: " + (i + 1) + "/" + expected.length;
                 for (ResultBytes actualElem : actual) {
                     if (Arrays.equals(expectedElem.getPrivateKeyBytes(), actualElem.getPrivateKeyBytes())) {
                         elemExists = true;
@@ -595,6 +642,48 @@ public class TestHelper {
                     }
                 }
                 assertThat("Actual AddressBytesArray does NOT contain expected AddressBytes with private key: " + Arrays.toString(expectedElem.getPrivateKey()), elemExists, is(true));
+                i++;
+            }
+        }
+    }
+
+    /**
+     * Array storing actual {@link Ripemd160Bytes} for better test assertions. Compares size and if elements in both are equal. Does not consider identical order of elements.
+     */
+    public static class ActualRipemd160BytesArray {
+
+        private final List<Ripemd160Bytes> actual;
+
+        public ActualRipemd160BytesArray(Ripemd160Bytes[] actual) {
+            assertThat(actual, Matchers.notNullValue());
+            this.actual = Arrays.asList(actual);
+        }
+
+        public void isEqualTo(Ripemd160Bytes expected) {
+            isEqualTo(new Ripemd160Bytes[]{expected});
+        }
+
+        public void isEqualTo(Ripemd160Bytes[] expected) {
+            assertThat(expected, Matchers.notNullValue());
+            assertThat("None identical length of both arrays!", actual.size(), is(equalTo(expected.length)));
+            int i = 0;
+            boolean elemExists;
+            for (Ripemd160Bytes expectedElem : expected) {
+                elemExists = false;
+                String reason = "Current expected Ripemd160Bytes: " + (i + 1) + "/" + expected.length;
+                for (Ripemd160Bytes actualElem : actual) {
+                    if (Arrays.equals(expectedElem.getPrivateKey(), actualElem.getPrivateKey())) {
+                        elemExists = true;
+                        reason += "\n\t        expected private key = " + Arrays.toString(expectedElem.getPrivateKey());
+                        reason += "\n\t          actual private key = " + Arrays.toString(actualElem.getPrivateKey());
+                        reason += "\n\t    expected RIPEMD-160 hash = " + Arrays.toString(expectedElem.getRipemd160Hash());
+                        reason += "\n\t      actual RIPEMD-160 hash = " + Arrays.toString(actualElem.getRipemd160Hash());
+                        assertThat(reason, actualElem, is(equalTo(expectedElem)));
+                        System.out.println(reason);
+                        break;
+                    }
+                }
+                assertThat("Actual ActualRipemd160BytesArray does NOT contain expected Ripemd160Bytes with private key: " + Arrays.toString(expectedElem.getPrivateKey()), elemExists, is(true));
                 i++;
             }
         }
