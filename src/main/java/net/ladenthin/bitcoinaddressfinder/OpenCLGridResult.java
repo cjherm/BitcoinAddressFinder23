@@ -127,7 +127,11 @@ public class OpenCLGridResult {
     }
 
     public Ripemd160Bytes[] getRipemd160Bytes() {
-        // TODO to be implemented...
+        Ripemd160Bytes[] ripemd160Bytes = new Ripemd160Bytes[workSize];
+        for (int i = 0; i < workSize; i++) {
+            ripemd160Bytes[i] = retrieveRipemd160BytesFromWorkItem(i);
+        }
+        return ripemd160Bytes;
     }
 
     private ResultBytes retrieveResultBytesFromWorkItem(int workItemId) {
@@ -144,6 +148,14 @@ public class OpenCLGridResult {
         factory.setResultBufferBytes(workItemResultBytes);
         factory.setKernelMode(kernelMode);
         return factory.createAddressBytes();
+    }
+
+    private Ripemd160Bytes retrieveRipemd160BytesFromWorkItem(int workItemId) {
+        byte[] workItemResultBytes = retrieveWorkItemResultBytesFromResultBuffer(workItemId);
+        Ripemd160BytesFactory factory = new Ripemd160BytesFactory();
+        factory.setResultBufferBytes(workItemResultBytes);
+        factory.setKernelMode(kernelMode);
+        return factory.createRipemd160Bytes();
     }
 
     private byte[] retrieveWorkItemResultBytesFromResultBuffer(int workItemId) {
