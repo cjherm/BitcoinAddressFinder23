@@ -628,7 +628,7 @@ public class TestHelper {
             boolean elemExists;
             for (AddressBytes expectedElem : expected) {
                 elemExists = false;
-                String reason = "Current expected ResultBytes: " + i + "/" + (expected.length - 1);
+                String reason = "Current expected AddressBytes: " + (i + 1) + "/" + expected.length;
                 for (AddressBytes actualElem : actual) {
                     if (Arrays.equals(expectedElem.getPrivateKey(), actualElem.getPrivateKey())) {
                         elemExists = true;
