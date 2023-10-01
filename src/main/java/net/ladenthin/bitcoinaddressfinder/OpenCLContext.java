@@ -56,6 +56,7 @@ public class OpenCLContext {
     // kernel modes that do not write all intermediate results into the result buffer:
     public static final int GEN_XY_COORDINATES_ONLY_MODE = 0;
     public static final int GEN_PUBLIC_KEY_ONLY_MODE = 1;
+    public static final int GEN_RIPEMD160_ONLY_MODE = 2;
     public static final int GEN_ADDRESSES_ONLY_MODE = 3;
 
     // kernel modes that write all intermediate results into the result buffer:
@@ -100,6 +101,8 @@ public class OpenCLContext {
         resourceNames.add("generator_utilities.cl");
         resourceNames.add("inc_ecc_secp256k1custom.cl");
         resourceNames.add("generate_btc_address.cl");
+        resourceNames.add("generate_btc_ripemd160.cl");
+
         return resourceNames;
     }
 
@@ -110,6 +113,10 @@ public class OpenCLContext {
     // names of kernel methods that only write the private key and the public key into the result buffer:
     private static final String UNTIL_PUBLIC_KEY_CHUNK_KERNEL = "generate_chunk_until_publickey";
     private static final String UNTIL_PUBLIC_KEY_NONCHUNK_KERNEL = "generate_until_publickey";
+
+    // names of kernel methods that only write the private key and the RIPEMD-160 hash into the result buffer:
+    private static final String ONLY_RIPEMD160_CHUNK_KERNEL = "generate_ripemd160_chunk";
+    private static final String ONLY_RIPEMD160_NONCHUNK_KERNEL = "generate_ripemd160_nonchunk";
 
     // names of kernel methods that only write the private key and the address into the result buffer:
     private static final String ONLY_ADDRESS_CHUNK_KERNEL = "generate_address_chunk";
