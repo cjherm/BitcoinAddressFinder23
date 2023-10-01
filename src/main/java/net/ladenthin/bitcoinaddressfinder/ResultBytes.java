@@ -13,13 +13,6 @@ public class ResultBytes {
     public static final int NUM_BYTES_RIPEMD160 = 20;
     public static final int NUM_BYTES_ADDRESS = 25;
 
-    public static final int NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY = NUM_BYTES_PRIVATE_KEY + NUM_BYTES_PUBLIC_KEY;
-    public static final int NUM_BYTES_TOTAL_UNTIL_1ST_SHA256 = NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY + NUM_BYTES_SHA256;
-    public static final int NUM_BYTES_TOTAL_UNTIL_RIPEMD160 = NUM_BYTES_TOTAL_UNTIL_1ST_SHA256 + NUM_BYTES_RIPEMD160;
-    public static final int NUM_BYTES_TOTAL_UNTIL_2ND_SHA256 = NUM_BYTES_TOTAL_UNTIL_RIPEMD160 + NUM_BYTES_SHA256;
-    public static final int NUM_BYTES_TOTAL_UNTIL_3RD_SHA256 = NUM_BYTES_TOTAL_UNTIL_2ND_SHA256 + NUM_BYTES_SHA256;
-    public static final int NUM_BYTES_TOTAL_UNTIL_ADDRESS = NUM_BYTES_TOTAL_UNTIL_3RD_SHA256 + NUM_BYTES_ADDRESS;
-
     private final byte[] privateKeyBytes;
     private final byte[] publicKeyBytes;
     private final byte[] firstSha256Bytes;

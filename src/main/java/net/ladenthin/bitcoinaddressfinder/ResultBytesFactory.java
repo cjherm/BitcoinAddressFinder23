@@ -5,6 +5,13 @@ package net.ladenthin.bitcoinaddressfinder;
  */
 public class ResultBytesFactory {
 
+    public static final int NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY = ResultBytes.NUM_BYTES_PRIVATE_KEY + ResultBytes.NUM_BYTES_PUBLIC_KEY;
+    public static final int NUM_BYTES_TOTAL_UNTIL_1ST_SHA256 = NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY + ResultBytes.NUM_BYTES_SHA256;
+    public static final int NUM_BYTES_TOTAL_UNTIL_RIPEMD160 = NUM_BYTES_TOTAL_UNTIL_1ST_SHA256 + ResultBytes.NUM_BYTES_RIPEMD160;
+    public static final int NUM_BYTES_TOTAL_UNTIL_2ND_SHA256 = NUM_BYTES_TOTAL_UNTIL_RIPEMD160 + ResultBytes.NUM_BYTES_SHA256;
+    public static final int NUM_BYTES_TOTAL_UNTIL_3RD_SHA256 = NUM_BYTES_TOTAL_UNTIL_2ND_SHA256 + ResultBytes.NUM_BYTES_SHA256;
+    public static final int NUM_BYTES_TOTAL_UNTIL_ADDRESS = NUM_BYTES_TOTAL_UNTIL_3RD_SHA256 + ResultBytes.NUM_BYTES_ADDRESS;
+
     private byte[] workItemResultBytes;
     private int kernelMode = -1;
 
@@ -53,23 +60,23 @@ public class ResultBytesFactory {
         }
 
         if (kernelMode >= OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE) {
-            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY, firstSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
+            System.arraycopy(workItemResultBytes, NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY, firstSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
         }
 
         if (kernelMode >= OpenCLContext.GEN_UNTIL_RIPEMD160_MODE) {
-            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256, ripemd160Bytes, 0, ResultBytes.NUM_BYTES_RIPEMD160);
+            System.arraycopy(workItemResultBytes, NUM_BYTES_TOTAL_UNTIL_1ST_SHA256, ripemd160Bytes, 0, ResultBytes.NUM_BYTES_RIPEMD160);
         }
 
         if (kernelMode >= OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE) {
-            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160, secondSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
+            System.arraycopy(workItemResultBytes, NUM_BYTES_TOTAL_UNTIL_RIPEMD160, secondSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
         }
 
         if (kernelMode >= OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE) {
-            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256, thirdSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
+            System.arraycopy(workItemResultBytes, NUM_BYTES_TOTAL_UNTIL_2ND_SHA256, thirdSha256Bytes, 0, ResultBytes.NUM_BYTES_SHA256);
         }
 
         if (kernelMode == OpenCLContext.GEN_UNTIL_ADDRESS_MODE) {
-            System.arraycopy(workItemResultBytes, ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256, addressBytes, 0, ResultBytes.NUM_BYTES_ADDRESS);
+            System.arraycopy(workItemResultBytes, NUM_BYTES_TOTAL_UNTIL_3RD_SHA256, addressBytes, 0, ResultBytes.NUM_BYTES_ADDRESS);
         }
 
         return new ResultBytes(privateKeyBytes, publicKeyBytes, firstSha256Bytes, ripemd160Bytes, secondSha256Bytes, thirdSha256Bytes, addressBytes);
@@ -81,27 +88,27 @@ public class ResultBytesFactory {
             return true;
         }
 
-        if (kernelMode == OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY) {
+        if (kernelMode == OpenCLContext.GEN_PUBLIC_KEY_ONLY_MODE && workItemResultBytes.length >= NUM_BYTES_TOTAL_UNTIL_PUBLIC_KEY) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_1ST_SHA256) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_1ST_SHA256_MODE && workItemResultBytes.length >= NUM_BYTES_TOTAL_UNTIL_1ST_SHA256) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_UNTIL_RIPEMD160_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_RIPEMD160) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_RIPEMD160_MODE && workItemResultBytes.length >= NUM_BYTES_TOTAL_UNTIL_RIPEMD160) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_2ND_SHA256) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_2ND_SHA256_MODE && workItemResultBytes.length >= NUM_BYTES_TOTAL_UNTIL_2ND_SHA256) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE && workItemResultBytes.length >= ResultBytes.NUM_BYTES_TOTAL_UNTIL_3RD_SHA256) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_3RD_SHA256_MODE && workItemResultBytes.length >= NUM_BYTES_TOTAL_UNTIL_3RD_SHA256) {
             return false;
         }
 
-        if (kernelMode == OpenCLContext.GEN_UNTIL_ADDRESS_MODE && workItemResultBytes.length == ResultBytes.NUM_BYTES_TOTAL_UNTIL_ADDRESS) {
+        if (kernelMode == OpenCLContext.GEN_UNTIL_ADDRESS_MODE && workItemResultBytes.length == NUM_BYTES_TOTAL_UNTIL_ADDRESS) {
             return false;
         }
 
