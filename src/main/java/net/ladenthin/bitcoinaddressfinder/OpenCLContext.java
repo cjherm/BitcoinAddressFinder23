@@ -212,6 +212,8 @@ public class OpenCLContext {
     private void setKernel() throws UnknownKernelModeException {
         if (producerOpenCL.kernelMode == GEN_XY_COORDINATES_ONLY_MODE) {
             setPublicKeyGeneratorKernel();
+        } else if (producerOpenCL.kernelMode == GEN_RIPEMD160_ONLY_MODE) {
+            setRipemd160GeneratorKernel();
         } else if (producerOpenCL.kernelMode == GEN_ADDRESSES_ONLY_MODE) {
             setAddressGeneratorKernel();
         } else if (producerOpenCL.kernelMode == GEN_PUBLIC_KEY_ONLY_MODE) {
@@ -236,6 +238,14 @@ public class OpenCLContext {
             kernel = clCreateKernel(program, ONLY_XY_COORDINATES_CHUNK_KERNEL, errorCode);
         } else {
             kernel = clCreateKernel(program, ONLY_XY_COORDINATES_NONCHUNK_KERNEL, errorCode);
+        }
+    }
+
+    private void setRipemd160GeneratorKernel() throws UnknownKernelModeException {
+        if (producerOpenCL.chunkMode) {
+            kernel = clCreateKernel(program, ONLY_RIPEMD160_CHUNK_KERNEL, errorCode);
+        } else {
+            kernel = clCreateKernel(program, ONLY_RIPEMD160_NONCHUNK_KERNEL, errorCode);
         }
     }
 
