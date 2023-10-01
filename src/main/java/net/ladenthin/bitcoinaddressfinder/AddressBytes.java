@@ -10,8 +10,6 @@ public class AddressBytes {
     public static final int NUM_BYTES_PRIVATE_KEY = 32;
     public static final int NUM_BYTES_ADDRESS = 25;
 
-    public static final int NUM_BYTES_TOTAL = NUM_BYTES_PRIVATE_KEY + NUM_BYTES_ADDRESS;
-
     private final byte[] privateKey;
     private final byte[] address;
 

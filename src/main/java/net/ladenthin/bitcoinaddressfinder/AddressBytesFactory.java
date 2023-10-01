@@ -5,6 +5,8 @@ package net.ladenthin.bitcoinaddressfinder;
  */
 public class AddressBytesFactory {
 
+    public static final int NUM_BYTES_TOTAL = AddressBytes.NUM_BYTES_PRIVATE_KEY + AddressBytes.NUM_BYTES_ADDRESS;
+
     private byte[] workItemResultBytes;
     private int kernelMode = -1;
 
@@ -54,7 +56,7 @@ public class AddressBytesFactory {
             return true;
         }
 
-        if (kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE && workItemResultBytes.length == AddressBytes.NUM_BYTES_TOTAL) {
+        if (kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE && workItemResultBytes.length == NUM_BYTES_TOTAL) {
             return false;
         }
 
