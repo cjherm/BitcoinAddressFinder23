@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class BenchmarkFactoryTest {
 
     @Test
-    public void test_createBenchmarkIterator_chunkMode_kernelModeAddress() throws BenchmarkFactoryException {
+    public void test_createBenchmarkIterator() throws BenchmarkFactoryException {
         // arrange
         CBenchmark configFile = new CBenchmark();
         configFile.type = BenchmarkFactory.TYPE_CHUNK_ITERATOR;
