@@ -16,7 +16,28 @@ public class MeasurementRoundResult {
         this.resultsPerSecond = (int) (numberOfResults / roundDurationInSeconds);
     }
 
+    public String getParameter() {
+        return parameter;
+    }
+
+    public double getRoundDurationInSeconds() {
+        return roundDurationInSeconds;
+    }
+
+
     public int getNumberOfResults() {
         return numberOfResults;
+    }
+
+    public int getResultsPerSecond() {
+        return resultsPerSecond;
+    }
+
+    public String getResultsString() {
+        return "PARAM: {" + parameter + "}, RESULTS: " + numberOfResults + ", DURATION: " + roundDurationInSeconds + "s, RESULTS/SECOND: " + resultsPerSecond;
+    }
+
+    public String getParameterToLatex() {
+        return parameterToLatex;
     }
 }
