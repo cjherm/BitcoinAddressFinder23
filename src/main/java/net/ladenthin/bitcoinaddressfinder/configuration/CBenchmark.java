@@ -1,20 +1,22 @@
 package net.ladenthin.bitcoinaddressfinder.configuration;
 
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
+
 public class CBenchmark {
 
     public String type;
 
-    public int gridNumBits;
+    public int gridNumBits = BenchmarkFactory.DEFAULT_GRIDNUMBITS;
 
-    public boolean chunkMode;
+    public boolean chunkMode = BenchmarkFactory.DEFAULT_CHUNKMODE;
 
-    public int kernelMode;
+    public int kernelMode = BenchmarkFactory.DEFAULT_KERNELMODE;
 
-    public int totalRounds;
+    public int totalRounds = BenchmarkFactory.DEFAULT_TOTAL_ROUNDS;
 
-    public int contextRounds;
+    public int contextRounds = BenchmarkFactory.DEFAULT_CONTEXT_ROUNDS;
 
-    public boolean logToConsole;
+    public boolean logToConsole = BenchmarkFactory.DEFAULT_LOGTOCONSOLE;
 
-    public boolean logToFile;
+    public boolean logToFile = BenchmarkFactory.DEFAULT_LOGTOFILE;
 }
