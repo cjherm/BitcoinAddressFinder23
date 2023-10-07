@@ -3,6 +3,7 @@ package net.ladenthin.bitcoinaddressfinder.benchmark;
 import net.ladenthin.bitcoinaddressfinder.OpenCLContext;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.ChunkSizeIteratorBenchmark;
+import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.Ripemd160Round;
 import net.ladenthin.bitcoinaddressfinder.configuration.CBenchmark;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLBuilder;
@@ -46,11 +47,6 @@ public class BenchmarkFactory {
         boolean logToConsole = configuration.logToConsole;
         boolean logToFile = configuration.logToFile;
         logger = new BenchmarkLogger(logToConsole, logToFile);
-    }
-
-    public static MeasurementRound createBenchmarkRound(CProducerOpenCL producer, int roundsPerInitializedContext, String s, String parameterToPrint, BenchmarkLogger logger) {
-        // TODO impl
-        return null;
     }
 
     public BenchmarkType createBenchmarkRunner() throws BenchmarkFactoryException {
@@ -131,5 +127,13 @@ public class BenchmarkFactory {
     private void logErrorAndAbort(String msg) throws BenchmarkFactoryException {
         logger.error(msg);
         throw new BenchmarkFactoryException(msg);
+    }
+
+    public static MeasurementRound createBenchmarkRound(CProducerOpenCL producer, int roundsPerInitializedContext, String parameterToLatex, String parameterToPrint, BenchmarkLogger logger) throws BenchmarkException {
+        int kernelMode = producer.kernelMode;
+        if (kernelMode == OpenCLContext.GEN_RIPEMD160_ONLY_MODE) {
+            return new Ripemd160Round(producer, roundsPerInitializedContext, parameterToPrint, parameterToLatex, logger);
+        }
+        return null;
     }
 }

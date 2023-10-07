@@ -41,7 +41,7 @@ public class ChunkSizeIteratorBenchmark implements BenchmarkType {
         createProducers();
         try {
             initializingBenchmarkRounds();
-        } catch (OutOfMemoryError e) {
+        } catch (BenchmarkException | OutOfMemoryError e) {
             logger.error("Error while trying to initialize \"" + BENCHMARK_NAME.trim() + "\"!");
             logger.error(e.getMessage());
             return;
@@ -75,7 +75,7 @@ public class ChunkSizeIteratorBenchmark implements BenchmarkType {
         logger.logFinalResults(benchmarkStart, benchmarkFinish, measurementRoundResults);
     }
 
-    private void initializingBenchmarkRounds() {
+    private void initializingBenchmarkRounds() throws BenchmarkException {
         logger.info("Initializing measuring rounds...");
         rounds = new ArrayList<>();
         for (CProducerOpenCL producer : producers) {
