@@ -477,37 +477,37 @@ public class OpenCLDevice implements Serializable {
         
         try (PrintStream ps = new PrintStream(baos, true, charset)) {
             ps.println("--- Info for device "+deviceName+": ---");
-            ps.printf("CL_DEVICE_NAME: \t\t\t%s\n", deviceName);
-            ps.printf("CL_DEVICE_VENDOR: \t\t\t%s\n", deviceVendor);
-            ps.printf("CL_DRIVER_VERSION: \t\t\t%s\n", driverVersion);
-            ps.printf("CL_DEVICE_PROFILE: \t\t\t%s\n", deviceProfile);
-            ps.printf("CL_DEVICE_VERSION: \t\t\t%s\n", deviceVersion);
-            ps.printf("CL_DEVICE_EXTENSIONS: \t\t\t%s\n", deviceExtensions);
-            ps.printf("CL_DEVICE_TYPE:\t\t\t\t%s\n", CL.stringFor_cl_device_type(deviceType));
-            ps.printf("CL_DEVICE_MAX_COMPUTE_UNITS:\t\t%d\n", maxComputeUnits);
-            ps.printf("CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS:\t%d\n", maxWorkItemDimensions);
-            ps.printf("CL_DEVICE_MAX_WORK_ITEM_SIZES:\t\t%d / %d / %d \n",
+            ps.printf("CL_DEVICE_NAME:                     %s\n", deviceName);
+            ps.printf("CL_DEVICE_VENDOR:                   %s\n", deviceVendor);
+            ps.printf("CL_DRIVER_VERSION:                  %s\n", driverVersion);
+            ps.printf("CL_DEVICE_PROFILE:                  %s\n", deviceProfile);
+            ps.printf("CL_DEVICE_VERSION:                  %s\n", deviceVersion);
+            ps.printf("CL_DEVICE_EXTENSIONS:               %s\n", deviceExtensions);
+            ps.printf("CL_DEVICE_TYPE:                     %s\n", CL.stringFor_cl_device_type(deviceType));
+            ps.printf("CL_DEVICE_MAX_COMPUTE_UNITS:        %d\n", maxComputeUnits);
+            ps.printf("CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS: %d\n", maxWorkItemDimensions);
+            ps.printf("CL_DEVICE_MAX_WORK_ITEM_SIZES:      %d / %d / %d \n",
                 maxWorkItemSizes[0], maxWorkItemSizes[1], maxWorkItemSizes[2]);
-            ps.printf("CL_DEVICE_MAX_WORK_GROUP_SIZE:\t\t%d\n", maxWorkGroupSize);
-            ps.printf("CL_DEVICE_MAX_CLOCK_FREQUENCY:\t\t%d MHz\n", maxClockFrequency);
-            ps.printf("CL_DEVICE_ADDRESS_BITS:\t\t\t%d\n", addressBits);
-            ps.printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE:\t\t%d MByte\n", (int)(maxMemAllocSize / (1024 * 1024)));
-            ps.printf("CL_DEVICE_GLOBAL_MEM_SIZE:\t\t%d MByte\n", (int)(globalMemSize / (1024 * 1024)));
-            ps.printf("CL_DEVICE_ERROR_CORRECTION_SUPPORT:\t%s\n", errorCorrectionSupport != 0 ? "yes" : "no");
-            ps.printf("CL_DEVICE_LOCAL_MEM_TYPE:\t\t%s\n", CL.stringFor_cl_device_local_mem_type(localMemType));
-            ps.printf("CL_DEVICE_LOCAL_MEM_SIZE:\t\t%d KByte\n", (int)(localMemSize / 1024));
-            ps.printf("CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE:\t%d KByte\n", (int)(maxConstantBufferSize / 1024));
-            ps.printf("CL_DEVICE_QUEUE_PROPERTIES:\t\t%s\n", CL.stringFor_cl_command_queue_properties(queueProperties));
-            ps.printf("CL_DEVICE_IMAGE_SUPPORT:\t\t%d\n", imageSupport);
-            ps.printf("CL_DEVICE_MAX_READ_IMAGE_ARGS:\t\t%d\n", maxReadImageArgs);
-            ps.printf("CL_DEVICE_MAX_WRITE_IMAGE_ARGS:\t\t%d\n", maxWriteImageArgs);
-            ps.printf("CL_DEVICE_SINGLE_FP_CONFIG:\t\t%s\n", CL.stringFor_cl_device_fp_config(singleFpConfig));
-            ps.printf("CL_DEVICE_2D_MAX_WIDTH\t\t\t%d\n", image2dMaxWidth);
-            ps.printf("CL_DEVICE_2D_MAX_HEIGHT\t\t\t%d\n", image2dMaxHeight);
-            ps.printf("CL_DEVICE_3D_MAX_WIDTH\t\t\t%d\n", image3dMaxWidth);
-            ps.printf("CL_DEVICE_3D_MAX_HEIGHT\t\t\t%d\n", image3dMaxHeight);
-            ps.printf("CL_DEVICE_3D_MAX_DEPTH\t\t\t%d\n", image3dMaxDepth);
-            ps.printf("CL_DEVICE_PREFERRED_VECTOR_WIDTH_<t>\t");
+            ps.printf("CL_DEVICE_MAX_WORK_GROUP_SIZE:      %d\n", maxWorkGroupSize);
+            ps.printf("CL_DEVICE_MAX_CLOCK_FREQUENCY:      %d MHz\n", maxClockFrequency);
+            ps.printf("CL_DEVICE_ADDRESS_BITS:             %d\n", addressBits);
+            ps.printf("CL_DEVICE_MAX_MEM_ALLOC_SIZE:       %d MByte\n", (int)(maxMemAllocSize / (1024 * 1024)));
+            ps.printf("CL_DEVICE_GLOBAL_MEM_SIZE:          %d MByte\n", (int)(globalMemSize / (1024 * 1024)));
+            ps.printf("CL_DEVICE_ERROR_CORRECTION_SUPPORT: %s\n", errorCorrectionSupport != 0 ? "yes" : "no");
+            ps.printf("CL_DEVICE_LOCAL_MEM_TYPE:           %s\n", CL.stringFor_cl_device_local_mem_type(localMemType));
+            ps.printf("CL_DEVICE_LOCAL_MEM_SIZE:           %d KByte\n", (int)(localMemSize / 1024));
+            ps.printf("CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE: %d KByte\n", (int)(maxConstantBufferSize / 1024));
+            ps.printf("CL_DEVICE_QUEUE_PROPERTIES:         %s\n", CL.stringFor_cl_command_queue_properties(queueProperties));
+            ps.printf("CL_DEVICE_IMAGE_SUPPORT:            %d\n", imageSupport);
+            ps.printf("CL_DEVICE_MAX_READ_IMAGE_ARGS:      %d\n", maxReadImageArgs);
+            ps.printf("CL_DEVICE_MAX_WRITE_IMAGE_ARGS:     %d\n", maxWriteImageArgs);
+            ps.printf("CL_DEVICE_SINGLE_FP_CONFIG:         %s\n", CL.stringFor_cl_device_fp_config(singleFpConfig));
+            ps.printf("CL_DEVICE_2D_MAX_WIDTH              %d\n", image2dMaxWidth);
+            ps.printf("CL_DEVICE_2D_MAX_HEIGHT             %d\n", image2dMaxHeight);
+            ps.printf("CL_DEVICE_3D_MAX_WIDTH              %d\n", image3dMaxWidth);
+            ps.printf("CL_DEVICE_3D_MAX_HEIGHT             %d\n", image3dMaxHeight);
+            ps.printf("CL_DEVICE_3D_MAX_DEPTH              %d\n", image3dMaxDepth);
+            ps.print("CL_DEVICE_PREFERRED_VECTOR_WIDTH_<t>");
             ps.printf("CHAR %d, SHORT %d, INT %d, LONG %d, FLOAT %d, DOUBLE %d\n\n\n",
                preferredVectorWidthChar, preferredVectorWidthShort,
                preferredVectorWidthInt, preferredVectorWidthLong,
