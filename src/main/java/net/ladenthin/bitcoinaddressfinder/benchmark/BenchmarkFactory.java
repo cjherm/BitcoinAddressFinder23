@@ -1,12 +1,10 @@
 package net.ladenthin.bitcoinaddressfinder.benchmark;
 
 import net.ladenthin.bitcoinaddressfinder.OpenCLContext;
-import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
-import net.ladenthin.bitcoinaddressfinder.benchmark.types.ChunkSizeIteratorBenchmark;
-import net.ladenthin.bitcoinaddressfinder.benchmark.types.CtxRoundsIteratorBenchmark;
-import net.ladenthin.bitcoinaddressfinder.benchmark.types.DefaultBenchmark;
+import net.ladenthin.bitcoinaddressfinder.benchmark.types.*;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.AddressBytesRound;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.PublicKeysRound;
+import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.ResultBytesRound;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.Ripemd160Round;
 import net.ladenthin.bitcoinaddressfinder.configuration.CBenchmark;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
@@ -28,6 +26,7 @@ public class BenchmarkFactory {
     public static final int DEFAULT_TOTAL_ROUNDS = 10;
     public static final int DEFAULT_CONTEXT_ROUNDS = 10;
     public static final boolean DEFAULT_LOGTOCONSOLE = true;
+    public static final boolean DEFAULT_LOGTOFILE = false;
 
     public static final String TYPE_DEFAULT = "default";
     public static final String TYPE_CHUNK_ITERATOR = "chunkSizeIterator";
@@ -203,7 +202,8 @@ public class BenchmarkFactory {
             return new PublicKeysRound(producer, roundsPerInitializedContext, parameterToPrint, parameterToLatex, logger);
         } else if (kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE) {
             return new AddressBytesRound(producer, roundsPerInitializedContext, parameterToPrint, parameterToLatex, logger);
+        } else {
+            return new ResultBytesRound(producer, roundsPerInitializedContext, parameterToPrint, parameterToLatex, logger);
         }
-        return null;
     }
 }
