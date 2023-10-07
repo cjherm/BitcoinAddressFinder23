@@ -14,7 +14,7 @@ public class DefaultBenchmarkTest {
     public static final int EXPECTED_RESULTS = (1 << BenchmarkFactory.DEFAULT_GRIDNUMBITS) * BenchmarkFactory.DEFAULT_TOTAL_ROUNDS * BenchmarkFactory.DEFAULT_CONTEXT_ROUNDS;
 
     @Test
-    public void test_start_untilCtxRound1_256Results() throws BenchmarkFactoryException {
+    public void test_start_chunkMode_kernelMode2_10xCtx_10xtotalRounds() throws BenchmarkFactoryException {
         // arrange
         CBenchmark configFile = new CBenchmark();
         configFile.type = BenchmarkFactory.TYPE_DEFAULT;
