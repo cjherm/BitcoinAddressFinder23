@@ -28,6 +28,9 @@ import net.ladenthin.bitcoinaddressfinder.AddressFilesToLMDB;
 import net.ladenthin.bitcoinaddressfinder.Finder;
 import net.ladenthin.bitcoinaddressfinder.Interruptable;
 import net.ladenthin.bitcoinaddressfinder.LMDBToAddressFile;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactoryException;
+import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.configuration.CConfiguration;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLBuilder;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLPlatform;
@@ -102,6 +105,15 @@ public class Main implements Runnable, Interruptable {
                 OpenCLBuilder openCLBuilder = new OpenCLBuilder();
                 List<OpenCLPlatform> openCLPlatforms = openCLBuilder.build();
                 System.out.println(openCLPlatforms);
+                break;
+            case Benchmark:
+                try {
+                    BenchmarkFactory runnerFactory = new BenchmarkFactory(configuration.benchmark);
+                    BenchmarkType runner = runnerFactory.createBenchmarkRunner();
+                    runner.start();
+                } catch (BenchmarkFactoryException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             default:
                 throw new UnsupportedOperationException("Command: " + configuration.command.name() + " currently not supported." );
