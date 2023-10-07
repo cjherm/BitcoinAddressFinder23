@@ -1,6 +1,7 @@
 package net.ladenthin.bitcoinaddressfinder;
 
 import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactoryException;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.ChunkSizeIteratorBenchmark;
 import net.ladenthin.bitcoinaddressfinder.configuration.CBenchmark;
@@ -14,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class BenchmarkFactoryTest {
 
     @Test
-    public void test_createBenchmarkIterator_chunkMode_kernelModeAddress() {
+    public void test_createBenchmarkIterator_chunkMode_kernelModeAddress() throws BenchmarkFactoryException {
         // arrange
         CBenchmark configFile = new CBenchmark();
         configFile.type = BenchmarkFactory.TYPE_CHUNK_ITERATOR;
