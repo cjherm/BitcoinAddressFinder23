@@ -5,4 +5,6 @@ public interface BenchmarkType {
     void start();
 
     int getTotalNumberOfResults();
+
+    String getName();
 }

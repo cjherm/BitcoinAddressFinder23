@@ -108,4 +108,9 @@ public class ChunkSizeIteratorBenchmark implements BenchmarkType {
         }
         return totalNumberOfResults;
     }
+
+    @Override
+    public String getName() {
+        return BENCHMARK_NAME;
+    }
 }
