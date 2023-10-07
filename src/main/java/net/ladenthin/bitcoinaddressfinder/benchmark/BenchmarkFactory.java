@@ -4,6 +4,7 @@ import net.ladenthin.bitcoinaddressfinder.OpenCLContext;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.ChunkSizeIteratorBenchmark;
 import net.ladenthin.bitcoinaddressfinder.configuration.CBenchmark;
+import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLBuilder;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLPlatform;
 
@@ -45,6 +46,11 @@ public class BenchmarkFactory {
         boolean logToConsole = configuration.logToConsole;
         boolean logToFile = configuration.logToFile;
         logger = new BenchmarkLogger(logToConsole, logToFile);
+    }
+
+    public static MeasurementRound createBenchmarkRound(CProducerOpenCL producer, int roundsPerInitializedContext, String s, String parameterToPrint, BenchmarkLogger logger) {
+        // TODO impl
+        return null;
     }
 
     public BenchmarkType createBenchmarkRunner() throws BenchmarkFactoryException {
