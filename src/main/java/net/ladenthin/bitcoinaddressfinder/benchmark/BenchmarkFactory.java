@@ -63,7 +63,7 @@ public class BenchmarkFactory {
     public BenchmarkType createBenchmarkRunner() throws BenchmarkFactoryException {
         switch (benchmarkType) {
             case TYPE_CHUNK_ITERATOR:
-                return checkConfigAndCreateIterator();
+                return checkConfigAndCreateChunkSizeIterator();
             case TYPE_DEFAULT:
                 return checkConfigAndCreateDefaultBenchmark();
             case TYPE_CTX_ITERATOR:
@@ -92,10 +92,11 @@ public class BenchmarkFactory {
     }
 
     private static void logErrorAndShutdown(String msg) {
-        // TODO impl
+        BenchmarkLogger.staticError(msg);
+        throw new RuntimeException(msg);
     }
 
-    private BenchmarkType checkConfigAndCreateIterator() {
+    private BenchmarkType checkConfigAndCreateChunkSizeIterator() {
         checkGridNumBits();
         checkKernelMode();
         checkContextRounds();
