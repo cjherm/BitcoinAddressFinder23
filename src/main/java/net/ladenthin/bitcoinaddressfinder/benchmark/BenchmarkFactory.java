@@ -26,6 +26,7 @@ public class BenchmarkFactory {
     public static final int DEFAULT_CONTEXT_ROUNDS = 10;
     public static final boolean DEFAULT_LOGTOCONSOLE = true;
 
+    public static final String TYPE_DEFAULT = "default";
     public static final String TYPE_CHUNK_ITERATOR = "chunkSizeIterator";
     public static final String TYPE_CTX_ITERATOR = "ctxRoundsIterator";
 
