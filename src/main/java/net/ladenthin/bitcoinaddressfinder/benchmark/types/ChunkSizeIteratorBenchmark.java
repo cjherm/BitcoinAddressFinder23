@@ -21,6 +21,7 @@ public class ChunkSizeIteratorBenchmark implements BenchmarkType {
 
     private List<CProducerOpenCL> producers;
     private List<MeasurementRound> rounds;
+    private List<MeasurementRoundResult> measurementRoundResults;
     private int numberOfIterations;
 
     public ChunkSizeIteratorBenchmark(int gridNumBitsMaxSize, boolean chunkMode, int kernelMode, int roundsPerInitializedContext, BenchmarkLogger logger) {
@@ -46,7 +47,7 @@ public class ChunkSizeIteratorBenchmark implements BenchmarkType {
             logger.error(e.getMessage());
             return;
         }
-        List<MeasurementRoundResult> measurementRoundResults = new ArrayList<>();
+        measurementRoundResults = new ArrayList<>();
 
         logger.startBenchmark(BENCHMARK_NAME, kernelMode, gridNumBitsMaxSize, chunkMode, roundsPerInitializedContext, numberOfIterations);
         int currentRound = 1;
@@ -100,8 +101,11 @@ public class ChunkSizeIteratorBenchmark implements BenchmarkType {
     }
 
     @Override
-    public String getTotalNumberOfResults() {
-        // TODO impl
-        return null;
+    public int getTotalNumberOfResults() {
+        int totalNumberOfResults = 0;
+        for (MeasurementRoundResult singleResult : measurementRoundResults) {
+            totalNumberOfResults += singleResult.getNumberOfResults();
+        }
+        return totalNumberOfResults;
     }
 }
