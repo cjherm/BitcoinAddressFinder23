@@ -1,5 +1,7 @@
 package net.ladenthin.bitcoinaddressfinder.benchmark;
 
+import net.ladenthin.bitcoinaddressfinder.benchmark.util.LatexContentCreator;
+
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -73,6 +75,12 @@ public class BenchmarkLogger {
     public void roundResult(MeasurementRoundResult result) {
         log(LOG_RESULT, result.getResultsString());
         log(LOG_RESULT, "----------------------------------------------------------------------------------------------------");
+    }
+
+    public void benchmarkResult(BenchmarkResult benchmarkResult) {
+        List<String> printOut = benchmarkResult.getFinalPrintOut();
+        log(LOG_RESULT, printOut);
+        flush();
     }
 
     public void consoleError(String msg) {
@@ -150,6 +158,11 @@ public class BenchmarkLogger {
     }
 
     public void logFinalResults(long benchmarkStart, long benchmarkFinish, List<MeasurementRoundResult> measurementRoundResults) {
-        // TODO impl
+        BenchmarkResult benchmarkResult = new BenchmarkResult(benchmarkStart, benchmarkFinish, measurementRoundResults);
+        benchmarkResult(benchmarkResult);
+        result(LatexContentCreator.createLatexPlotOutOfResults(measurementRoundResults));
+        result(LatexContentCreator.createLatexTableContent(measurementRoundResults));
+        result("====================================================================================================");
+        flush();
     }
 }
