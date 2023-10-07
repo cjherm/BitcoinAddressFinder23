@@ -60,16 +60,6 @@ public class BenchmarkFactory {
         logger = new BenchmarkLogger(logToConsole, logToFile);
     }
 
-    public static List<CProducerOpenCL> createProducers(int gridNumBits, boolean chunkMode, int kernelMode, int measuringRounds, BenchmarkLogger logger) {
-        // TODO impl
-        return null;
-    }
-
-    public static List<MeasurementRound> initializingBenchmarkRounds(int gridNumBits, boolean chunkMode, int roundsPerInitializedContext, List<CProducerOpenCL> producers, BenchmarkLogger logger) {
-        // TODO impl
-        return null;
-    }
-
     public BenchmarkType createBenchmarkRunner() throws BenchmarkFactoryException {
         switch (benchmarkType) {
             case TYPE_CHUNK_ITERATOR:
@@ -175,6 +165,16 @@ public class BenchmarkFactory {
     private void logErrorAndAbort(String msg) throws BenchmarkFactoryException {
         logger.error(msg);
         throw new BenchmarkFactoryException(msg);
+    }
+
+    public static List<CProducerOpenCL> createProducers(int gridNumBits, boolean chunkMode, int kernelMode, int measuringRounds, BenchmarkLogger logger) {
+        // TODO impl
+        return null;
+    }
+
+    public static List<MeasurementRound> initializingBenchmarkRounds(int gridNumBits, boolean chunkMode, int roundsPerInitializedContext, List<CProducerOpenCL> producers, BenchmarkLogger logger) {
+        // TODO impl
+        return null;
     }
 
     public static MeasurementRound createBenchmarkRound(CProducerOpenCL producer, int roundsPerInitializedContext, String parameterToLatex, String parameterToPrint, BenchmarkLogger logger) throws BenchmarkException {
