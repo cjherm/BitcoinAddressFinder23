@@ -33,6 +33,7 @@ import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactoryException;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.configuration.CConfiguration;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLBuilder;
+import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLDevice;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLPlatform;
 import net.ladenthin.javacommons.StreamHelper;
 import org.slf4j.Logger;
@@ -104,7 +105,12 @@ public class Main implements Runnable, Interruptable {
             case OpenCLInfo:
                 OpenCLBuilder openCLBuilder = new OpenCLBuilder();
                 List<OpenCLPlatform> openCLPlatforms = openCLBuilder.build();
-                System.out.println(openCLPlatforms);
+                for (OpenCLPlatform platform : openCLPlatforms) {
+                    for (OpenCLDevice device : platform.getOpenCLDevices()) {
+                        logger.info(device.toStringPretty());
+                    }
+                }
+                BenchmarkFactory.assumeOpenClWorking();
                 break;
             case Benchmark:
                 try {
