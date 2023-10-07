@@ -40,7 +40,7 @@ public class DefaultBenchmark implements BenchmarkType {
         try {
             List<CProducerOpenCL> producers = BenchmarkFactory.createProducers(gridNumBits, chunkMode, kernelMode, measuringRounds, logger);
             rounds = BenchmarkFactory.initializingBenchmarkRounds(gridNumBits, chunkMode, roundsPerInitializedContext, producers, logger);
-        } catch (OutOfMemoryError e) {
+        } catch (BenchmarkException | OutOfMemoryError e) {
             logger.error("Error while trying to initialize \"" + BENCHMARK_NAME.trim() + "\"!");
             logger.error(e.getMessage());
             return;

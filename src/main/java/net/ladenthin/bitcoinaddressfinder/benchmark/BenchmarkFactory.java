@@ -13,6 +13,7 @@ import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLBuilder;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLPlatform;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BenchmarkFactory {
@@ -168,16 +169,33 @@ public class BenchmarkFactory {
     }
 
     public static List<CProducerOpenCL> createProducers(int gridNumBits, boolean chunkMode, int kernelMode, int measuringRounds, BenchmarkLogger logger) {
-        // TODO impl
-        return null;
+        logger.info("Creating configurations...");
+        List<CProducerOpenCL> producers = new ArrayList<>();
+        for (int i = 0; i < measuringRounds; i++) {
+            CProducerOpenCL producerOpenCL = new CProducerOpenCL();
+            producerOpenCL.gridNumBits = gridNumBits;
+            producerOpenCL.chunkMode = chunkMode;
+            producerOpenCL.kernelMode = kernelMode;
+            producers.add(producerOpenCL);
+        }
+        logger.info("Configurations successfully created!");
+        return producers;
     }
 
-    public static List<MeasurementRound> initializingBenchmarkRounds(int gridNumBits, boolean chunkMode, int roundsPerInitializedContext, List<CProducerOpenCL> producers, BenchmarkLogger logger) {
-        // TODO impl
-        return null;
+    public static List<MeasurementRound> initializingBenchmarkRounds(int gridNumBits, boolean chunkMode, int roundsPerInitializedContext, List<CProducerOpenCL> producers, BenchmarkLogger logger) throws BenchmarkException {
+        logger.info("Initializing measuring rounds...");
+        List<MeasurementRound> rounds = new ArrayList<>();
+        int parameterToLatex = 1;
+        for (CProducerOpenCL producer : producers) {
+            String parameterToPrint = "2^{" + gridNumBits + "} = " + (1 << gridNumBits) + ", " + roundsPerInitializedContext + "x/ctx, cm:" + chunkMode;
+            rounds.add(createBenchmarkRound(producer, roundsPerInitializedContext, parameterToPrint, "" + parameterToLatex, logger));
+            parameterToLatex++;
+        }
+        logger.info(rounds.size() + " measuring rounds successfully initialized!");
+        return rounds;
     }
 
-    public static MeasurementRound createBenchmarkRound(CProducerOpenCL producer, int roundsPerInitializedContext, String parameterToLatex, String parameterToPrint, BenchmarkLogger logger) throws BenchmarkException {
+    public static MeasurementRound createBenchmarkRound(CProducerOpenCL producer, int roundsPerInitializedContext, String parameterToLatex, String parameterToPrint, BenchmarkLogger logger) {
         int kernelMode = producer.kernelMode;
         if (kernelMode == OpenCLContext.GEN_RIPEMD160_ONLY_MODE) {
             return new Ripemd160Round(producer, roundsPerInitializedContext, parameterToPrint, parameterToLatex, logger);
