@@ -10,6 +10,12 @@ public class ChunkSizeIteratorBenchmark implements BenchmarkType {
 
     @Override
     public void start() {
+        // TODO impl
+    }
 
+    @Override
+    public String getTotalNumberOfResults() {
+        // TODO impl
+        return null;
     }
 }
