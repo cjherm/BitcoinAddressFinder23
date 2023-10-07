@@ -60,6 +60,16 @@ public class BenchmarkFactory {
         logger = new BenchmarkLogger(logToConsole, logToFile);
     }
 
+    public BenchmarkFactory(CBenchmark configuration, BenchmarkLogger logger) {
+        this.benchmarkType = configuration.type;
+        this.gridNumBits = configuration.gridNumBits;
+        this.totalRounds = configuration.totalRounds;
+        this.chunkMode = configuration.chunkMode;
+        this.kernelMode = configuration.kernelMode;
+        this.contextRounds = configuration.contextRounds;
+        this.logger = logger;
+    }
+
     public BenchmarkType createBenchmarkRunner() throws BenchmarkFactoryException {
         switch (benchmarkType) {
             case TYPE_CHUNK_ITERATOR:

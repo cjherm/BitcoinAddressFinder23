@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import net.ladenthin.bitcoinaddressfinder.AddressFilesToLMDB;
-import net.ladenthin.bitcoinaddressfinder.Finder;
-import net.ladenthin.bitcoinaddressfinder.Interruptable;
-import net.ladenthin.bitcoinaddressfinder.LMDBToAddressFile;
-import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
+
+import net.ladenthin.bitcoinaddressfinder.*;
 import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactoryException;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkSeriesFactory;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkSeries;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
 import net.ladenthin.bitcoinaddressfinder.configuration.CConfiguration;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLBuilder;
 import net.ladenthin.bitcoinaddressfinder.opencl.OpenCLDevice;
@@ -117,6 +117,15 @@ public class Main implements Runnable, Interruptable {
                     BenchmarkFactory runnerFactory = new BenchmarkFactory(configuration.benchmark);
                     BenchmarkType runner = runnerFactory.createBenchmarkRunner();
                     runner.start();
+                } catch (BenchmarkFactoryException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case BenchmarkSeries:
+                try {
+                    BenchmarkSeriesFactory seriesFactory = new BenchmarkSeriesFactory(configuration.benchmarkSeries);
+                    BenchmarkSeries series = seriesFactory.createBenchmarkSeries();
+                    series.start();
                 } catch (BenchmarkFactoryException e) {
                     throw new RuntimeException(e);
                 }

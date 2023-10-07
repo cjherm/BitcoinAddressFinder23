@@ -24,4 +24,5 @@ public class CConfiguration {
     public CAddressFilesToLMDB addressFilesToLMDB;
     public CFinder finder;
     public CBenchmark benchmark;
+    public CBenchmarkSeries benchmarkSeries;
 }

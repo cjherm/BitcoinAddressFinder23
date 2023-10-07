@@ -18,5 +18,5 @@
 package net.ladenthin.bitcoinaddressfinder.configuration;
 
 public enum CCommand {
-    Find, LMDBToAddressFile, AddressFilesToLMDB, OpenCLInfo, Benchmark
+    Find, LMDBToAddressFile, AddressFilesToLMDB, OpenCLInfo, Benchmark, BenchmarkSeries
 }
