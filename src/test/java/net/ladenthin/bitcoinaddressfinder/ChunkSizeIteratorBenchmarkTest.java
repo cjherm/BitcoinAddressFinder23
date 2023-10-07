@@ -72,4 +72,24 @@ public class ChunkSizeIteratorBenchmarkTest {
         // assert
         runner.start();
     }
+
+    @Test
+    public void test_start_chunkSizeIterator_chunkMode_addressBytes() throws BenchmarkFactoryException {
+        // arrange
+        CBenchmark configFile = new CBenchmark();
+        configFile.type = BenchmarkFactory.TYPE_CHUNK_ITERATOR;
+        configFile.chunkMode = true;
+        configFile.kernelMode = OpenCLContext.GEN_ADDRESSES_ONLY_MODE;
+        configFile.gridNumBits = BenchmarkFactory.MAX_GRIDNUMBITS;
+        configFile.contextRounds = BenchmarkFactory.DEFAULT_CONTEXT_ROUNDS;
+        configFile.logToFile = false;
+        configFile.logToConsole = true;
+        BenchmarkFactory factory = new BenchmarkFactory(configFile);
+
+        // act
+        BenchmarkType runner = factory.createBenchmarkRunner();
+
+        // assert
+        runner.start();
+    }
 }
