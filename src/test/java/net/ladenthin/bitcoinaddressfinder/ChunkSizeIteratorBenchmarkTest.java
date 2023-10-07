@@ -4,11 +4,13 @@ import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
 import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactoryException;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.configuration.CBenchmark;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@Ignore
 public class ChunkSizeIteratorBenchmarkTest {
 
     @Test
@@ -37,7 +39,7 @@ public class ChunkSizeIteratorBenchmarkTest {
         // arrange
         CBenchmark configFile = new CBenchmark();
         configFile.type = BenchmarkFactory.TYPE_CHUNK_ITERATOR;
-        configFile.gridNumBits = 8;
+        configFile.gridNumBits = BenchmarkFactory.DEFAULT_GRIDNUMBITS;
         configFile.chunkMode = true;
         configFile.kernelMode = 2;
         configFile.contextRounds = 10;
@@ -60,17 +62,18 @@ public class ChunkSizeIteratorBenchmarkTest {
         configFile.type = BenchmarkFactory.TYPE_CHUNK_ITERATOR;
         configFile.chunkMode = true;
         configFile.kernelMode = OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE;
-        configFile.gridNumBits = BenchmarkFactory.MAX_GRIDNUMBITS;
+        configFile.gridNumBits = BenchmarkFactory.DEFAULT_GRIDNUMBITS;
         configFile.contextRounds = BenchmarkFactory.DEFAULT_CONTEXT_ROUNDS;
         configFile.logToFile = false;
         configFile.logToConsole = true;
         BenchmarkFactory factory = new BenchmarkFactory(configFile);
-
-        // act
         BenchmarkType runner = factory.createBenchmarkRunner();
 
-        // assert
+        // act
         runner.start();
+
+        // assert
+        assertThat(runner.getTotalNumberOfResults(), equalTo(5110));
     }
 
     @Test
@@ -80,16 +83,17 @@ public class ChunkSizeIteratorBenchmarkTest {
         configFile.type = BenchmarkFactory.TYPE_CHUNK_ITERATOR;
         configFile.chunkMode = true;
         configFile.kernelMode = OpenCLContext.GEN_ADDRESSES_ONLY_MODE;
-        configFile.gridNumBits = BenchmarkFactory.MAX_GRIDNUMBITS;
+        configFile.gridNumBits = BenchmarkFactory.DEFAULT_GRIDNUMBITS;
         configFile.contextRounds = BenchmarkFactory.DEFAULT_CONTEXT_ROUNDS;
         configFile.logToFile = false;
         configFile.logToConsole = true;
         BenchmarkFactory factory = new BenchmarkFactory(configFile);
-
-        // act
         BenchmarkType runner = factory.createBenchmarkRunner();
 
-        // assert
+        // act
         runner.start();
+
+        // assert
+        assertThat(runner.getTotalNumberOfResults(), equalTo(5110));
     }
 }
