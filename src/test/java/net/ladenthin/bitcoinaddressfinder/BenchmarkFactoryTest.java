@@ -15,17 +15,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class BenchmarkFactoryTest {
 
     @Test
-    public void test_createBenchmarkIterator() throws BenchmarkFactoryException {
+    public void test_createBenchmarkChunkSizeIterator() throws BenchmarkFactoryException {
         // arrange
         CBenchmark configFile = new CBenchmark();
         configFile.type = BenchmarkFactory.TYPE_CHUNK_ITERATOR;
-        configFile.chunkMode = true;
-        configFile.kernelMode = 2;
-        configFile.gridNumBits = 1;
-        configFile.totalRounds = 3;
-        configFile.contextRounds = 1;
+        configFile.chunkMode = BenchmarkFactory.DEFAULT_CHUNKMODE;
+        configFile.kernelMode = BenchmarkFactory.DEFAULT_KERNELMODE;
+        configFile.gridNumBits = BenchmarkFactory.DEFAULT_GRIDNUMBITS;
+        configFile.totalRounds = BenchmarkFactory.DEFAULT_TOTAL_ROUNDS;
+        configFile.contextRounds = BenchmarkFactory.DEFAULT_CONTEXT_ROUNDS;
         configFile.logToFile = false;
-        configFile.logToConsole = true;
+        configFile.logToConsole = BenchmarkFactory.DEFAULT_LOGTOCONSOLE;
         BenchmarkFactory factory = new BenchmarkFactory(configFile);
 
         // act

@@ -21,9 +21,12 @@ public class BenchmarkFactory {
     public static final int DEFAULT_GRIDNUMBITS = 8;
     public static final boolean DEFAULT_CHUNKMODE = true;
     public static final int DEFAULT_KERNELMODE = 2;
+    public static final int DEFAULT_TOTAL_ROUNDS = 10;
     public static final int DEFAULT_CONTEXT_ROUNDS = 10;
+    public static final boolean DEFAULT_LOGTOCONSOLE = true;
 
     public static final String TYPE_CHUNK_ITERATOR = "chunkSizeIterator";
+    public static final String TYPE_CTX_ITERATOR = "ctxRoundsIterator";
 
     private static final String ARG_GRIDNUMBITS = "gridNumBits";
     private static final String ARG_KERNELMODE = "kernelMode";
