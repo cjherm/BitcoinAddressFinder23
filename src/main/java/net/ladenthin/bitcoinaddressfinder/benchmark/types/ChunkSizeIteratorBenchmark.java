@@ -1,9 +1,6 @@
 package net.ladenthin.bitcoinaddressfinder.benchmark.types;
 
-import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
-import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkLogger;
-import net.ladenthin.bitcoinaddressfinder.benchmark.MeasurementRound;
-import net.ladenthin.bitcoinaddressfinder.benchmark.MeasurementRoundResult;
+import net.ladenthin.bitcoinaddressfinder.benchmark.*;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
 
 import java.util.ArrayList;
@@ -63,6 +60,9 @@ public class ChunkSizeIteratorBenchmark implements BenchmarkType {
                 MeasurementRoundResult measurementRoundResult = round.start();
                 logger.roundResult(measurementRoundResult);
                 measurementRoundResults.add(measurementRoundResult);
+            } catch (BenchmarkException e) {
+                logger.error("Error when trying to start round " + (currentRound - 1) + "/" + numberOfIterations + "!");
+                logger.error(e.getInitialThrowable().getMessage());
             } catch (OutOfMemoryError e) {
                 logger.error("ChunkSize is too large!");
                 logger.error(e.getMessage());
