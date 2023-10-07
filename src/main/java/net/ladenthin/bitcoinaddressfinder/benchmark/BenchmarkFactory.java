@@ -19,6 +19,7 @@ public class BenchmarkFactory {
     public static final int MAX_CTXROUNDS = 100;
 
     public static final int DEFAULT_GRIDNUMBITS = 8;
+    public static final boolean DEFAULT_CHUNKMODE = true;
     public static final int DEFAULT_KERNELMODE = 2;
     public static final int DEFAULT_CONTEXT_ROUNDS = 10;
 
