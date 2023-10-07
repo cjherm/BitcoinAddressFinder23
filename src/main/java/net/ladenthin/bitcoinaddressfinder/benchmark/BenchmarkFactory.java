@@ -3,6 +3,7 @@ package net.ladenthin.bitcoinaddressfinder.benchmark;
 import net.ladenthin.bitcoinaddressfinder.OpenCLContext;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.ChunkSizeIteratorBenchmark;
+import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.AddressBytesRound;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.PublicKeysRound;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.Ripemd160Round;
 import net.ladenthin.bitcoinaddressfinder.configuration.CBenchmark;
@@ -136,6 +137,8 @@ public class BenchmarkFactory {
             return new Ripemd160Round(producer, roundsPerInitializedContext, parameterToPrint, parameterToLatex, logger);
         } else if (kernelMode == OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE) {
             return new PublicKeysRound(producer, roundsPerInitializedContext, parameterToPrint, parameterToLatex, logger);
+        } else if (kernelMode == OpenCLContext.GEN_ADDRESSES_ONLY_MODE) {
+            return new AddressBytesRound(producer, roundsPerInitializedContext, parameterToPrint, parameterToLatex, logger);
         }
         return null;
     }
