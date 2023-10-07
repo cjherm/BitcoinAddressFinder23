@@ -36,7 +36,6 @@ public class CProducer {
      * For the generation of Addresses from given PrivateKeys
      * <br><br>
      */
-    // TODO set default value to ensure compability with older impl for now
     public int kernelMode = OpenCLContext.GEN_XY_COORDINATES_ONLY_MODE;
     /**
      * Lazy initialization. The configuration is changed on demand.
@@ -51,7 +50,7 @@ public class CProducer {
      * the global_ID of the kernel.
      * <code>chunkMode = FALSE</code> means, that we will only use provided privateKeys and do not calculate new ones
      */
-    public boolean chunkMode;
+    public boolean chunkMode = true;
 
     /**
      * (2<sup>{@code maxNumBits}</sup> - 1) can be set to a lower value to improve a search on specific ranges (e.g. the puzzle transaction https://privatekeys.pw/puzzles/bitcoin-puzzle-tx ).
