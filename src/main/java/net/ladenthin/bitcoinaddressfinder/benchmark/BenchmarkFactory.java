@@ -4,6 +4,7 @@ import net.ladenthin.bitcoinaddressfinder.OpenCLContext;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.ChunkSizeIteratorBenchmark;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.CtxRoundsIteratorBenchmark;
+import net.ladenthin.bitcoinaddressfinder.benchmark.types.DefaultBenchmark;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.AddressBytesRound;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.PublicKeysRound;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.Ripemd160Round;
@@ -17,6 +18,7 @@ import java.util.List;
 public class BenchmarkFactory {
 
     public static final int MAX_GRIDNUMBITS = 24;
+    public static final int MAX_TOTALROUNDS = 100;
     public static final int MAX_CTXROUNDS = 100;
 
     public static final int DEFAULT_GRIDNUMBITS = 8;
@@ -31,6 +33,7 @@ public class BenchmarkFactory {
     public static final String TYPE_CTX_ITERATOR = "ctxRoundsIterator";
 
     private static final String ARG_GRIDNUMBITS = "gridNumBits";
+    private static final String ARG_TOTAL_ROUNDS = "totalRounds";
     private static final String ARG_KERNELMODE = "kernelMode";
     private static final String ARG_CONTEXT_ROUNDS = "contextRounds";
 
@@ -61,6 +64,8 @@ public class BenchmarkFactory {
         switch (benchmarkType) {
             case TYPE_CHUNK_ITERATOR:
                 return checkConfigAndCreateIterator();
+            case TYPE_DEFAULT:
+                return checkConfigAndCreateDefaultBenchmark();
             case TYPE_CTX_ITERATOR:
                 return checkConfigAndCreateCtxIterator();
             default:
@@ -97,6 +102,13 @@ public class BenchmarkFactory {
         return new ChunkSizeIteratorBenchmark(gridNumBits, chunkMode, kernelMode, contextRounds, logger);
     }
 
+    private BenchmarkType checkConfigAndCreateDefaultBenchmark() {
+        checkGridNumBits();
+        checkTotalRounds();
+        checkContextRounds();
+        return new DefaultBenchmark(gridNumBits, chunkMode, totalRounds, contextRounds, logger);
+    }
+
     private BenchmarkType checkConfigAndCreateCtxIterator() {
         checkGridNumBits();
         checkKernelMode();
@@ -126,6 +138,14 @@ public class BenchmarkFactory {
         }
         logWarnLimits(ARG_KERNELMODE, DEFAULT_KERNELMODE);
         kernelMode = DEFAULT_KERNELMODE;
+    }
+
+    private void checkTotalRounds() {
+        if (totalRounds > 0 && totalRounds <= MAX_TOTALROUNDS) {
+            return;
+        }
+        logWarnLimits(ARG_TOTAL_ROUNDS, DEFAULT_TOTAL_ROUNDS);
+        totalRounds = DEFAULT_TOTAL_ROUNDS;
     }
 
     private void checkContextRounds() {
