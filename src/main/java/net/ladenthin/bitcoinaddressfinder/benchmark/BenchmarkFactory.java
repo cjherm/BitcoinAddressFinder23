@@ -3,6 +3,7 @@ package net.ladenthin.bitcoinaddressfinder.benchmark;
 import net.ladenthin.bitcoinaddressfinder.OpenCLContext;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.ChunkSizeIteratorBenchmark;
+import net.ladenthin.bitcoinaddressfinder.benchmark.types.CtxRoundsIteratorBenchmark;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.AddressBytesRound;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.PublicKeysRound;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.rounds.Ripemd160Round;
@@ -59,6 +60,8 @@ public class BenchmarkFactory {
         switch (benchmarkType) {
             case TYPE_CHUNK_ITERATOR:
                 return checkConfigAndCreateIterator();
+            case TYPE_CTX_ITERATOR:
+                return checkConfigAndCreateCtxIterator();
             default:
                 logErrorAndAbort("Unknown BenchmarkType!");
         }
@@ -91,6 +94,13 @@ public class BenchmarkFactory {
         checkKernelMode();
         checkContextRounds();
         return new ChunkSizeIteratorBenchmark(gridNumBits, chunkMode, kernelMode, contextRounds, logger);
+    }
+
+    private BenchmarkType checkConfigAndCreateCtxIterator() {
+        checkGridNumBits();
+        checkKernelMode();
+        checkContextRounds();
+        return new CtxRoundsIteratorBenchmark(gridNumBits, chunkMode, kernelMode, contextRounds, logger);
     }
 
     private void checkGridNumBits() {
