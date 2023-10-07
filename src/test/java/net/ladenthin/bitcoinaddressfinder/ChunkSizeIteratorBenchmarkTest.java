@@ -31,4 +31,25 @@ public class ChunkSizeIteratorBenchmarkTest {
         // assert
         assertThat(runner.getTotalNumberOfResults(), equalTo(3));
     }
+
+    @Test
+    public void test_start_untilGridNumBits8_5110totalResults() throws BenchmarkFactoryException {
+        // arrange
+        CBenchmark configFile = new CBenchmark();
+        configFile.type = BenchmarkFactory.TYPE_CHUNK_ITERATOR;
+        configFile.gridNumBits = 8;
+        configFile.chunkMode = true;
+        configFile.kernelMode = 2;
+        configFile.contextRounds = 10;
+        configFile.logToConsole = true;
+        configFile.logToFile = false;
+        BenchmarkFactory factory = new BenchmarkFactory(configFile);
+        BenchmarkType runner = factory.createBenchmarkRunner();
+
+        // act
+        runner.start();
+
+        // assert
+        assertThat(runner.getTotalNumberOfResults(), equalTo(5110));
+    }
 }
