@@ -12,6 +12,10 @@ public class BenchmarkLogger {
         // TODO impl
     }
 
+    public static void staticError(String msg) {
+        // TODO impl
+    }
+
     public void warn(String s) {
         // TODO impl
     }
