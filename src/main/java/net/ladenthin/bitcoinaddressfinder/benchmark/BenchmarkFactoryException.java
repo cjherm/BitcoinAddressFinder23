@@ -1,8 +1,7 @@
 package net.ladenthin.bitcoinaddressfinder.benchmark;
 
-public class BenchmarkFactoryException extends Exception {
-
+public class BenchmarkFactoryException extends Throwable {
     public BenchmarkFactoryException(String msg) {
-        // TODO impl
+        super(msg);
     }
 }

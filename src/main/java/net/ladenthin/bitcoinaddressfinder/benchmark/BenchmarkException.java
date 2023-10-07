@@ -1,13 +1,20 @@
 package net.ladenthin.bitcoinaddressfinder.benchmark;
 
-public class BenchmarkException extends Exception {
+public class BenchmarkException extends Throwable {
 
-    public BenchmarkException(String s, Throwable e) {
-        // TODO impl
+    private final Throwable e;
+
+    public BenchmarkException(String msg) {
+        super(msg);
+        this.e = new Throwable();
+    }
+
+    public BenchmarkException(String msg, Throwable e) {
+        super(msg);
+        this.e = e;
     }
 
     public Throwable getInitialThrowable() {
-        // TODO impl
-        return null;
+        return e;
     }
 }
