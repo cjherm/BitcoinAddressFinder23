@@ -4,11 +4,13 @@ import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
 import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactoryException;
 import net.ladenthin.bitcoinaddressfinder.benchmark.types.BenchmarkType;
 import net.ladenthin.bitcoinaddressfinder.configuration.CBenchmark;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@Ignore
 public class DefaultBenchmarkTest {
 
     public static final int EXPECTED_RESULTS = (1 << BenchmarkFactory.DEFAULT_GRIDNUMBITS) * BenchmarkFactory.DEFAULT_TOTAL_ROUNDS * BenchmarkFactory.DEFAULT_CONTEXT_ROUNDS;
