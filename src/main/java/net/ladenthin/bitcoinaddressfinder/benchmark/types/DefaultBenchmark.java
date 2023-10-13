@@ -1,7 +1,10 @@
 package net.ladenthin.bitcoinaddressfinder.benchmark.types;
 
-import net.ladenthin.bitcoinaddressfinder.OpenCLContext;
-import net.ladenthin.bitcoinaddressfinder.benchmark.*;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkException;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkFactory;
+import net.ladenthin.bitcoinaddressfinder.benchmark.BenchmarkLogger;
+import net.ladenthin.bitcoinaddressfinder.benchmark.MeasurementRound;
+import net.ladenthin.bitcoinaddressfinder.benchmark.MeasurementRoundResult;
 import net.ladenthin.bitcoinaddressfinder.configuration.CProducerOpenCL;
 
 import java.util.ArrayList;
@@ -13,19 +16,21 @@ import java.util.List;
  */
 public class DefaultBenchmark implements BenchmarkType {
 
-    public static final String BENCHMARK_NAME = "  RIPEMD160_RUNNER  ";
+    public static final String BENCHMARK_NAME = "  DEFAULT_RUNNER  ";
 
     private final int gridNumBits;
     private final boolean chunkMode;
+    private final int kernelMode;
     private final int measuringRounds;
     private final int roundsPerInitializedContext;
     private final BenchmarkLogger logger;
 
     private List<MeasurementRoundResult> measurementRoundResults;
 
-    public DefaultBenchmark(int gridNumBits, boolean chunkMode, int measuringRounds, int roundsPerInitializedContext, BenchmarkLogger logger) {
+    public DefaultBenchmark(int gridNumBits, boolean chunkMode, int kernelMode, int measuringRounds, int roundsPerInitializedContext, BenchmarkLogger logger) {
         this.gridNumBits = gridNumBits;
         this.chunkMode = chunkMode;
+        this.kernelMode = kernelMode;
         this.measuringRounds = measuringRounds;
         this.roundsPerInitializedContext = roundsPerInitializedContext;
         this.logger = logger;
@@ -36,7 +41,6 @@ public class DefaultBenchmark implements BenchmarkType {
         logger.info("Initializing " + BENCHMARK_NAME.trim() + "!");
 
         List<MeasurementRound> rounds;
-        int kernelMode = OpenCLContext.GEN_RIPEMD160_ONLY_MODE;
         try {
             List<CProducerOpenCL> producers = BenchmarkFactory.createProducers(gridNumBits, chunkMode, kernelMode, measuringRounds, logger);
             rounds = BenchmarkFactory.initializingBenchmarkRounds(gridNumBits, chunkMode, roundsPerInitializedContext, producers, logger);
@@ -67,7 +71,7 @@ public class DefaultBenchmark implements BenchmarkType {
                 logger.error(e.getMessage());
                 rounds.clear();
                 measurementRoundResults.clear();
-                DefaultBenchmark reRun = new DefaultBenchmark((gridNumBits - 1), chunkMode, measuringRounds, roundsPerInitializedContext, logger);
+                DefaultBenchmark reRun = new DefaultBenchmark((gridNumBits - 1), chunkMode, kernelMode, measuringRounds, roundsPerInitializedContext, logger);
                 reRun.start();
                 return;
             }

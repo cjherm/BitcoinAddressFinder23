@@ -117,7 +117,7 @@ public class BenchmarkFactory {
         checkGridNumBits();
         checkTotalRounds();
         checkContextRounds();
-        return new DefaultBenchmark(gridNumBits, chunkMode, totalRounds, contextRounds, logger);
+        return new DefaultBenchmark(gridNumBits, chunkMode, kernelMode, totalRounds, contextRounds, logger);
     }
 
     private BenchmarkType checkConfigAndCreateCtxIterator() {
@@ -197,7 +197,7 @@ public class BenchmarkFactory {
         int parameterToLatex = 1;
         for (CProducerOpenCL producer : producers) {
             String parameterToPrint = "2^{" + gridNumBits + "} = " + (1 << gridNumBits) + ", " + roundsPerInitializedContext + "x/ctx, cm:" + chunkMode;
-            rounds.add(createBenchmarkRound(producer, roundsPerInitializedContext, parameterToPrint, "" + parameterToLatex, logger));
+            rounds.add(createBenchmarkRound(producer, roundsPerInitializedContext, "" + parameterToLatex, parameterToPrint, logger));
             parameterToLatex++;
         }
         logger.info(rounds.size() + " measuring rounds successfully initialized!");
