@@ -3,7 +3,8 @@
 Copyright (c) 2017-2021 Bernard Ladenthin.
 
 ## Requirments
-* Java 17 LTS is necessary
+* Java 17 LTS is necessary (for this project the specific version 17.0.6 was used)
+* [Download: Java 17.0.6 and newer](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 * Device (e.g. Graphic card or CPU) with support of OpenCL 2.0 or higher
 
 ## General
