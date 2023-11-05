@@ -38,6 +38,8 @@ import org.bouncycastle.util.encoders.Hex;
  */
 public class KeyUtility {
 
+    private final static boolean USE_XOR_SWAP = false;
+
     @Nullable
     public final NetworkParameters networkParameters;
     public final ByteBufferUtility byteBufferUtility;
@@ -236,8 +238,38 @@ public class KeyUtility {
         for (int i = 0; i < privateKeys.length; i++) {
             byte[] loopBytes = bigIntegerToBytes(privateKeys[i]);
             int offset = i * PublicKeyBytes.PRIVATE_KEY_MAX_NUM_BYTES;
+            // put key in reverse order because the ByteBuffer put writes in reverse order, a flip has no effect
+            reverse(loopBytes);
             System.arraycopy(loopBytes, 0, bytes, offset, loopBytes.length);
         }
         return bytes;
+    }
+
+    /**
+     * https://stackoverflow.com/questions/12893758/how-to-reverse-the-byte-array-in-java
+     */
+    public static void reverse(byte[] array) {
+        if (array == null) {
+            return;
+        }
+        if (USE_XOR_SWAP) {
+            int len = array.length;
+            for (int i = 0; i < len / 2; i++) {
+                array[i] ^= array[len - i - 1];
+                array[len - i - 1] ^= array[i];
+                array[i] ^= array[len - i - 1];
+            }
+        } else {
+            int i = 0;
+            int j = array.length - 1;
+            byte tmp;
+            while (j > i) {
+                tmp = array[j];
+                array[j] = array[i];
+                array[i] = tmp;
+                j--;
+                i++;
+            }
+        }
     }
 }

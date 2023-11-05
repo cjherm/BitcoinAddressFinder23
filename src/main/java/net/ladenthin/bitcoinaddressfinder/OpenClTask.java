@@ -50,8 +50,6 @@ public class OpenClTask {
      */
     private static final boolean USE_HOST_PTR = false;
 
-    private final static boolean USE_XOR_SWAP = false;
-    
     private final CProducer cProducer;
 
     private final cl_context context;
@@ -120,8 +118,6 @@ public class OpenClTask {
 
         byte[] privateKeyChunkAsByteArray = KeyUtility.bigIntegersToBytes(privateKeys);
 
-        // put key in reverse order because the ByteBuffer put writes in reverse order, a flip has no effect
-        reverse(privateKeyChunkAsByteArray);
         srcByteBuffer.clear();
         srcByteBuffer.put(privateKeyChunkAsByteArray, 0, privateKeyChunkAsByteArray.length);
     }
@@ -244,33 +240,5 @@ public class OpenClTask {
         clone.put(readOnlyCopy);
 
         return clone;
-    }
-
-    /**
-     * https://stackoverflow.com/questions/12893758/how-to-reverse-the-byte-array-in-java
-     */
-    public static void reverse(byte[] array) {
-        if (array == null) {
-            return;
-        }
-        if (USE_XOR_SWAP) {
-            int len = array.length;
-            for (int i = 0; i < len / 2; i++) {
-                array[i] ^= array[len - i - 1];
-                array[len - i - 1] ^= array[i];
-                array[i] ^= array[len - i - 1];
-            }
-        } else {
-            int i = 0;
-            int j = array.length - 1;
-            byte tmp;
-            while (j > i) {
-                tmp = array[j];
-                array[j] = array[i];
-                array[i] = tmp;
-                j--;
-                i++;
-            }
-        }
     }
 }
