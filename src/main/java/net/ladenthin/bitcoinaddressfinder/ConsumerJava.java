@@ -219,6 +219,8 @@ public class ConsumerJava implements Consumer {
                         logger.error("pubKeyUncompressedFromEcKey: " + Hex.encodeHexString(pubKeyUncompressedFromEcKey));
                         logger.error("hash160Uncompressed: " + Hex.encodeHexString(hash160Uncompressed));
                         logger.error("hash160UncompressedFromEcKey: " + Hex.encodeHexString(hash160UncompressedFromEcKey));
+                    } else {
+                        logger.error("fromPrivateUncompressed.getPubKeyHash() == hash160Uncompressed");
                     }
                     
                     if (!Arrays.equals(hash160CompressedFromEcKey, hash160Compressed)) {
@@ -228,6 +230,8 @@ public class ConsumerJava implements Consumer {
                         logger.error("pubKeyCompressedFromEcKey: " + Hex.encodeHexString(pubKeyCompressedFromEcKey));
                         logger.error("hash160Compressed: " + Hex.encodeHexString(hash160Compressed));
                         logger.error("hash160CompressedFromEcKey: " + Hex.encodeHexString(hash160CompressedFromEcKey));
+                    } else {
+                        logger.error("fromPrivateCompressed.getPubKeyHash() == hash160Compressed");
                     }
                 }
 

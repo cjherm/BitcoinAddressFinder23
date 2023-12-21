@@ -33,6 +33,7 @@ k_local[0] = 0x929f72dc;
  * @param r out: x coordinate with leading parity, a pointer to an u32 array with a size of 9.
  * @param k in: scalar to multiply the basepoint, a pointer to an u32 array with a size of 8.
  */
+ /*
 __kernel void generateKeysKernel_parse_public(__global u32 *r, __global const u32 *k)
 {
 
@@ -80,6 +81,7 @@ __kernel void generateKeysKernel_parse_public(__global u32 *r, __global const u3
     r[7] = r_local[7];
     r[8] = r_local[8];
 }
+/*
 
 /*
  * Generate a secp256k1_t struct for the public point. pre-computed points: (x1,y1,-y1),(x3,y3,-y3),(x5,y5,-y5),(x7,y7,-y7).
@@ -113,7 +115,7 @@ __kernel void get_precalculated_g(__global u32 *r)
     }
 }
 
-__kernel void generateKeysKernel_transform_public(__global u32 *r, __global const u32 *k)
+/*__kernel void generateKeysKernel_transform_public(__global u32 *r, __global const u32 *k)
 {
 
     u32 g_local[PUBLIC_KEY_LENGTH_WITHOUT_PARITY];
@@ -161,6 +163,7 @@ __kernel void generateKeysKernel_transform_public(__global u32 *r, __global cons
     r[7] = r_local[7];
     r[8] = r_local[8];
 }
+*/
 
 /*
  * Calculates the public key from a given private key. Will manipulate that private key depending on the global id.
